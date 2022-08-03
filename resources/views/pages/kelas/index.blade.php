@@ -24,7 +24,7 @@ use App\Traits\Helper;
             </div>
             <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped" width="100%">
+                <table id="data" class="table table-striped" width="100%">
                 <thead>
                     <tr>
                     <th class="text-center">
@@ -59,7 +59,7 @@ var _URL_DATATABLE = '{{ url("datatable/kelas") }}';
 // SESUAIKAN FIELD EDIT MODAL
 setDataTable();
 function setDataTable() {
-    $('table').DataTable({
+    $('#data').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
@@ -77,7 +77,7 @@ function setDataTable() {
                 className: 'text-center'
             },{
                 data: 'nama',
-                name: 'nama',
+                name: 'nama',   
             },{
                 data: 'jurusan',
                 name: 'jurusan',
@@ -118,7 +118,7 @@ $(document).on('click','.edit',function(e){
 // open modal
 $('#btn-add-data').fireModal({
     title: _TITLE_MODAL_ADD,
-    body: '<?= Helper::includeAsJsString("pages.jurusan.form") ?>',
+    body: '<?= Helper::includeAsJsString("pages.kelas.form") ?>',
     buttons: [
     {
             submit: false,

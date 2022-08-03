@@ -15,7 +15,7 @@
         <label for="exampleInputEmail1">Jenis Pengguna</label>
         <select id="role" class="form-control "
             name="role" autocomplete="off">
-            <option value="" selected disabled> Pilih Jenis Pngguna</option>
+            <option value="" selected disabled> Pilih Jenis Pengguna</option>
 
             <option value="1">Admin</option>
             <option value="2">Bendahara</option>

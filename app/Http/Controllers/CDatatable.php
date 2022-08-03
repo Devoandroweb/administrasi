@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Administrasi\MPendanaan;
+use App\Models\Administrasi\Siswa;
 use App\Models\MAjaran;
 use App\Models\MJabatan;
 use App\Models\MJenisAdministrasi;
 use App\Models\MJurusan;
 use App\Models\MKelas;
 use App\Models\MPegawai;
+use App\Models\MSiswa;
 use App\Models\User;
 use App\Traits\Helper;
 use Illuminate\Http\Request;
@@ -17,10 +20,10 @@ use Illuminate\Support\Facades\Auth;
 class CDatatable extends Controller
 {
     use Helper;
-    public function pegawai()
+    public function siswa()
     {
         // dd(MPegawai::get());
-        return DataTables::eloquent(MPegawai::withDeleted())
+        return DataTables::eloquent(MSiswa::withDeleted())
             ->editColumn('jk', function ($row) {
                 $result = "-";
                 if ($row->jk == 1) {
@@ -32,10 +35,10 @@ class CDatatable extends Controller
             })
             ->addColumn('action', function ($row) {
                 $btn = '';
-                if ($row->id_pegawai != 1) {
-                    $btn .= '<a href="' . route('pegawai.destroy', encrypt($row->id_pegawai)). '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+                if ($row->id_siswa != 1) {
+                    $btn .= '<a href="' . route('siswa.destroy', encrypt($row->id_siswa)). '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
-                $btn .= '<a href="' . route('pegawai.edit', encrypt($row->id_pegawai)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
+                $btn .= '<a href="' . route('siswa.edit', encrypt($row->id_siswa)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -103,7 +106,8 @@ class CDatatable extends Controller
     public function kelas()
     {
         $model = MKelas::with('jurusan');
-        
+        // dd($model[0]->nama);
+        // dd($model[1]);
         // dd(Auth::user()->id);
         return DataTables::eloquent($model)
             ->addColumn('jurusan', function ($row) {
@@ -111,13 +115,13 @@ class CDatatable extends Controller
             })
             ->addColumn('action', function ($row) {
                 $btn = '';
-                if ($row->id_jurusan != 1) {
-                    $btn .= '<a href="' . route('jurusan.destroy', encrypt($row->id_jurusan)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+                if ($row->id_kelas != 1) {
+                    $btn .= '<a href="' . route('kelas.destroy', encrypt($row->id_kelas)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
-                $btn .= '<a href="' . route('jurusan.edit', encrypt($row->id_jurusan)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
+                $btn .= '<a href="' . route('kelas.edit', encrypt($row->id_kelas)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 return $btn;
             })
-            ->rawColumns(['action','jurusan'])
+            ->rawColumns(['action', 'jurusan'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -146,6 +150,101 @@ class CDatatable extends Controller
                 return $btn;
             })
             ->rawColumns(['action', 'status_convert'])
+            ->addIndexColumn()
+            ->toJson();
+    }
+    public function administrasi()
+    {
+        $model = MSiswa::with('admSiswa','kelas');
+        // dd($model[3]->kelas->jurusan);
+        
+        // dd(Auth::user()->id);
+        return DataTables::eloquent($model)
+
+            ->addColumn('kelas', function ($row) {
+                return $row->kelas->nama." ". $row->kelas->jurusan->nama;
+            })
+            ->addColumn('biaya', function ($row) {
+                $html = '<div class="mb-2 font-weight-bold text-success">Biaya</div>';
+                $html .= "<table class='border'>";
+                foreach($row->admSiswa as $key){
+                    $html .= "<tr>"; 
+                        $html .= "<td class='font-weight-bold'>".$key->jenisAdministrasi->nama; 
+                        $html .= "<td>:</td>";
+                        $html .= "<td class='text-right'>".$this->ribuan($key->jenisAdministrasi->biaya); 
+                    $html .= "</tr>"; 
+                }
+                $html .= "</table>";
+                if(count($row->admSiswa) == 0){
+                    $html = "<div class='text-danger'>Biaya tidak ada</div>";
+                }
+                return $html;
+            })
+            ->rawColumns(['biaya','kelas'])
+            ->addIndexColumn()
+            ->toJson();
+    }
+    public function pendanaan()
+    {
+        $model = MPendanaan::with('siswa');
+        // $biaya = json_decode($model[0]->detail);
+        // dd($biaya);
+        
+        // dd($model[3]->kelas->jurusan);
+        
+        // dd(Auth::user()->id);
+        return DataTables::eloquent($model)
+
+            ->editColumn('nis', function ($row) {
+                if($row->tipe_pemasukan == 1){
+                    return $row->siswa->nis;
+                }
+                return '-';
+            })
+            ->editColumn('total', function ($row) {
+                return $this->ribuan($row->total);
+            })
+            ->editColumn('saldo', function ($row) {
+                return $this->ribuan($row->saldo);
+            })
+            ->editColumn('nama', function ($row) {
+                $nama = "";
+                if($row->tipe_pemasukan == 1){
+                    $nama = $row->siswa->nama;
+                }else{
+                    $nama = $row->nama;
+                }
+                return $nama;
+            })
+            ->addColumn('detail', function ($row) {
+                $html = '<div class="mb-2 font-weight-bold text-success">Detail Pembayaran</div>';
+                $html .= "<table class='border'>";
+                $biaya = json_decode($row->detail);
+
+                foreach($biaya as $key){
+                    $html .= "<tr>"; 
+                        $html .= "<td class='font-weight-bold'>".$key->nama_biaya; 
+                        $html .= "<td>:</td>";
+                        $html .= "<td class='text-right'>".$this->ribuan($key->nominal); 
+                    $html .= "</tr>"; 
+                }
+                $html .= "</table>";
+                
+                return $html;
+            })
+            ->addColumn('status', function ($row)
+            {
+                $total = $this->ribuan($row->total);
+                if($row->tipe == 1){
+                    return '<span class="text-success">+ Rp. '.$total.'</span>';
+                }
+                return '<span class="text-danger">- Rp. ' . $total . '</span>';
+            })
+            ->editColumn('created_at', function ($row) {
+            
+                return $this->convertDate($row->created_at,true,false);
+            })
+            ->rawColumns(['detail','status'])
             ->addIndexColumn()
             ->toJson();
     }

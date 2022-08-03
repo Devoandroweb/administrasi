@@ -17,6 +17,10 @@ class MKelas extends Model
     ];
     function jurusan()
     {
-        return $this->hasOne(MJurusan::class,'id_jurusan');
+        return $this->belongsTo(MJurusan::class,'id_jurusan');
+    }
+    function siswa()
+    {
+        return $this->hasOne(MSiswa::class,'id_siswa');
     }
 }

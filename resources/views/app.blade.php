@@ -57,7 +57,7 @@
   <script src="{{asset('vendor')}}/bootstrap/daterangepicker/daterangepicker.js"></script>
   <script src="{{asset('vendor')}}/bootstrap/timepicker/js/bootstrap-timepicker.min.js"></script>
   <script src="{{asset('vendor')}}/bootstrap/tagsinput/bootstrap-tagsinput.min.js"></script>
-  <script src="{{asset('vendor')}}/select2/js/select2.full.min.js"></script>
+  <script src="{{asset('vendor')}}/select2/js/select2.min.js"></script>
   <script src="{{asset('vendor')}}/selectric/jquery.selectric.min.js"></script>
 
   <!-- JS Libraies -->

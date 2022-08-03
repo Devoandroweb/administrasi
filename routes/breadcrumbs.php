@@ -13,12 +13,12 @@ Breadcrumbs::for('user_management', function (BreadcrumbTrail $trail) {
     $trail->push('User', url('user'));
 });
 //Pegawai
-Breadcrumbs::for('pegawai', function (BreadcrumbTrail $trail) {
-    $trail->push('Pegawai', url('pegawai'));
+Breadcrumbs::for('siswa', function (BreadcrumbTrail $trail) {
+    $trail->push('Siswa', url('siswa'));
 });
-Breadcrumbs::for('edit_pegawai', function (BreadcrumbTrail $trail) {
-    $trail->parent('pegawai');
-    $trail->push('Kelola Pegawai', url('pegawai'));
+Breadcrumbs::for('edit_siswa', function (BreadcrumbTrail $trail) {
+    $trail->parent('siswa');
+    $trail->push('Kelola Siswa', url('siswa'));
 });
 Breadcrumbs::for('jenis_administrasi', function (BreadcrumbTrail $trail) {
     $trail->push('Jenis Administrasi', url('jenis-adminitrasi'));
@@ -31,5 +31,12 @@ Breadcrumbs::for('kelas', function (BreadcrumbTrail $trail) {
 });
 Breadcrumbs::for('ajaran', function (BreadcrumbTrail $trail) {
     $trail->push('Ajaran', url('ajaran'));
+});
+
+Breadcrumbs::for('administrasi_siswa', function (BreadcrumbTrail $trail) {
+    $trail->push('Administrasi Siswa', url('administrasi-siswa'));
+});
+Breadcrumbs::for('pendanaan', function (BreadcrumbTrail $trail) {
+    $trail->push('Pendanaan', url('pendanaan'));
 });
 

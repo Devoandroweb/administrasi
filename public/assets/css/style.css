@@ -183,7 +183,7 @@ p, ul:not(.list-unstyled), ol {
 .custom-select,
 .custom-file-label {
   background-color: #fdfdff;
-  border-color: #e4e6fc;
+  border-color: #8a8a8a;
 }
 .form-control:focus,
 .input-group-text:focus,
@@ -3650,4 +3650,9 @@ body.layout-3 .main-wrapper {
     -webkit-transform: scale(1.2, 1.2);
     opacity: 0;
   }
+}
+
+/* custom */
+.select2-selection{
+  border-color: #8a8a8a !important;
 }

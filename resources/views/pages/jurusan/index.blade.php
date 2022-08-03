@@ -24,7 +24,7 @@ use App\Traits\Helper;
             </div>
             <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped" width="100%">
+                <table id="data" class="table table-striped" width="100%">
                 <thead>
                     <tr>
                     <th class="text-center">
@@ -58,7 +58,7 @@ var _URL_DATATABLE = '{{ url("datatable/jurusan") }}';
 // SESUAIKAN FIELD EDIT MODAL
 setDataTable();
 function setDataTable() {
-    $('table').DataTable({
+    $('#data').DataTable({
         processing: true,
         serverSide: true,
         ajax: {

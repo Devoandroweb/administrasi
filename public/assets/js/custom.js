@@ -51,6 +51,7 @@ function clearInput(formId){
 }
 function setNumeric(){
     $(".numeric").autoNumeric('init',{aPad:false, aDec: ',', aSep: '.'});
+    console.log("set numeric success");
 }
 function toRupiah(el,value){
     el.autoNumeric('init',{aPad:false, aDec: ',', aSep: '.'});

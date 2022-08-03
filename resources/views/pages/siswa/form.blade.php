@@ -3,10 +3,13 @@
 @section('content')
 <?php 
 use App\Traits\Helper;  
-$name[] = 'nip';
+$name[] = 'nis';
 $name[] = 'nama';
+$name[] = 'tempat_lahir';
+$name[] = 'tgl_lahir';
 $name[] = 'jk';
 $name[] = 'no_telp';
+$name[] = 'id_kelas';
 $name[] = 'alamat';
 ?>
 
@@ -14,7 +17,7 @@ $name[] = 'alamat';
     <div class="section-header">
     <h1>{{$title}}</h1>
     {{-- breadcrumbs --}}
-    {{ Breadcrumbs::render('edit_pegawai') }}
+    {{ Breadcrumbs::render('edit_siswa') }}
     </div>
     <div class="section-body">
         <div class="card card-primary">
@@ -25,7 +28,7 @@ $name[] = 'alamat';
                 @if(session('msg'))
                     <div class="alert alert-danger">{{session('msg')}}</div>
                 @endif
-                <form action="{{$url}}" method="post">
+                <form action="{{$url}}" method="post" enctype="multipart/form-data">
                        @csrf
                         {{$method != null ? $method : ''}}
                         <div class="row justify-content-center mb-4">
@@ -39,10 +42,10 @@ $name[] = 'alamat';
                         </div>
                         <div class="row">
                            <div class="form-group col-md-6">
-                               <label for="exampleInputEmail1">NIP</label>
+                               <label for="exampleInputEmail1">NIS (Nomor Induk Siswa)</label>
                                @if(is_null($data))
                                     <input type="text" class="form-control @error($name[0]) is-invalid @enderror"
-                               value="{{$newNip}}" name="{{$name[0]}}" autocomplete="off" readonly />
+                               value="{{$newNis}}" name="{{$name[0]}}" autocomplete="off" readonly />
                                @else
                                     <input type="text" class="form-control @error($name[0]) is-invalid @enderror"
                                value="{{Helper::showData($data,$name[0])}}" name="{{$name[0]}}" autocomplete="off" />
@@ -54,52 +57,63 @@ $name[] = 'alamat';
                                    value="{{Helper::showData($data,$name[1])}}" name="{{$name[1]}}" autocomplete="off" />
                            </div>
                            <div class="form-group col-md-6">
+                               <label for="exampleInputEmail1">Tempat Lahir</label>
+                               <input type="text" class="form-control @error($name[2]) is-invalid @enderror"
+                                   value="{{Helper::showData($data,$name[2])}}" name="{{$name[2]}}" autocomplete="off" />
+                           </div>
+                           <div class="form-group col-md-6">
+                               <label for="exampleInputEmail1">Tanggal Lahir</label>
+                               <input type="date" class="form-control @error($name[3]) is-invalid @enderror"
+                                   value="{{Helper::showData($data,$name[3])}}" name="{{$name[3]}}" autocomplete="off" />
+                           </div>
+
+                           <div class="form-group col-md-6">
                                <label for="exampleInputEmail1">Jenis Kelamin</label>
-                               <select id="tipe" class="form-control @error($name[2]) is-invalid @enderror"
-                                   name="{{$name[2]}}" autocomplete="off">
+                               <select id="tipe" class="form-control @error($name[4]) is-invalid @enderror"
+                                   name="{{$name[4]}}" autocomplete="off">
                                    <option value="" selected disabled> Pilih Jenis Kelamin</option>
 
-                                   <option value="1" {{(old($name[2]) == 1) ? 'selected' : ''}}
-                                       {{Helper::showDataSelected2($data,$name[2],1)}}>
+                                   <option value="1" {{(old($name[4]) == 1) ? 'selected' : ''}}
+                                       {{Helper::showDataSelected2($data,$name[4],1)}}>
                                        Laki - Laki
                                    </option>
-                                   <option value="2" {{(old($name[2]) == 2) ? 'selected' : ''}}
-                                       {{Helper::showDataSelected2($data,$name[2],2)}}>
+                                   <option value="2" {{(old($name[4]) == 2) ? 'selected' : ''}}
+                                       {{Helper::showDataSelected2($data,$name[4],2)}}>
                                        Perempuan
                                    </option>
                                </select>
                            </div>
                            <div class="form-group col-md-6">
                                <label for="exampleInputEmail1">No Telepon</label>
-                               <input type="text" class="form-control phone-number @error($name[3]) is-invalid @enderror"
-                                   value="{{Helper::showData($data,$name[3])}}" name="{{$name[3]}}" autocomplete="off" />
+                               <input type="text" class="form-control phone-number @error($name[5]) is-invalid @enderror"
+                                   value="{{Helper::showData($data,$name[5])}}" name="{{$name[5]}}" autocomplete="off" />
                            </div>
                            {{-- <div class="form-group col-md-6">
                                <label for="exampleInputEmail1">Usia</label>
                                <input type="number" class="form-control @error($name[4]) is-invalid @enderror"
                                    value="{{Helper::showData($data,$name[4])}}" name="{{$name[4]}}" autocomplete="off" />
                            </div> --}}
-                           {{-- <div class="form-group col-md-6">
-                               <label for="exampleInputEmail1">Jabatan</label>
-                               <select id="tipe" class="form-control @error($name[5]) is-invalid @enderror"
-                                   name="{{$name[5]}}" autocomplete="off" required>
-                                   <option value="" selected disabled> Pilih Status Pasien</option>
+                           <div class="form-group col-md-12">
+                               <label for="exampleInputEmail1">Kelas</label>
+                               <select id="kelas" class="form-control @error($name[6]) is-invalid @enderror"
+                                   name="{{$name[6]}}" autocomplete="off">
+                                   <option value="" selected disabled> Pilih Kelas</option>
 
-                                   @foreach($departement as $key)
-                                   <option value="<?= $key->{$name[2]} ?>"
-                                       {{(old($name[2]) == $key->{$name[2]}) ? 'selected' : ''}}
-                                       {{Helper::showDataSelected($data,$name[2],$key->{$name[2]})}}>
-                                       {{$key->nama_departemen}}
+                                   @foreach($kelas as $key)
+                                   <option value="<?= $key->{$name[6]} ?>"
+                                       {{(old($name[6]) == $key->{$name[6]}) ? 'selected' : ''}}
+                                       {{Helper::showDataSelected($data,$name[6],$key->{$name[6]})}}>
+                                       {{$key->nama." ".$key->jurusan->nama}}
                                    </option>
                                    @endforeach
                                    
                                </select>
-                           </div> --}}
+                           </div>
                            <div class="form-group col-md-12">
                             <label for="exampleInputEmail1">Alamat</label>
-                            <textarea type="text" class="form-control @error($name[4]) is-invalid @enderror" cols="5"
-                                rows="6" style="height:100px" value="" name="{{$name[4]}}"
-                                autocomplete="off">{{Helper::showData($data,$name[4])}}</textarea>
+                            <textarea type="text" class="form-control @error($name[7]) is-invalid @enderror" cols="5"
+                                rows="6" style="height:100px" value="" name="{{$name[7]}}"
+                                autocomplete="off">{{Helper::showData($data,$name[7])}}</textarea>
                             </div>
                         </div>
                        

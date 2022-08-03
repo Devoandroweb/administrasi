@@ -7,18 +7,18 @@ use App\Traits\Helper;
 ?>
 <section class="section">
     <div class="section-header">
-    <h1>Data Pegawai</h1>
+    <h1>Data Siswa</h1>
     {{-- breadcrumbs --}}
-    {{ Breadcrumbs::render('pegawai') }}
+    {{ Breadcrumbs::render('siswa') }}
     </div>
 
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Data Pegawai untuk mengelola Human Resource</h4>
+            <h4>Data Siswa untuk mengelola Administrasi</h4>
             <div class="card-header-action">
                 <a href="{{$url}}" class="btn btn-primary" id="btn-add-data">
-                Tambah Pegawai
+                Tambah Siswa
                 </a>
             </div>
             </div>
@@ -27,13 +27,13 @@ use App\Traits\Helper;
                 <div class="alert alert-danger">{{session('msg')}}</div>
             @endif
             <div class="table-responsive">
-                <table class="table table-striped" width="100%">
+                <table id="data" class="table table-striped" width="100%">
                 <thead>
                     <tr>
                     <th class="text-center">
                         #
                     </th>
-                    <th>NIP</th>
+                    <th>NIS</th>
                     <th>Nama</th>
                     <th>Jenis Kelamin</th>
                     <th>Action</th>
@@ -55,11 +55,11 @@ use App\Traits\Helper;
 <script>
     setDataTable();
     function setDataTable() {
-        $('table').DataTable({
+        $('#data').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{{ url("datatable/pegawai") }}',
+                url: '{{ url("datatable/siswa") }}',
             },
             rowReorder: {
                 selector: 'td:nth-child(1)'
@@ -72,8 +72,8 @@ use App\Traits\Helper;
                     width: '4%',
                     className: 'text-center'
                 },{
-                    data: 'nip',
-                    name: 'nip',
+                    data: 'nis',
+                    name: 'nis',
                 },{
                     data: 'nama',
                     name: 'nama',

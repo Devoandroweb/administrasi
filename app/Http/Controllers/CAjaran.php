@@ -70,8 +70,10 @@ class CAjaran extends Controller
     function actifed_ajaran($id)
     {
         try {
+            MAjaran::query()->update(['status'=>0]);
             $ajaran = MAjaran::find(decrypt($id));
-            $ajaran->update(['status'=>1]);
+            $ajaran->status = 1;
+            $ajaran->update();
 
             $_SESI_AJARAN = [];
             if ($ajaran != null) {

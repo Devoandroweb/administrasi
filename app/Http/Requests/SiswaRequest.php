@@ -28,8 +28,10 @@ class SiswaRequest extends FormRequest
             'nama' => 'required',
             'jk' => 'required',
             'no_telp' => 'required',
+            'tempat_lahir' => 'required',
+            'tgl_lahir' => 'required',
             'alamat' => 'required',
-            // 'id_jabatan' => 'required',
+            'id_kelas' => 'required',
         ];
     }
 }

@@ -17,7 +17,7 @@ function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
             dataType: "JSON",
             success: function (response) {
                 $.destroyModal(modal);
-                $('table').DataTable().destroy();
+                $('#data').DataTable().destroy();
                 setDataTable();
                 iziToast.success({
                     title: 'Success',

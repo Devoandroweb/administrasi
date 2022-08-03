@@ -15,6 +15,6 @@ class MJurusan extends Model
     protected $fillable = ['nama'];
     public function kelas()
     {
-        return $this->belongsTo(MKelas::class);
+        return $this->hasOne(MKelas::class,);
     }
 }

@@ -76,7 +76,7 @@ trait Helper
     }
     static function showData($data, $column)
     {
-        $columnDate = ['tanggal_start', 'tanggal_end'];
+        $columnDate = ['tgl_lahir'];
 
         if ($data != null) {
             return $data->{$column};
@@ -92,7 +92,7 @@ trait Helper
     }
     static function showDataDate($data, $column)
     {
-        $columnDate = ['tanggal_start', 'tanggal_end'];
+        $columnDate = ['tgl_lahir'];
         if ($data != null) {
             if (strtotime($data->{$column})) {
                 return date('Y-m-d', strtotime($data->{$column}));
