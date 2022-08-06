@@ -51,4 +51,8 @@ class User extends Authenticatable
     {
         return self::find(decrypt($id))->update(['deleted' => 0]);
     }
+    public function htransaksi()
+    {
+        return $this->hasOne(HTransaksi::class, 'created_by');
+    }
 }

@@ -8,10 +8,11 @@
 use App\Traits\Helper;
 use App\Models\MSiswa;
 ?>
+<form action="" id="data-pembayaran" class="w-100">
 <section class="section">
     <div class="section-header">
-        <form action="" class="w-100">
-        <div class="row">
+        
+        <div class="row w-100">
             <div class="col">
                 <div class="form-group">
                         <label>Siswa</label>
@@ -37,24 +38,31 @@ use App\Models\MSiswa;
                 </div>
                 
             </div>
-        </form>
+
     </div>
     <style>
         .floating-button{
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 40px;
+            right: 40px;
             z-index: 99;
+        }
+        .floating-button .btn-save{
+            width: 60px;
+            height: 60px;
+        }
+        .floating-button .fas{
+            font-size: 1.5em
         }
     </style>
     <div class="floating-button">
-        <button type="button" class="btn btn-success rounded-circle btn-save"><i class="far fa-save fa-lg"></i></button>
+        <button type="button" class="btn btn-success rounded-circle btn-save"><i class="fas fa-save fa-lg"></i></button>
     </div>
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-body">
             <div class="table-responsive">
-                <form action="" id="data-pembayaran">
+                
                 <table id="data" class="table table-striped" width="100%">
                 <thead>
                     <tr>
@@ -68,12 +76,12 @@ use App\Models\MSiswa;
                     
                 </tbody>
                 </table>
-                </form>
+
             </div>
             </div>
         </div>
 </section>
-
+</form>
 @endsection
 @push('js')
 <script type="text/javascript" src="{{asset('vendor/autonumeric/autoNumeric.js')}}"></script>
@@ -92,8 +100,10 @@ function searchBiaya(id_siswa){
         url: "{{url('pembayaran-cost-siswa')}}/"+id_siswa,
         dataType: "JSON",
         success: function (response) {
+            $("input[name=nominal_pembayaran]").autoNumeric('set',0);
             generateRowCostNow(response.tgg_now); 
             generateRowArrears(response.tgg_before);
+
         }
     });
 }
@@ -165,7 +175,7 @@ function calculatePembayaran(uang = 0){
         uang = 0;
     }
    
-    for (let i = allCost.length; i >= 0; i--) {
+    for (let i = allCost.length; i >= 1; i--) {
 
         var inputTarget = allCost[i-1].attributes.id.value;
         if(parseInt(uang) <= parseInt(allCost[i-1].value)){ //jika uang lebih kecil atau sama dengan biaya
@@ -177,7 +187,6 @@ function calculatePembayaran(uang = 0){
         }
         $("input[name=sisa_uang").autoNumeric('set',uang);
         setNumeric();
-        panjangAllCost--;
     }
 
     

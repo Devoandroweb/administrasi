@@ -11,6 +11,7 @@ use App\Models\MJurusan;
 use App\Models\MKelas;
 use App\Models\MPegawai;
 use App\Models\MSiswa;
+use App\Models\MWhatsapp;
 use App\Models\User;
 use App\Traits\Helper;
 use Illuminate\Http\Request;
@@ -137,19 +138,19 @@ class CDatatable extends Controller
                     $status = 'checked';
                 }
                 return '<label class="custom-switch">
-                          <input type="radio" name="status" value="1" data-url="'.url('aktif-ajaran/'.encrypt($row->id)).'" class="custom-switch-input" '.$status.'>
+                          <input type="radio" name="status" value="1" data-url="'.url('aktif-ajaran/'.encrypt($row->id)).'" class="custom-switch-input" '.$status.' disabled>
                           <span class="custom-switch-indicator"></span>
                         </label>';
             })
-            ->addColumn('action', function ($row) {
-                $btn = '';
-                if ($row->id != 1) {
-                    $btn .= '<a href="' . route('ajaran.destroy', encrypt($row->id)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
-                }
-                $btn .= '<a href="' . route('ajaran.edit', encrypt($row->id)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
-                return $btn;
-            })
-            ->rawColumns(['action', 'status_convert'])
+            // ->addColumn('action', function ($row) {
+            //     $btn = '';
+            //     if ($row->id != 1) {
+            //         $btn .= '<a href="' . route('ajaran.destroy', encrypt($row->id)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+            //     }
+            //     $btn .= '<a href="' . route('ajaran.edit', encrypt($row->id)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
+            //     return $btn;
+            // })
+            ->rawColumns(['status_convert'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -171,7 +172,11 @@ class CDatatable extends Controller
                     $html .= "<tr>"; 
                         $html .= "<td class='font-weight-bold'>".$key->jenisAdministrasi->nama; 
                         $html .= "<td>:</td>";
-                        $html .= "<td class='text-right'>".$this->ribuan($key->jenisAdministrasi->biaya); 
+                        if($key->nominal != 0){
+                            $html .= "<td class='text-right'>".$this->ribuan($key->nominal); 
+                        }else{
+                            $html .= "<td class='text-right text-success'> Lunas"; 
+                        }
                     $html .= "</tr>"; 
                 }
                 $html .= "</table>";
@@ -180,7 +185,12 @@ class CDatatable extends Controller
                 }
                 return $html;
             })
-            ->rawColumns(['biaya','kelas'])
+            ->addColumn('tunggakan', function ($row) {
+                
+                $btn = '<a href="' . url('administrasi-siswa-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-primary edit" tooltip="Klik untuk melihat Detail Tunggakan"><i class="fas fa-eye"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['biaya','kelas', 'tunggakan'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -245,6 +255,47 @@ class CDatatable extends Controller
                 return $this->convertDate($row->created_at,true,false);
             })
             ->rawColumns(['detail','status'])
+            ->addIndexColumn()
+            ->toJson();
+    }
+    public function whatsapp()
+    {
+        $model = MWhatsapp::query();
+        // dd(Auth::user()->id);
+        return DataTables::eloquent($model)
+
+            ->addColumn('no_telp_convert', function ($row) {
+                
+                return '<i class="fab fa-whatsapp"></i> '.$row->no_telp;
+            })
+            ->addColumn('pesan_convert', function ($row) {
+                if($row->tipe == 2){
+                    return "<a href='". url('upload/whatsapp/' . $row->file)."' target='_blank' class='text-info'>".$row->file."</a>";
+                }
+                return $row->pesan;
+            })
+            ->addColumn('tipe_convert', function ($row) {
+                if($row->tipe == 1){
+                    return "<span class='text-success'>Text</span>";
+                }else{
+                    return "<span class='text-info'>File</span>";
+                }
+                return "-";
+                
+            })
+            ->addColumn('status_convert', function ($row) {
+                if ($row->status == 1) {
+                    return "<span class='text-success'><i class='far fa-check-circle'></i> Success</span>";
+                } else {
+                    return "<span class='text-danger'><i class='far fa-times-circle'></i> Failed</span>";
+                }
+            })
+            ->addColumn('action', function ($row) {
+                $btn = '';
+                $btn .= '<a href="' . route('whatsapp.destroy', encrypt($row->id_whatsapp)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['action', 'pesan_convert', 'tipe_convert', 'status_convert', 'no_telp_convert'])
             ->addIndexColumn()
             ->toJson();
     }

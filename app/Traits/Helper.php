@@ -45,7 +45,7 @@ trait Helper
         }
         return $text;
     }
-    function ribuan($angka, $comma = 0)
+    static function ribuan($angka, $comma = 0)
     {
 
         $hasil_rupiah = number_format($angka, $comma, ',', '.');
@@ -244,4 +244,5 @@ trait Helper
         $newNis = $latesNis + 1;
         return $newNis;
     }
+   
 }

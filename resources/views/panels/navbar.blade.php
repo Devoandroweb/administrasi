@@ -1,25 +1,26 @@
+<?php use Illuminate\Support\Facades\Http; ?>
 <div class="navbar-bg"></div>
       <nav class="navbar navbar-expand-lg main-navbar">
         <form class="form-inline mr-auto">
           <ul class="navbar-nav mr-3">
             <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a></li>
-            <li><a href="#" data-toggle="search" class="nav-link nav-link-lg d-sm-none"><i class="fas fa-search"></i></a></li>
+            <li class="">
+
+            <a href="javascript:;" class="nav-link nav-link-lg d-md-flex align-items-center font-weight-bold">
+              <span class="d-none d-md-block mr-1">Tahun Akademik : </span>
+              <span class="d-md-none">TA : </span>
+              
+                @php
+                    echo Session::get('tahun_awal')." - ".Session::get('tahun_akhir');
+                @endphp
+              
+            </a>
+          </li>
           </ul>
         </form>
         <ul class="navbar-nav navbar-right">
           
-          <li class="nav-item active">
-            <a href="{{url('ajaran')}}" class="nav-link nav-link-lg d-flex align-items-center">
-              <span>
-                Tahun Akademik : 
-                <span class="btn btn-outline-light rounded-pill ml-2">
-                  @php
-                      echo Session::get('tahun_awal')." - ".Session::get('tahun_akhir');
-                  @endphp
-                </span>
-              </span>
-            </a>
-          </li>
+          @if(auth()->guard('web')->check())
           <li class="nav-item active">
             <a href="{{url('pembayaran')}}" class="nav-link nav-link-lg d-flex align-items-center">
                 <span class="btn btn-warning rounded-pill">
@@ -27,11 +28,38 @@
                 </span>
             </a>
           </li>
+          
+          <li class="nav-item active">
+            <a href="{{url('whatsapp')}}" class="nav-link nav-link-lg d-flex align-items-center">
+              <?php 
+                
+                $res = null;
+                try {
+                  $res = Http::get("http://localhost:8000/check-auth")->throw()->json();
+                } catch (\Throwable $th) {
+                  $activeWa = 'bg-danger';
+                }
+                if($res != null){
+                    $activeWa = 'bg-success';
+                }else{
+                    $activeWa = 'bg-danger';
+                }
+              ?>
+              <span class="dot {{$activeWa}} mr-2 status-wa"></span> Whatsapp Gateway
+            </a>
+          </li>
+          @endif
           <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-            <img alt="image" src="{{asset('/')}}/assets/img/avatar/default.png" class="rounded-circle mr-1">
+            <img alt="image" src="{{asset('assets')}}/img/avatar/default.png" class="rounded-circle mr-1">
+            @if(Auth::guard('web')->check())
             <div class="d-sm-none d-lg-inline-block">Hi, {{Auth::user()->name}}</div></a>
+            @endif
+            @if(Auth::guard('siswa')->check())
+            <div class="d-sm-none d-lg-inline-block">Hi, {{Auth::guard('siswa')->user()->nama}}</div></a>
+            @endif
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Logged in 5 min ago</div>
+              @if(auth()->guard('web')->check())
               <a href="features-activities.html" class="dropdown-item has-icon">
                 <i class="fas fa-bolt"></i> Activities
               </a>
@@ -42,6 +70,13 @@
               <a href="{{route('logout')}}" class="dropdown-item has-icon text-danger">
                 <i class="fas fa-sign-out-alt"></i> Logout
               </a>
+              @endif
+
+              @if(auth()->guard('siswa')->check())
+              <a href="{{route('logout-siswa')}}" class="dropdown-item has-icon text-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+              @endif
             </div>
           </li>
         </ul>

@@ -36,7 +36,14 @@ Breadcrumbs::for('ajaran', function (BreadcrumbTrail $trail) {
 Breadcrumbs::for('administrasi_siswa', function (BreadcrumbTrail $trail) {
     $trail->push('Administrasi Siswa', url('administrasi-siswa'));
 });
+Breadcrumbs::for('administrasi_siswa_tunggakan', function (BreadcrumbTrail $trail) {
+    $trail->parent('administrasi_siswa');
+    $trail->push('Tunggakan Siswa', url('administrasi-siswa'));
+});
 Breadcrumbs::for('pendanaan', function (BreadcrumbTrail $trail) {
     $trail->push('Pendanaan', url('pendanaan'));
+});
+Breadcrumbs::for('whatsapp', function (BreadcrumbTrail $trail) {
+    $trail->push('Whatsapp Gateway', url('whatsapp'));
 });
 

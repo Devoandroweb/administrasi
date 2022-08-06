@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\Pendanaan;
 use App\Models\Administrasi\Siswa;
 use App\Traits\CreatedUpdatedBy;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MSiswa extends Model
+class MSiswa extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
     use CreatedUpdatedBy;
     protected $table = 'm_siswa';
     protected $primaryKey = 'id_siswa';
@@ -41,5 +45,9 @@ class MSiswa extends Model
     public function pendanaan()
     {
         return $this->hasOne(Pendanaan::class,'id_siswa');
+    }
+    public function htransaksi()
+    {
+        return $this->hasOne(HTransaksi::class,'id_siswa');
     }
 }

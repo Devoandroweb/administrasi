@@ -36,6 +36,34 @@ class CLogin extends Controller
 
         return back()->with('msg','Email atau Password Salah');
     }
+    public function siswa()
+    {
+        // dd("adasd");
+        return view('login-siswa')->with('title', 'Login Siswa');
+    }
+    public function authSiswa(Request $request)
+    {
+        $credentials = $request->validate([
+            'nis' => ['required'],
+            'password' => ['required'],
+        ]);
+        $credentials['deleted'] = 1;
+        // dd($credentials);
+        if (Auth::guard('siswa')->attempt($credentials)) {
+            $request->session()->regenerate();
+            //simpan tahun ajaran
+            $ajaran = MAjaran::where('status',1)->first();
+            $_SESI_AJARAN = [];
+            if($ajaran != null){
+                $_SESI_AJARAN['tahun_awal'] = $ajaran->tahun_awal; 
+                $_SESI_AJARAN['tahun_akhir'] = $ajaran->tahun_akhir;
+            }
+            Session::put($_SESI_AJARAN);
+            return redirect(url('/siswa/dashboard'));
+        }
+
+        return back()->with('msg','NIS atau Password Salah');
+    }
     public function logout(Request $request)
     {
         Auth::logout();
@@ -45,5 +73,12 @@ class CLogin extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/admin');
+    }
+    public function logout_siswa(Request $request)
+    {
+        Auth::guard('siswa')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
     }
 }

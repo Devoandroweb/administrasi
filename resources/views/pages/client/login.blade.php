@@ -2,9 +2,6 @@
 @section('content-login')
 <div class="bg-white w-100" style="height: 100vh">
   <div class="row justify-content-center mx-auto" style="height:100%">
-    <div class="col-0 col-md-6 text-center border-right d-flex align-items-center">
-      <img src="{{asset('assets/img/hr.gif')}}" class="w-50 m-auto d-none d-md-block" alt="">
-    </div>
     <div class="col p-5 p-lg-5">
       <div class="px-lg-5">
         <form action="{{url('/auth')}}" method="post"> 
@@ -27,7 +24,7 @@
                   <i class="fas fa-envelope"></i>
                 </div>
               </div>
-              <input type="email" name="email" class="form-control" required>
+              <input type="text" name="nis" class="form-control" required>
             </div>
           </div>
           <div class="form-group">
@@ -45,7 +42,7 @@
               <div class="label"></div>
             </div>
           </div>
-          <button type="submit" class="btn btn-danger btn-block py-2">Go</button>
+          <button type="submit" class="btn btn-info btn-block py-2">Go</button>
         </form>
       </div>
     </div>

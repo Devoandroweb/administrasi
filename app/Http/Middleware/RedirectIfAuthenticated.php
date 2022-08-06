@@ -21,12 +21,25 @@ class RedirectIfAuthenticated
     {
         $guards = empty($guards) ? [null] : $guards;
 
-        foreach ($guards as $guard) {
+        foreach ($guards as $guard) {        
+            $redierectHome = RouteServiceProvider::HOME;
+            $redierectHomeClient = RouteServiceProvider::HOMECLIENT;
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                // dd("siswa");
+                if($guard == 'siswa'){
+                    return redirect($redierectHomeClient);
+                }
+                return redirect($redierectHome);
+            }
+            if (Auth::guard("siswa")->check()) {
+                return redirect($redierectHomeClient);
+            }
+            if ($guard == 'siswa') {
+                if(Auth::check()){
+                    return redirect($redierectHome);
+                }
             }
         }
-
         return $next($request);
     }
 }

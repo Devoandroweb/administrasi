@@ -7,7 +7,7 @@ use App\Traits\Helper;
 ?>
 <section class="section">
     <div class="section-header">
-    <h1>Kelola Pemasukan</h1>
+    <h1>Kelola Pegeluaran dan Pemasukan</h1>
     {{-- breadcrumbs --}}
     {{ Breadcrumbs::render('pendanaan') }}
     </div>

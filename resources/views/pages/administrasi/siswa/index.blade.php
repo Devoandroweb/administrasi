@@ -30,7 +30,7 @@ use App\Traits\Helper;
                     <th>Nama</th>
                     <th>Biaya</th>
                     <th>Kelas</th>
-                    {{-- <th>Action</th> --}}
+                    <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,7 +52,6 @@ var _TABLE = null;
 // SESUAIKAN COLUMN DATATABLE
 // SESUAIKAN FIELD EDIT MODAL
 setDataTable();
-
 function setDataTable() {
     _TABLE = $('#data').DataTable({
         processing: true,
@@ -93,6 +92,9 @@ function setDataTable() {
             },{
                 data: 'kelas',
                 name: 'kelas',
+            },{
+                data: 'tunggakan',
+                name: null,
             }
             // ,{
             //     data: 'action',
