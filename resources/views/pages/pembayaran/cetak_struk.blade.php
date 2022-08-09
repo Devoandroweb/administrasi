@@ -26,7 +26,7 @@ foreach ($_TUNGGAKAN as $key) {
 <style type="text/css">
     @font-face {
 
-        src : url('{{ asset("public/assets/font/F25_Bank_Printer.ttf") }}');
+        src : url('{{ asset("assets/font/F25_Bank_Printer.ttf") }}');
         font-family: 'bankr';
     }
 

@@ -92,6 +92,7 @@ $(document).on('click','#btn-add-data',function(e){
 });
 $(document).on('click','.edit',function(e){
     var modal = $("#fire-modal-1");
+
     clearInput("#form-data");
     e.preventDefault();
     $.ajax({
@@ -100,6 +101,7 @@ $(document).on('click','.edit',function(e){
         dataType: "JSON",
         success: function (response) {
             if(response.status){
+  
                 _STATUS_SUBMIT = 2;
                 modal.find(".modal-title").text(_TITLE_MODAL_UPDATE);
                 _ID_UPDATE = response.data.key;

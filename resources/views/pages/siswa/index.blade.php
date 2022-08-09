@@ -5,6 +5,8 @@
 <?php 
 use App\Traits\Helper;
 ?>
+@include('pages.siswa.detail')
+
 <section class="section">
     <div class="section-header">
     <h1>Data Siswa</h1>
@@ -89,6 +91,11 @@ use App\Traits\Helper;
             ]
         });
     }
+    //modal
+    // open modal
+        $(document).on("click",".detail", function () {
+            $("#modal-detail").modal('show');
+        });
 </script>
 <script type="text/javascript" src="{{asset('assets/js/delete.js')}}"></script>
 @endpush

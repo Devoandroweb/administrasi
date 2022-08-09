@@ -30,13 +30,13 @@
                 <div class="summary-item">
                     <p><i><span class="text-danger"><b>Perhatian !!</b> di mohon untuk segera melunasi pembayaran</span></i></p>
                     <hr>
-                    <h6>Item List <span class="text-muted">(3 Items)</span></h6>
+                    <h6>Item List <span class="text-muted">({{$biayaNow->count()+$biayaBefore->count()}} Items)</span></h6>
                     <ul class="list-unstyled list-unstyled-border">
                     @foreach($biayaNow as $key)
                         <li class="media">
                             <div class="media-body">
-                            @if($key->jenisAdministrasi->nominal != 0)
-                            <div class="media-right">Rp. {{number_format($key->jenisAdministrasi->nominal,2,".",",")}}</div>
+                            @if($key->nominal != 0)
+                            <div class="media-right">Rp. {{number_format($key->nominal,2,".",",")}}</div>
                             @else
                             <div class="media-right text-success">Lunas</div>
                             @endif

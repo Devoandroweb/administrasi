@@ -17,7 +17,6 @@ use App\Models\MSiswa;
                 <div class="form-group">
                         <label>Siswa</label>
                         <select id="siswa" class="form-control siswa" placeholer="">
-                            <option value="" disabled selected>Ketikkan NIS atau Nama Siswa</option>
                             @foreach(MSiswa::all() as $key)
                                 <option value="{{encrypt($key->id_siswa)}}">{{$key->nis." - ".$key->nama}}</option>
                             @endforeach
@@ -27,7 +26,7 @@ use App\Models\MSiswa;
                 <div class="col">
                     <div class="form-group">
                         <label>Nominal Uang</label>
-                        <input type="text" name="nominal_pembayaran" class="form-control text-right numeric" required="" autocomplete="off">
+                        <input type="text" name="nominal_pembayaran" class="form-control text-right numeric" required="" autocomplete="off" disabled>
                     </div>
                 </div>
                 <div class="col">
@@ -56,7 +55,7 @@ use App\Models\MSiswa;
         }
     </style>
     <div class="floating-button">
-        <button type="button" class="btn btn-success rounded-circle btn-save"><i class="fas fa-save fa-lg"></i></button>
+        <button type="button" class="btn btn-success rounded-circle btn-save" disabled tooltip="Simpan Pembayaran"><i class="fas fa-save fa-lg"></i></button>
     </div>
     <div class="section-body">
         <div class="card card-primary">
@@ -86,12 +85,18 @@ use App\Models\MSiswa;
 @push('js')
 <script type="text/javascript" src="{{asset('vendor/autonumeric/autoNumeric.js')}}"></script>
 <script>
+$('.btn-save').attr('disabled','disabled');
 var _ID_SISWA = 0;
-$('.siswa').select2();
+$('.siswa').select2({
+    placeholder: "Ketikkan NIS atau Nama Siswa",
+}).val("").trigger("change");
+$(".siswa").select2("val", "");
 $('.siswa').on('select2:select', function (e) {
     var data = e.params.data;
     _ID_SISWA = data.id;
     searchBiaya(data.id);
+    
+
 });
 setNumeric();
 //proses cari biaya siswa
@@ -101,8 +106,17 @@ function searchBiaya(id_siswa){
         dataType: "JSON",
         success: function (response) {
             $("input[name=nominal_pembayaran]").autoNumeric('set',0);
-            generateRowCostNow(response.tgg_now); 
-            generateRowArrears(response.tgg_before);
+            var itemCount = response.tgg_now.length + response.tgg_before.length;
+            $("#data tbody").html("<tr><td colspan='4' class='text-center text-danger'><i>Tidak ada biaya Tertanggung</i></td></tr>");
+            if(itemCount == 0){
+                $("#data tbody").html("<tr><td colspan='4' class='text-center text-danger'><i>Tidak ada biaya Tertanggung</i></td></tr>");
+                console.log(itemCount);
+                $('input[name=nominal_pembayaran]').attr('disabled','disabled');
+            }else{
+                $('input[name=nominal_pembayaran]').removeAttr('disabled');
+                generateRowCostNow(response.tgg_now); 
+                generateRowArrears(response.tgg_before);
+            }
 
         }
     });
@@ -167,9 +181,19 @@ $(document).on('click','.remove-item',function(e){
 });
 $("input[name=nominal_pembayaran]").keyup(function (e) { 
     var uang = $(this).val().split('.').join('');
-    calculatePembayaran(uang);
+    if(uang == ""){
+        uang = 0;
+    }
+    var sisa_uang = calculatePembayaran(uang);
+    if(uang != 0 && sisa_uang != uang){
+        $('.btn-save').removeAttr('disabled');
+    }else{
+        $('.btn-save').attr('disabled','disabled');
+    }
+    
 });
 function calculatePembayaran(uang = 0){
+    var sisa_uang = 0;
     var allCost = $('.biaya');
     if(uang == ""){
         uang = 0;
@@ -182,11 +206,12 @@ function calculatePembayaran(uang = 0){
             $(".no-"+inputTarget).autoNumeric('set',uang);
             uang = 0;
         }else{ // jika uang lebih besar dengan biaya
-            uang = parseInt(uang) - parseInt(allCost[i-1].value);
+            sisa_uang = parseInt(uang) - parseInt(allCost[i-1].value);
             $(".no-"+inputTarget).autoNumeric('set',parseInt(allCost[i-1].value));
         }
-        $("input[name=sisa_uang").autoNumeric('set',uang);
+        $("input[name=sisa_uang").autoNumeric('set',sisa_uang);
         setNumeric();
+        return sisa_uang;
     }
 
     

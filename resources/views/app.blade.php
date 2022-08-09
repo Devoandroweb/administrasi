@@ -27,14 +27,26 @@
   <link rel="stylesheet" href="{{asset('assets')}}/css/custom.css">
   <link rel="stylesheet" href="{{asset('assets')}}/css/tooltip-dw.css">
   <link rel="stylesheet" href="{{asset('assets')}}/css/components.css">
+  <link rel="stylesheet" href="{{asset('assets')}}/css/loading.css">
   {{-- custom css --}}
+  
+<style type="text/css">
+
+</style>
   @stack('style')
 </head>
 
 <body>
+
   <div id="app">
     <div class="main-wrapper">
+      
       @if($content != 'login')
+        <div class="loadingio-spinner-spinner-r68m0c0thyo loading loading-show">
+          <div class="ldio-rdj0bm7qmr">
+          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+          </div>
+        </div>
         @include('panels.navbar')
         @include('panels.sidebar')
         @include('panels.content')
@@ -51,7 +63,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{{asset('assets')}}/js/stisla.js"></script>
 
   <!-- JS Libraies -->
@@ -75,6 +87,9 @@
   <!-- Page Specific JS File -->
   {{-- <script src="{{asset('assets')}}/js/page/forms-advanced-forms.js"></script> --}}
   <script>
+   $(document).ready(function () {
+       $(".loading").removeClass('loading-show');
+   });
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -87,7 +102,7 @@
     });
     var channel = pusherClient.subscribe('my-channel');
     channel.bind('my-event', function(data) {
-        console.log(data);
+
         if(data != null){
           $(".status-wa").removeClass('bg-danger');
           $(".status-wa").addClass('bg-success');
@@ -100,6 +115,12 @@
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     })
+    $( document ).ajaxStart(function() {
+       $(".loading").addClass('loading-show');
+    });
+    $( document ).ajaxComplete(function() {
+       $(".loading").removeClass('loading-show');
+    });
   </script>
   {{-- cusom js --}}
   @stack('js')

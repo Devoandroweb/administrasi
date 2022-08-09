@@ -8,195 +8,93 @@ use App\Models\Administrasi\HTransaksi;
 
 <head>
     <title>Menampilkan List Printer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-
 </head>
-<style type="text/css">
-    @font-face {
-
-        src : url('{{ asset("assets/font/monaco.ttf") }}');
-        font-family: 'bankr';
-    }
-
-    .content {
-        width: 70%;
-        margin: auto;
-        padding: 2rem;
-        line-height: 0.2rem;
-        overflow: hidden;
-        border-top: none;
-        border-right: none;
-        border-left: none;
-
-    }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom:20px;
-    }
-
-    .header img {
-        width: 40%;
-    }
-
-    .bag1 {
-        text-align: center;
-        width: 15%;
-    }
-
-    .bag2 {
-        width: 50%;
-    }
-
-    .bag3 {
-        width: 35%;
-    }
-
-    .bag3 p {
-        font-size: 8pt;
-        font-family: "bankr";
-    }
-
-    .bank-r {
-        font-family: bankr;
-    }
-
-    .bag2>label {
-        font-size: 10pt;
-    }
-
-    table {
-        font-size: 12pt;
-        width: 100%;
-        font-family: 'bankr';
-
-    }
-
-    hr {
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .terbilang {
-
-        width: 100%;
-        font-family: bankr;
-        line-height: 1.5rem;
-        display: flex;
-        align-items: center;
-        font-size: 8pt;
-
-    }
-
-    .terbilang-bag1 {
-        width: 50%;
-        /* background-image: url("{{url('public/assets/img/bg-pattern.png')}}"); */
-    }
-
-    .terbilang-bag2 {
-        width: 50%;
-        text-align: right;
-    }
-
-    .terbilang-bag1 .pattern {
-        background-image: url('{{  asset("public/assets/img/pattern_line.jpg")  }}');
-        background-size: 100px;
-        padding: 10px;
-    }
-
-    .footer {
-        font-size: 8pt;
-        font-family: bankr;
-        line-height: 1.5rem;
-    }
-
-    .ttd {
-        width: 100%;
-    }
-
-    .ttd1 {
-        width: 30%;
-        float: right;
-        text-align: center;
-    }
-
-    .print {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-    }
-
-    button {
-        background: #084479;
-        border: none;
-        border-radius: 0.1rem;
-        color: white;
-        font-weight: bold;
-        padding: 0.5rem 1rem 0.5rem 1rem;
-        margin: 2rem;
-        cursor: pointer;
-    }
-
-    @media print {
-        * {
-            -webkit-print-color-adjust: exact !important;
-            /*Chrome, Safari */
-            color-adjust: exact !important;
-            /*Firefox*/
-        }
-
-        .content {
-            width: 100%;
-            padding: 0;
-            padding-bottom: 10px !important;
-        }
-
-        .print {
-            display: none;
-        }
-
-        @page {
-            padding: 1rem;
-            margin: 1rem;
 
 
-        }
-
-        @page {
-            size: auto;
-        }
-    }
-</style>
-
-<body>
+<body style="font-family: 'monaco';">
     
     <div class="content">
-        <div class="header">
-            <div class="bag1">
-                <img src="{{ asset('assets/img/logo_sekolah.png') }}">
-            </div>
-            <div class="bag2 bank-r">
-                <h3>SMA ISLAM AL-HIKMAH</h3>
-                <label><small>Jl. Raya Tanjungsari Kuwolu Bululawang Malang Jawa Timur</small></label>
-            </div>
-            <div class="bag3">
-                <h5 class="bank-r" style="margin-bottom: 0rem;">BIAYA ADMINISTRASI SISWA</h5>
-            </div>
+        <div class="header" style="margin-bottom: 20px">
+            <table>
+                <tr>
+                    <td width="25%" style="text-align: center"><img src="{{ asset('assets/img/logo_sekolah.png') }}" width="60%"></td>
+                    <td style="text-align: center;">
+                        <h1>SMA ISLAM AL-HIKMAH</h1>
+                        <label><small>Jl. Raya Tanjungsari Kuwolu Bululawang Malang Jawa Timur</small></label>
+                    </td>
+                </tr>
+            </table>
         </div>
         <hr>
         <div class="body">
-            <table style="margin-top: 20px">
+            <h4 class="bank-r" style="margin-bottom: 2rem;text-align:center">BIAYA ADMINISTRASI SISWA</h4>
+            <table width="100%">
                 <tr>
-                    <td colspan="2" style="font-weight: bold; padding-bottom:20px;">Tahun Ajaran : 2021 - 2022</td>
+                    <td style="">NIS</td>
+                    <td style="width:2%">:</td>
+                    <td style="width:30%">{{auth()->guard('siswa')->user()->nis}}</td>
+                    <td style="">Kelas</td>
+                    <td style="width:2%">:</td>
+                    <td style="">{{auth()->guard('siswa')->user()->kelas->nama." ".auth()->guard('siswa')->user()->kelas->jurusan->nama}}</td>
                 </tr>
                 <tr>
-                    <td>SPP</td>
-                    <td style="text-align: right">30.000</td>
+                    <td style="">Nama</td>
+                    <td style="">:</td>
+                    <td style="">{{auth()->guard('siswa')->user()->nama}}</td>
+                    <td style="">Tanggal Unduh</td>
+                    <td style="">:</td>
+                    <td style="">{{Helper::convertDate(date("Y-m-d"),true,false)}}</td>
                 </tr>
             </table>
-
+            <hr style="display: block; height: 1px;
+                border: 0; border-top: 1px solid #ccc;
+                margin: 1em 0; padding: 0;">
+            <table style="margin-top: 20px; width:100%">
+                @php 
+                    $headerGroup = ""; 
+                    $yearAkademicNow = Session::get('tahun_awal')." - ". Session::get('tahun_akhir');
+                    $no = 1;
+                @endphp
+                <tr>
+                    <td colspan="3" style="font-weight: bold; padding-top:20px;padding-bottom:10px;">Tahun Ajaran : {{$yearAkademicNow}}</td>
+                </tr>
+                @foreach ($biayaNow as $item)
+                <tr>
+                    <td>{{$loop->iteration." ".$item->jenisAdministrasi->nama}}</td>
+                    @if($item->nominal != 0)
+                    <td style="text-align: right">Rp. </td>
+                    <td style="text-align: right">{{number_format($item->nominal,2,".",",")}}</td>
+                    @else
+                    <td style="text-align: right"></td>
+                    <td style="text-align: right; color:#47c363 ;">Lunas</td>
+                    @endif
+                </tr>
+                @php @endphp
+                @endforeach
+                
+                @foreach ($biayaBefore as $item)
+                @if($headerGroup != $item->ajaran)
+                @php $headerGroup = $item->ajaran; $no = 1;@endphp
+                <tr>
+                    <td colspan="2" style="font-weight: bold; padding-top:20px;padding-bottom:10px;">Tahun Ajaran : {{$headerGroup}}</td>
+                </tr>
+                @endif
+                <tr>
+                    <td>{{$no." ".$item->nama_tunggakan}}</td>
+                    @if($item->nominal != 0)
+                    <td style="text-align: right">Rp. </td>
+                    <td style="text-align: right">{{number_format($item->nominal,2,".",",")}}</td>
+                    @else
+                    <td style="text-align: right"></td>
+                    <td style="text-align: right; color:#47c363 ;">Lunas</td>
+                    @endif
+                </tr>
+                @php $no++;@endphp
+                @endforeach
+            </table>
+            <div style="color: #fc544b; margin-top:3rem;text-align:center;">
+                <b>Perhatian !!</b> di mohon untuk segera melunasi pembayaran</span></i>
+            </div>
         </div>
 
     </div>

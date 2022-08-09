@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(HTransaksi::class, 'created_by');
     }
+    function hUser()
+    {
+        return $this->belongsTo(RHUser::class,'id_user');
+    }
+    
 }

@@ -35,11 +35,15 @@ class CDatatable extends Controller
                 return $result;
             })
             ->addColumn('action', function ($row) {
+
                 $btn = '';
-                if ($row->id_siswa != 1) {
-                    $btn .= '<a href="' . route('siswa.destroy', encrypt($row->id_siswa)). '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+                if(Auth::user()->role == 1){
+                    if ($row->id_siswa != 1) {
+                        $btn .= '<a href="' . route('siswa.destroy', encrypt($row->id_siswa)). '" class="text-danger delete mr-2" tooltip="Hapus Biodata Siswa"><i class="far fa-trash-alt"></i></a>';
+                    }
+                    $btn .= '<a href="' . route('siswa.edit', encrypt($row->id_siswa)) . '" class="text-primary edit mr-2" tooltip="Ubah Biodata Siswa"><i class="fas fa-user-edit"></i></a>';
                 }
-                $btn .= '<a href="' . route('siswa.edit', encrypt($row->id_siswa)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
+                $btn .= '<a href="#" class="text-info detail" tooltip="Lihat detail Biodata Siswa" ><i class="fas fa-eye"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])

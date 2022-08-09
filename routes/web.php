@@ -7,9 +7,11 @@ use App\Http\Controllers\Administrasi\CPembayaran;
 use App\Http\Controllers\CAjaran;
 use App\Http\Controllers\CDashboard;
 use App\Http\Controllers\CDatatable;
+use App\Http\Controllers\CExport;
 use App\Http\Controllers\CJenisAdministrasi;
 use App\Http\Controllers\CJurusan;
 use App\Http\Controllers\CKelas;
+use App\Http\Controllers\CLaporan;
 use App\Http\Controllers\Client\CDashboard as ClientCDashboard;
 use App\Http\Controllers\CLogin;
 use App\Http\Controllers\CSiswa;
@@ -46,7 +48,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/ajaran', CAjaran::class)->except('actifed_ajaran');
     Route::resource('/whatsapp', CWhatsapp::class);
 
-    //invoke
+    
+    Route::get('/laporan', [CLaporan::class, 'index']);
+
     Route::get('/administrasi-siswa', [ASiswa::class, 'index']);
     Route::get('/administrasi-siswa-tunggakan/{id}', [ASiswa::class,'tunggakan']);
     
@@ -75,6 +79,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/datatable/administrasi', [CDatatable::class, 'administrasi']);
     Route::get('/datatable/pendanaan', [CDatatable::class, 'pendanaan']);
     Route::get('/datatable/whatsapp', [CDatatable::class, 'whatsapp']);
+    
+    Route::prefix("/export")->group(function () {
+        Route::get('/siswa', [CExport::class, 'exportSiswa']);
+        Route::get('/siswa-administrasi', [CExport::class, 'exportAdministrasiSiswa']);
+        Route::get('/pengeluaran', [CExport::class, 'exportPengeluaran']);
+        Route::get('/pemasukan', [CExport::class, 'exportPemasukan']);
+    });
 
     //signout
     Route:: get('/logout', [CLogin::class, 'logout'])->name('logout');
@@ -84,7 +95,7 @@ Route::middleware(['auth:siswa'])->group(function () {
     Route::prefix("/client")->group(function () {
         Route::get('/dashboard', [ClientCDashboard::class, 'index']);
         Route::get('/logout', [CLogin::class, 'logout_siswa'])->name('logout-siswa');
+        Route::get('/cetak-administrasi', [ClientCDashboard::class, 'printTanggungan']);
     });
 });
-Route::get('/cetak-administrasi', [ClientCDashboard::class, 'printTanggungan']);
 

@@ -42,7 +42,7 @@
               <div class="label"></div>
             </div>
           </div>
-          <button type="submit" class="btn btn-outline-white btn-block py-2">Go</button>
+          <button type="submit" class="btn btn-outline-white btn-block py-2">Masuk</button>
         </form>
       </div>
     </div>

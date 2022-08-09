@@ -38,8 +38,10 @@
               </li>
               <li><a class="nav-link" href="{{url('siswa')}}"><i class="fas fa-user-graduate"></i> <span>Siswa</span></a></li>
               <li><a class="nav-link" href="{{url('whatsapp')}}"><i class="fab fa-whatsapp"></i> <span>WA Gateway</span></a></li>
+              <li><a class="nav-link" href="{{url('laporan')}}"><i class="fas fa-print"></i> <span>Report</span></a></li>
               <li><a class="nav-link" href="{{url('user')}}"><i class="fas fa-user-astronaut"></i> <span>User Management</span></a></li>
               @endif
-              
+          </ul>
+          
         </aside>
       </div>

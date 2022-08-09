@@ -62,7 +62,7 @@
             <div class="col-lg-8 col-md-12 col-12 col-sm-12">
               <div class="card">
                 <div class="card-header">
-                  <h4>Statistics</h4>
+                  <h4>Statistik</h4>
                   
                 </div>
                 <div class="card-body">
@@ -74,42 +74,21 @@
             <div class="col-lg-4 col-md-12 col-12 col-sm-12">
               <div class="card">
                 <div class="card-header">
-                  <h4>Recent Activities</h4>
+                  <h4>Aktifitas Terakhir</h4>
                 </div>
                 <div class="card-body">
                   <ul class="list-unstyled list-unstyled-border">
+                    @foreach ($rHuser as $item)
                     <li class="media">
                       <img class="mr-3 rounded-circle" width="50" src="{{asset('/')}}assets/img/avatar/default.png" alt="avatar">
                       <div class="media-body">
-                        <div class="float-right text-primary">Now</div>
-                        <div class="media-title">Farhan A Mujib</div>
-                        <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin.</span>
+                        <div class="float-right text-primary ">{{$item->lastTimeLogin($item->user->id)}}</div>
+                        <div class="media-title text-capitalize">{{$item->user->name}}</div>
+                        <span class="text-small text-muted"><i>Role : {{Helper::convertRoleText($item->user->role)}}</i></span>
                       </div>
                     </li>
-                    <li class="media">
-                      <img class="mr-3 rounded-circle" width="50" src="{{asset('/')}}assets/img/avatar/avatar-2.png" alt="avatar">
-                      <div class="media-body">
-                        <div class="float-right">12m</div>
-                        <div class="media-title">Ujang Maman</div>
-                        <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin.</span>
-                      </div>
-                    </li>
-                    <li class="media">
-                      <img class="mr-3 rounded-circle" width="50" src="{{asset('/')}}assets/img/avatar/avatar-3.png" alt="avatar">
-                      <div class="media-body">
-                        <div class="float-right">17m</div>
-                        <div class="media-title">Rizal Fakhri</div>
-                        <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin.</span>
-                      </div>
-                    </li>
-                    <li class="media">
-                      <img class="mr-3 rounded-circle" width="50" src="{{asset('/')}}assets/img/avatar/avatar-4.png" alt="avatar">
-                      <div class="media-body">
-                        <div class="float-right">21m</div>
-                        <div class="media-title">Alfa Zulkarnain</div>
-                        <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin.</span>
-                      </div>
-                    </li>
+                    @endforeach
+
                   </ul>
                 </div>
               </div>

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Administrasi\Siswa;
 use App\Models\MTunggakan;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CDashboard extends Controller
 {
+   
     function index()
     {
         // dd(auth()->guard('siswa')->user());
@@ -37,6 +39,12 @@ class CDashboard extends Controller
     }
     function printTanggungan()
     {
-        return view('pages.client.cetak_tanggungan');
+        $auth = auth()->guard('siswa')->user();
+        $biayaNow = Siswa::where('id_siswa', $auth->id_siswa)->with('jenisAdministrasi')->get();
+        $biayaBefore = MTunggakan::where('id_siswa', $auth->id_siswa)->get();
+        Pdf::setOption(['dpi' => 150, 'defaultFont' => 'calibri']);
+        $pdf = Pdf::loadView('pages.client.cetak_tanggungan',compact('biayaNow','biayaBefore'));
+        return $pdf->download('administrasi-'. $auth->nis.'-'.$auth->nama.'-'.date('YmdHis').'.pdf');
+        // return view('pages.client.cetak_tanggungan');
     }
 }

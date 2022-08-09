@@ -1,5 +1,6 @@
 // submit data
 function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
+     
     var result = false;
     var validate = false;
     var msg = null;
@@ -10,6 +11,7 @@ function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
         msg = 'Mengubah';
     }
     if(validate){
+       
         $.ajax({
             type: method,
             url: url,

@@ -12,4 +12,8 @@ class MTunggakan extends Model
     protected $primaryKey = 'id_tunggakan';
     public $timestamps = false;
     protected $fillable = ['id_siswa', 'nama_tunggakan', 'nominal', 'ajaran'];
+    function siswa()
+    {
+        return $this->belongsTo(MSiswa::class, 'id_siswa');
+    }
 }

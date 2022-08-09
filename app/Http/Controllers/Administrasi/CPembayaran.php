@@ -100,8 +100,9 @@ class CPembayaran extends Controller
             if(isset($request->nama_biaya_tunggakan)){
                 
                 foreach($request->nama_biaya_tunggakan as $key){
+                    
                     if ($request->nominal_tunggakan[$j] != 0) {
-                        $total = $total + (int)str_replace(".", "", $request->nominal_tunggakan[$i]);
+                        $total = $total + (int)str_replace(".", "", $request->nominal_tunggakan[$j]);
                         $ajaranLalu = $request->tahun_ajaran[$j];
                         $detailTunggakan[] = [
                             'nama_biaya' => $request->nama_biaya_tunggakan[$j],
@@ -136,7 +137,7 @@ class CPembayaran extends Controller
             $masterWa = new MWhatsapp;
             $masterWa->no_telp = "6285608727991";
             $masterWa->pesan = $strukWA;
-            $masterWa->tipe_file = 1;
+            $masterWa->tipe = 1;
             //whatsapp --------------------------------------------------------------------------
             try {
                 Http::get("http://localhost:8000/send-message", [

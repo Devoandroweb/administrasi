@@ -72,6 +72,9 @@ function setDataTable() {
             selector: 'td:nth-child(1)'
         },
         responsive: true,
+        language: {
+                    "processing": "<img src='{{asset('assets/img/loading.gif')}}'"
+        },
         columns: [{
                 "data": 'DT_RowIndex',
                 orderable: false,

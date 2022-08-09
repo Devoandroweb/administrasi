@@ -238,11 +238,45 @@ trait Helper
                 break;
         }
     }
+    static function convertRoleText($role)
+    {
+        switch ($role) {
+            case 1:
+                return 'Administrator';
+                break;
+            case 2:
+                return 'Bendahara';
+                break;
+            case 3:
+                return 'Kepala Sekolah';
+                break;
+            default:
+                return "-";
+                break;
+        }
+    }
     static function newNis()
     {
         $latesNis = MSiswa::max('nis');
         $newNis = $latesNis + 1;
         return $newNis;
     }
-   
+    static function chooseGender($kode)
+    {
+        if($kode == 1){
+            return 'Laki-laki';
+        }elseif($kode == 2){
+            return 'Perempuan';
+        }
+        return '-';
+    }
+    static function dateDifference($start_date, $end_date, $differenceFormat = '%hj %im')
+    {
+        $datetimeStart = date_create($start_date);
+        $datetimeEnd = date_create($end_date);
+
+        $interval = date_diff($datetimeStart, $datetimeEnd);
+
+        return $interval->format($differenceFormat);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MAjaran;
+use App\Models\RHUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -30,6 +31,10 @@ class CLogin extends Controller
                 $_SESI_AJARAN['tahun_awal'] = $ajaran->tahun_awal; 
                 $_SESI_AJARAN['tahun_akhir'] = $ajaran->tahun_akhir;
             }
+            //insert update to RHUser
+            $idUser = Auth::user()->id;
+            RHUser::where('id_user',$idUser)->delete();
+            RHUser::updateOrCreate(['id_user'=> $idUser,'date_login'=>date('Y-m-d H:i:s')]);
             Session::put($_SESI_AJARAN);
             return redirect(url('/dashboard'));
         }

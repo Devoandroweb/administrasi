@@ -38,6 +38,10 @@ class MSiswa extends Authenticatable
     {
         return $this->hasMany(Siswa::class,'id_siswa');
     }
+    public function tunggakan()
+    {
+        return $this->hasMany(MTunggakan::class,'id_siswa');
+    }
     public function kelas()
     {
         return $this->belongsTo(MKelas::class, 'id_kelas');
