@@ -15,6 +15,9 @@ class MKelas extends Model
     protected $fillable = [
         'nama', 'id_jurusan'
     ];
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ];
     function jurusan()
     {
         return $this->belongsTo(MJurusan::class,'id_jurusan');
@@ -22,5 +25,9 @@ class MKelas extends Model
     function siswa()
     {
         return $this->hasOne(MSiswa::class,'id_siswa');
+    }
+    function siswaAll()
+    {
+        return $this->hasMany(MSiswa::class,'id_kelas');
     }
 }

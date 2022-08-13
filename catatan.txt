@@ -1,0 +1,27 @@
+id_siswa = 5
+SPP | 90.000 (9bln)
+pilih januari (1)
+nominal : 10.000 | bayar | 5.000
+
+save to administrasi
+administrasi->nominal = nominal - bayar;
+
+save to cicilan
+t_cicilan
+where id_administrasi =  administrasi->id_administrasi
+for(i=1;i<=10;i++){
+    if(cicilan->{'cicilan_'.i} == 0){
+        cicilan->{'cicilan_'.i} = bayar;
+    }
+}
+save to t_spp
+swithcase
+
+
+
+
+
+ketika nambah siswa
+administrasi
+t_spp
+t_cicilan

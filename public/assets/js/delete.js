@@ -29,7 +29,7 @@ function deleteData(url,type = "get",method = null){
                     message: response.msg,
                     position: 'topRight'
                 });
-                $('table').DataTable().destroy();
+                $('#data').DataTable().destroy();
                 setDataTable();
             }
         }

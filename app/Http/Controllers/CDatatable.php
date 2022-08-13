@@ -38,12 +38,12 @@ class CDatatable extends Controller
 
                 $btn = '';
                 if(Auth::user()->role == 1){
+                    $btn .= '<a href="' . route('siswa.edit', encrypt($row->id_siswa)) . '" class="text-primary edit mr-2" tooltip="Ubah Biodata Siswa"><i class="fas fa-user-edit"></i></a>';
                     if ($row->id_siswa != 1) {
                         $btn .= '<a href="' . route('siswa.destroy', encrypt($row->id_siswa)). '" class="text-danger delete mr-2" tooltip="Hapus Biodata Siswa"><i class="far fa-trash-alt"></i></a>';
                     }
-                    $btn .= '<a href="' . route('siswa.edit', encrypt($row->id_siswa)) . '" class="text-primary edit mr-2" tooltip="Ubah Biodata Siswa"><i class="fas fa-user-edit"></i></a>';
                 }
-                $btn .= '<a href="#" class="text-info detail" tooltip="Lihat detail Biodata Siswa" ><i class="fas fa-eye"></i></a>';
+                $btn .= '<a href="'. url('siswa-show/'.encrypt($row->id_siswa)) .'" class="text-info detail" tooltip="Lihat detail Biodata Siswa" ><i class="fas fa-eye"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -61,10 +61,10 @@ class CDatatable extends Controller
             })
             ->addColumn('action', function ($row) {
                 $btn = '';
+                $btn .= '<a href="' . route('user.edit', encrypt($row->id)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 if ($row->id != 1) {
                     $btn .= '<a href="' . route('user.destroy', encrypt($row->id)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
-                $btn .= '<a href="' . route('user.edit', encrypt($row->id)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action', 'role_convert'])
@@ -81,10 +81,10 @@ class CDatatable extends Controller
             })
             ->addColumn('action', function ($row) {
                 $btn = '';
+                $btn .= '<a href="' . route('jenis-administrasi.edit', encrypt($row->id)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 if ($row->id != 1) {
                     $btn .= '<a href="' . route('jenis-administrasi.destroy', encrypt($row->id)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
-                $btn .= '<a href="' . route('jenis-administrasi.edit', encrypt($row->id)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -98,10 +98,10 @@ class CDatatable extends Controller
         return DataTables::eloquent($model)
             ->addColumn('action', function ($row) {
                 $btn = '';
+                $btn .= '<a href="' . route('jurusan.edit', encrypt($row->id_jurusan)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 if ($row->id_jurusan != 1) {
                     $btn .= '<a href="' . route('jurusan.destroy', encrypt($row->id_jurusan)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
-                $btn .= '<a href="' . route('jurusan.edit', encrypt($row->id_jurusan)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action'])
@@ -110,23 +110,27 @@ class CDatatable extends Controller
     }
     public function kelas()
     {
-        $model = MKelas::with('jurusan');
-        // dd($model[0]->nama);
+        $model = MKelas::with('jurusan','siswaAll');
+        // dd($model[1]->siswaAll()->where('deleted',0)->get());
         // dd($model[1]);
         // dd(Auth::user()->id);
         return DataTables::eloquent($model)
             ->addColumn('jurusan', function ($row) {
                 return $row->jurusan->nama;
             })
+            ->addColumn('siswa_count', function ($row) {
+                $result = '<a href="#" class="badge badge-info">'. $row->siswaAll()->where('deleted',0)->get()->count().'</a>';
+                return $result;
+            })
             ->addColumn('action', function ($row) {
                 $btn = '';
+                $btn .= '<a href="' . route('kelas.edit', encrypt($row->id_kelas)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 if ($row->id_kelas != 1) {
                     $btn .= '<a href="' . route('kelas.destroy', encrypt($row->id_kelas)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
-                $btn .= '<a href="' . route('kelas.edit', encrypt($row->id_kelas)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
                 return $btn;
             })
-            ->rawColumns(['action', 'jurusan'])
+            ->rawColumns(['action', 'jurusan', 'siswa_count'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -167,7 +171,10 @@ class CDatatable extends Controller
         return DataTables::eloquent($model)
 
             ->addColumn('kelas', function ($row) {
-                return $row->kelas->nama." ". $row->kelas->jurusan->nama;
+                if($row->id_kelas != 0){
+                    return $row->kelas->nama." ". $row->kelas->jurusan->nama;
+                }
+                return "<i class='text-danger'>Alumni</i>";
             })
             ->addColumn('biaya', function ($row) {
                 $html = '<div class="mb-2 font-weight-bold text-success">Biaya</div>';
@@ -204,14 +211,18 @@ class CDatatable extends Controller
         // $biaya = json_decode($model[0]->detail);
         // dd($biaya);
         
-        // dd($model[3]->kelas->jurusan);
+        // dd($model[0]->siswa);
         
         // dd(Auth::user()->id);
         return DataTables::eloquent($model)
 
-            ->editColumn('nis', function ($row) {
+            ->addColumn('nis_convert', function ($row) {
                 if($row->tipe_pemasukan == 1){
-                    return $row->siswa->nis;
+                    if($row->siswa != null){
+                        return $row->siswa->nis;
+                    }else{
+                        return '<i class="text-danger">Siswa tidak ada atau telah di hapus</i>';
+                    }
                 }
                 return '-';
             })
@@ -224,7 +235,11 @@ class CDatatable extends Controller
             ->editColumn('nama', function ($row) {
                 $nama = "";
                 if($row->tipe_pemasukan == 1){
-                    $nama = $row->siswa->nama;
+                    if($row->siswa != null){
+                        $nama = $row->siswa->nama;
+                    }else{
+                        $nama = "-";
+                    }
                 }else{
                     $nama = $row->nama;
                 }
@@ -258,7 +273,7 @@ class CDatatable extends Controller
             
                 return $this->convertDate($row->created_at,true,false);
             })
-            ->rawColumns(['detail','status'])
+            ->rawColumns(['detail','status', 'nis_convert'])
             ->addIndexColumn()
             ->toJson();
     }

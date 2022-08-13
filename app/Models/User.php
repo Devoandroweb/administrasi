@@ -45,7 +45,7 @@ class User extends Authenticatable
 
     public static function withDeleted()
     {
-        return self::where('deleted', 1);
+        return self::where('deleted', 0);
     }
     public static function updateDeleted($id)
     {

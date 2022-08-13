@@ -3,7 +3,7 @@
 use App\Traits\Helper;
 use App\Models\Administrasi\HTransaksi;
 $hTransaksi = HTransaksi::with('siswa','createdBy')->where("id_transaksi", $id)->first();
-
+// dd($id);
 $_BIAYA = json_decode($hTransaksi->biaya);
 $_TUNGGAKAN = json_decode($hTransaksi->tunggakan);
 // dd($_TUNGGAKAN);
@@ -219,7 +219,7 @@ foreach ($_TUNGGAKAN as $key) {
                 <tr>
                     <td>NIS / Kelas</td>
                     <td>:</td>
-                    <td>{{ $hTransaksi->siswa->nis." / ".$hTransaksi->siswa->kelas->nama}}</td>
+                    <td>{{ $hTransaksi->siswa->nis." / ".$hTransaksi->siswa->namaKelas()}}</td>
                     <td>Tanggal Cetak</td>
                     <td>:</td>
                     <td>{{ $hTransaksi->tanggal }}</td>
@@ -250,7 +250,12 @@ foreach ($_TUNGGAKAN as $key) {
                     <td style="text-align: right;">Jumlah (Rp)</td>
                 </tr>
                 <?php
-                
+                function cekBulan($json)
+                {
+                    if(isset($json->bulan_spp)){
+                        return "(".ucwords($json->bulan_spp).")";
+                    }
+                }
                 $no = 1;
 
                 $html = '';
@@ -259,7 +264,7 @@ foreach ($_TUNGGAKAN as $key) {
                 for ($i = 0; $i < count($_BIAYA); $i++) {
                     $html .= '<tr>';
                     $html .= '<td style="width: 5%;">' . $no . '</td>';
-                    $html .= '<td>' . $_BIAYA[$i]->nama_biaya . '</td><td class="" style="text-align: right;">' . Helper::ribuan($_BIAYA[$i]->nominal) . '</td>';
+                    $html .= '<td>' . $_BIAYA[$i]->nama_biaya . ' '.cekBulan($_BIAYA[$i]).'</td><td class="" style="text-align: right;">' . Helper::ribuan($_BIAYA[$i]->nominal) . '</td>';
                     $html .= '</tr>';
                     $no++;
                 }

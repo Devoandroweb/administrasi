@@ -1,7 +1,7 @@
 <form action="" id="form-data">
     <div class="form-group">
         <label>Nama Administrasi</label>
-        <input type="text" name="nama" class="form-control" required="" autocomplete="off">
+        <input type="text" name="nama" class="form-control text-uppercase" required="" autocomplete="off">
     </div>
     <div class="form-group">
         <label>Nominal</label>

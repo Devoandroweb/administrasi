@@ -15,7 +15,7 @@ use App\Traits\Helper;
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Data Biaya tunggakan dengan Nama : <b class="text-success">{{$siswa->nama}}</b> <i class="fas fa-angle-right"></i> Kelas : <b class="text-danger">{{$siswa->kelas->nama." ".$siswa->kelas->jurusan->nama}}</b> </h4>
+            <h4>Data Biaya tunggakan dengan Nama : <b class="text-success">{{$siswa->nama}}</b> <i class="fas fa-angle-right"></i> Kelas : <b class="text-danger">{{$siswa->namaKelas()}}</b> </h4>
             </div>
             <div class="card-body">
             <div class="table-responsive">

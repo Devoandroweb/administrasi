@@ -12,7 +12,7 @@
           <div class="text-center">
             <img src="{{asset('assets/img/logo_sekolah.png')}}" class="mb-4" width="15%" alt=""> 
             <h3 class="text-primary">Selamat datang di <br> Sistem Informasi Administrasi</h3>
-            <p class="text-primary">Login with your Account</p>
+            <p class="text-danger">Login with your Account</p>
           </div>
           <hr> 
           @if(session('msg')) 
@@ -45,10 +45,20 @@
               <div class="label"></div>
             </div>
           </div>
-          <button type="submit" class="btn btn-danger btn-block py-2">Go</button>
+          <button type="submit" class="btn btn-danger btn-login btn-block py-2">Masuk</button>
         </form>
       </div>
     </div>
   </div>
-</div>
+</div> 
 @endsection
+@push('js')
+<script>
+  $('.btn-login').click(function (e) { 
+    // e.preventDefault();
+    $(this).html('<div class="spinner-grow text-light" role="status">\
+            <span class="visually-hidden"></span>\
+          </div>');
+  });
+</script>
+@endpush

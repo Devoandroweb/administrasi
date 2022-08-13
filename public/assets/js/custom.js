@@ -57,3 +57,10 @@ function toRupiah(el,value){
     el.autoNumeric('init',{aPad:false, aDec: ',', aSep: '.'});
     el.autoNumeric('set',value);
 }
+function loadingLine(kode = false){
+    if(kode){
+        $('.form-loader').removeClass('d-none');
+    }else{
+        $('.form-loader').addClass('d-none');
+    }
+}

@@ -40,9 +40,9 @@ class CKelas extends Controller
     {
         // dd(MKelas::find($id));
         try {
-            $jurusan = MKelas::find(decrypt($id));
-            $jurusan->key = encrypt($jurusan->id_jurusan);
-            return response()->json(['status' => true, 'data' => $jurusan->makeHidden('id_jurusan')], 200);
+            $kelas = MKelas::where('id_kelas',decrypt($id))->with('jurusan')->first();
+            $kelas->key = encrypt($kelas->id_kelas);
+            return response()->json(['status' => true, 'data' => $kelas->makeHidden('id_kelas')], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         }

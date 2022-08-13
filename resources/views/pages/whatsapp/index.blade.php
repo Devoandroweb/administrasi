@@ -81,6 +81,8 @@ function setDataTable() {
             },{
                 data: 'no_telp_convert',
                 name: 'no_telp',
+                width: '15%',
+
             },{
                 data: 'pesan_convert',
                 name: 'pesan',
@@ -91,6 +93,7 @@ function setDataTable() {
             },{
                 data: 'status_convert',
                 name: 'status',
+                width: '10%',
                 searchable: false,
             },{
                 data: 'action',

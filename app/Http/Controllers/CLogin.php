@@ -20,7 +20,7 @@ class CLogin extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-        $credentials['deleted'] = 1;
+        $credentials['deleted'] = 0;
         // dd($credentials);
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -52,7 +52,7 @@ class CLogin extends Controller
             'nis' => ['required'],
             'password' => ['required'],
         ]);
-        $credentials['deleted'] = 1;
+        $credentials['deleted'] = 0;
         // dd($credentials);
         if (Auth::guard('siswa')->attempt($credentials)) {
             $request->session()->regenerate();

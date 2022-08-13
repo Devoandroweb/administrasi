@@ -23,6 +23,7 @@ use App\Traits\Helper;
             </div>
             </div>
             <div class="card-body">
+            <div class="loader-line form-loader d-none mb-2"></div>
             <div class="table-responsive">
                 <table id="data" class="table table-striped" width="100%">
                 <thead>
@@ -32,6 +33,7 @@ use App\Traits\Helper;
                     </th>
                     <th>Nama</th>
                     <th>Jurusan</th>
+                    <th>Siswa</th>
                     <th>Action</th>
                     </tr>
                 </thead>
@@ -82,6 +84,10 @@ function setDataTable() {
                 data: 'jurusan',
                 name: 'jurusan',
             },{
+                data: 'siswa_count',
+                name: 'siswa_count',
+                searchable: false
+            },{
                 data: 'action',
                 name: 'action',
                 orderable: false,
@@ -108,6 +114,7 @@ $(document).on('click','.edit',function(e){
                 modal.find(".modal-title").text(_TITLE_MODAL_UPDATE);
                 _ID_UPDATE = response.data.key;
                 modal.find("input[name=nama]").val(response.data.nama);
+                modal.find("select[name=id_jurusan]").val(response.data.jurusan.id_jurusan);
                 modal.modal("show");
             }
         }
@@ -126,7 +133,6 @@ $('#btn-add-data').fireModal({
             id: 'btn-submit',
             text: 'Simpan',
             handler: function(current_modal) {
-                
                 if(_STATUS_SUBMIT == 1){ // new
                     saveForm(
                         $('#form-data'),
@@ -159,7 +165,13 @@ $('#btn-add-data').fireModal({
     ]
 });
 
-// submit data
+// ajax loader
+$( document ).ajaxStart(function() {
+    loadingLine(true);
+});
+$( document ).ajaxComplete(function() {
+    loadingLine();
+});
 
 </script>
 <script type="text/javascript" src="{{asset('assets/js/save.js')}}"></script>

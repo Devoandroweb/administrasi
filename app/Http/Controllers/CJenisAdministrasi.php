@@ -19,7 +19,7 @@ class CJenisAdministrasi extends Controller
             // dd($request->validated());
             $data = $request->all();
             $data['biaya'] = str_replace('.','',$request->biaya);
-            // dd($data);
+            // create to 
             MJenisAdministrasi::create($data);
             return response()->json(['status' => true, 'msg' => 'Sukses Menambahkan Data'], 200);
         } catch (\Throwable $th) {

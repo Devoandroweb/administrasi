@@ -5,6 +5,7 @@ use App\Http\Controllers\Administrasi\CHTransaksi;
 use App\Http\Controllers\Administrasi\CPendanaan;
 use App\Http\Controllers\Administrasi\CPembayaran;
 use App\Http\Controllers\CAjaran;
+use App\Http\Controllers\CCronJob;
 use App\Http\Controllers\CDashboard;
 use App\Http\Controllers\CDatatable;
 use App\Http\Controllers\CExport;
@@ -14,6 +15,7 @@ use App\Http\Controllers\CKelas;
 use App\Http\Controllers\CLaporan;
 use App\Http\Controllers\Client\CDashboard as ClientCDashboard;
 use App\Http\Controllers\CLogin;
+use App\Http\Controllers\CSetting;
 use App\Http\Controllers\CSiswa;
 use App\Http\Controllers\CUser;
 use App\Http\Controllers\CWhatsapp;
@@ -58,10 +60,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pendanaan', [CPendanaan::class, 'pendanaan']);
     Route::post('/pemasukan/save', [CPendanaan::class, 'pemasukan_save']);
     Route::post('/pengeluaran/save', [CPendanaan::class, 'pengeluaran_save']);
-
     Route::get('/pembayaran', [CPembayaran::class,'index']);
     Route::get('/pembayaran-cost-siswa/{id}', [CPembayaran::class, 'getBiayaSiswa']);
     Route::post('/pembayaran-save/{id}', [CPembayaran::class, 'save']);
+    Route::get('/siswa-show/{id}', [CSiswa::class, 'show']);
+    Route::get('/biaya-spp-perbulan/{id_siswa}/{bulan}', [CPembayaran::class, 'getSppBulanan']);
     
     //another function
     Route::get('/user-checkusername', [CUser::class,'check_username']);
@@ -87,10 +90,18 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pemasukan', [CExport::class, 'exportPemasukan']);
     });
 
+    //setting
+    Route:: get('/reset-tahun-ajaran', [CSetting::class, 'resetTahunAjaran']);
+
     //signout
     Route:: get('/logout', [CLogin::class, 'logout'])->name('logout');
-
+    
 });
+//cronjob
+Route::get('/cronjob-update-spp', [CCronJob::class, 'updateSpp']);
+Route::get('/reset-administrasi', [CSetting::class, 'resetTahunAjaran']);
+
+//client
 Route::middleware(['auth:siswa'])->group(function () {
     Route::prefix("/client")->group(function () {
         Route::get('/dashboard', [ClientCDashboard::class, 'index']);

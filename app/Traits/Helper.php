@@ -279,4 +279,18 @@ trait Helper
 
         return $interval->format($differenceFormat);
     }
+    static function nullToNol($var)
+    {
+        if($var == "" || $var == null){
+            return 0;
+        }
+        return $var;
+    }
+    static function cekExitsBulanSpp($var,$jenisAdm)
+    {
+        if($jenisAdm == 1 && $var != null){
+            return "(".ucwords($var).")";
+        }
+        return "";
+    }
 }

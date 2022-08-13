@@ -92,7 +92,7 @@ function setDataTable() {
                 width: '4%',
                 className: 'text-center'
             },{
-                data: 'nis',
+                data: 'nis_convert',
                 name: 'nis',
                 orderable: false,
                 searchable: false,
@@ -228,6 +228,7 @@ function setDataTable() {
     function removeInput(){
         $(".add-input").remove();
     }
+    
 </script>
 
 <script type="text/javascript" src="{{asset('assets/js/save.js')}}"></script>

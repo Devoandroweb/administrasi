@@ -45,7 +45,7 @@ $name[] = 'alamat';
                                <label for="exampleInputEmail1">NIS (Nomor Induk Siswa)</label>
                                @if(is_null($data))
                                     <input type="text" class="form-control @error($name[0]) is-invalid @enderror"
-                               value="{{$newNis}}" name="{{$name[0]}}" autocomplete="off" readonly />
+                               value="{{$newNis}}" name="{{$name[0]}}" autocomplete="off"  />
                                @else
                                     <input type="text" class="form-control @error($name[0]) is-invalid @enderror"
                                value="{{Helper::showData($data,$name[0])}}" name="{{$name[0]}}" autocomplete="off" />

@@ -1,3 +1,4 @@
+<div class="loader-line form-loader d-none mb-2"></div>
 <form action="" id="form-data-peng">
     <div class="form-group">
         <label for="">Nama</label>

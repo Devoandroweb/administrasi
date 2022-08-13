@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="csrf-token" content="{{csrf_token()}}">
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta content="width=device-width, initial-scale=0.5" name="viewport" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>{{$title}} | Administrasi</title>
   <link rel="icon" type="image/x-icon" href="{{asset('assets')}}/img/favicon.ico">
@@ -29,15 +29,11 @@
   <link rel="stylesheet" href="{{asset('assets')}}/css/components.css">
   <link rel="stylesheet" href="{{asset('assets')}}/css/loading.css">
   {{-- custom css --}}
-  
-<style type="text/css">
-
-</style>
   @stack('style')
 </head>
 
-<body>
-
+<body style="font-size:12px">
+  <div class="loader-line app-loader d-none" style="position: fixed;top: 0;  z-index: 999;"></div>
   <div id="app">
     <div class="main-wrapper">
       
@@ -51,6 +47,7 @@
         @include('panels.sidebar')
         @include('panels.content')
         @include('panels.footer')
+        
       @else
         @yield('content-login')
       @endif
@@ -83,7 +80,7 @@
   <!-- Template JS File -->
   <script src="{{asset('assets')}}/js/scripts.js"></script>
   <script src="{{asset('assets')}}/js/custom.js"></script>
-  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
   <!-- Page Specific JS File -->
   {{-- <script src="{{asset('assets')}}/js/page/forms-advanced-forms.js"></script> --}}
   <script>
@@ -102,7 +99,6 @@
     });
     var channel = pusherClient.subscribe('my-channel');
     channel.bind('my-event', function(data) {
-
         if(data != null){
           $(".status-wa").removeClass('bg-danger');
           $(".status-wa").addClass('bg-success');
@@ -114,13 +110,46 @@
     });
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
+
+    // -----------------------------------------------
+    $("#reset_adm").click(function (e) { 
+      e.preventDefault();
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: "Fitur ini akan menghitung ulang data sebagai berikut : - Menaikkan Kelas Siswa - Memindahkan Administrasi Siswa ke Tunggakan Siswa - Menambahkan Tahun Ajaran Baru",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                $('.app-loader').removeClass('d-none');
+                $.ajax({
+                  type: "get",
+                  url: $(this).attr('href'),
+                  dataType: "JSON",
+                  success: function (response) {
+                    if(response.status){
+                      window.location.href = '{{url("dashboard")}}';
+                    }
+                  }
+                });
+            }
+        })
+      
+    });
+    // ------------------------------------------------
     $( document ).ajaxStart(function() {
-       $(".loading").addClass('loading-show');
+        loadingLine(true);
     });
     $( document ).ajaxComplete(function() {
-       $(".loading").removeClass('loading-show');
+        loadingLine();
     });
+    
+      document.body.style.zoom = "80%";
   </script>
   {{-- cusom js --}}
   @stack('js')

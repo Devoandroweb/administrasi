@@ -7,6 +7,9 @@ use App\Models\Administrasi\Siswa;
 use App\Models\MJenisAdministrasi;
 use App\Models\MKelas;
 use App\Models\MSiswa;
+use App\Models\MTunggakan;
+use App\Models\TCicilan;
+use App\Models\TSPP;
 use App\Traits\Helper;
 use App\Traits\Uploader;
 use Illuminate\Http\Request;
@@ -66,9 +69,16 @@ class CSiswa extends Controller
      */
     public function show($id)
     {
-        $url = url('siswa/edit/'.$id);
-        $title = "Detail Siswa";
-        return view('pages.siswa.form', compact('url', 'title'))->with('data', MSiswa::find($id));
+        try {
+            //code...
+            $siswa = MSiswa::where('id_siswa', decrypt($id))->with('kelas.jurusan')->first();
+            $siswa->{'jk_text'} = $siswa->jenisKelamin();
+            $siswa->{'tgl_lhr'} = $siswa->convertTglLahir();
+            return response()->json(['status'=>true,'data'=> $siswa],200);
+        } catch (\Throwable $th) {
+            return response()->json(['status'=>false,'msg'=> $th->getMessage()],500);
+            //throw $th;
+        }
     }
 
     /**
@@ -108,10 +118,19 @@ class CSiswa extends Controller
      * @param  \App\Models\MSiswa  $mSiswa
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id_siswa)
     {
         try {
-            MSiswa::updateDeleted($id);
+            $id = decrypt($id_siswa);
+            MSiswa::find($id)->delete();
+            $idAdministrasi = Siswa::where('id_siswa',$id)->pluck('id_administrasi');
+            TCicilan::where('tipe',1)->whereIn('id_administrasi',$idAdministrasi)->delete();
+            
+            $idTunggakan = MTunggakan::where('id_siswa',$id)->pluck('id_tunggakan');
+            TCicilan::where('tipe', 2)->whereIn('id_administrasi', $idTunggakan)->delete();
+
+            TSPP::where('id_siswa',$id)->delete();
+
             return response()->json(['status' => true, 'msg' => 'Sukses Menghapus Data'], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
@@ -138,12 +157,17 @@ class CSiswa extends Controller
     }
     public function createAdministrasi($id_siswa)
     {
-        $data = [];
+        $dataAdm = [];
         $jenisAdmistrasi = MJenisAdministrasi::all();
         foreach($jenisAdmistrasi as $key){
-           array_push($data, ['id_siswa' => $id_siswa,'id_jenis_administrasi'=>$key->id,'nominal'=>$key->biaya]); 
+           array_push($dataAdm, ['id_siswa' => $id_siswa,'id_jenis_administrasi'=>$key->id,'nominal'=>$key->biaya]); 
+           TCicilan::create([
+                'tipe'=> 1,
+                'id_administrasi'=> $key->id
+            ]);
         } 
         // dd($data);
-        Siswa::insert($data);
+        Siswa::insert($dataAdm);
+        TSPP::create(['id_siswa'=> $id_siswa]);
     }
 }

@@ -13,6 +13,9 @@ class MJurusan extends Model
     protected $primaryKey = 'id_jurusan';
     protected $table = 'm_jurusan';
     protected $fillable = ['nama'];
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ];
     public function kelas()
     {
         return $this->hasOne(MKelas::class,);

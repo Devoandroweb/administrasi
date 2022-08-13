@@ -35,7 +35,7 @@
                 
                 $res = null;
                 try {
-                  $res = Http::get("http://localhost:8000/check-auth")->throw()->json();
+                  $res = Http::get("http://localhost:8989/check-auth")->throw()->json();
                 } catch (\Throwable $th) {
                   $activeWa = 'bg-danger';
                 }
@@ -60,11 +60,9 @@
             <div class="dropdown-menu dropdown-menu-right">
               <div class="dropdown-title">Logged in 5 min ago</div>
               @if(auth()->guard('web')->check())
-              <a href="features-activities.html" class="dropdown-item has-icon">
-                <i class="fas fa-bolt"></i> Activities
-              </a>
-              <a href="features-settings.html" class="dropdown-item has-icon">
-                <i class="fas fa-cog"></i> Settings
+              
+              <a href="{{url('reset-administrasi')}}" id="reset_adm" class="dropdown-item has-icon">
+                <i class="fas fa-redo"></i> Calculate Administrasi
               </a>
               <div class="dropdown-divider"></div>
               <a href="{{route('logout')}}" class="dropdown-item has-icon text-danger">

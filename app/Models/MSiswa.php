@@ -6,6 +6,7 @@ use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\Pendanaan;
 use App\Models\Administrasi\Siswa;
 use App\Traits\CreatedUpdatedBy;
+use App\Traits\Helper;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,23 +17,35 @@ class MSiswa extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use CreatedUpdatedBy;
+    use Helper;
     protected $table = 'm_siswa';
     protected $primaryKey = 'id_siswa';
     protected $fillable = [
         'username','password','nis','nama','jk','no_telp','alamat','foto','id_kelas','deleted','tempat_lahir','tgl_lahir'
+    ];
+    protected $hidden = [
+        'created_at', 'updated_at', 'password'
     ];
     function generatePhotos($class)
     {
         $img = '<img class="'.$class.'" src="'.url('img/').$this->foto.'" alt="'.$this->nama.'">';
         return $img;
     }
+    function jenisKelamin()
+    {
+        return $this->chooseGender($this->jk);
+    }
+    function convertTglLahir()
+    {
+        return $this->convertDate($this->tgl_lahir,false,false);
+    }
     public static function withDeleted()
     {
-        return self::where('deleted', 1);
+        return self::where('deleted', 0);
     }
     public static function updateDeleted($id)
     {
-        return self::find(decrypt($id))->update(['deleted' => 0]);
+        return self::find(decrypt($id))->delete();
     }
     public function admSiswa()
     {
@@ -53,5 +66,12 @@ class MSiswa extends Authenticatable
     public function htransaksi()
     {
         return $this->hasOne(HTransaksi::class,'id_siswa');
+    }
+    public function namaKelas()
+    {
+        if($this->id_kelas != 0){
+            return $this->kelas->nama."-".$this->kelas->jurusan->nama;
+        }
+        return "Alumni";
     }
 }

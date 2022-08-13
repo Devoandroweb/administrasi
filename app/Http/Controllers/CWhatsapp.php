@@ -10,6 +10,7 @@ class CWhatsapp extends Controller
 {
     public function index()
     {
+        // dd();
         return view('pages.whatsapp.index')
         ->with('title', 'Whatsapp Gateway');
     }
@@ -20,15 +21,10 @@ class CWhatsapp extends Controller
             // dd($request->validated());
             $data = $request->except('_method', '_token', 'siswa');
             $data['tipe'] = 1;
-            try {
-                //code...
-                Http::get("http://localhost:8000/send-message", [
-                    'number' => $request->no_telp . "@c.us",
-                    'msg' => $request->pesan
-                ]);
+            $resWa = Http::post(env("HOST_WAGATEWAY")."/send-message?number=" . $request->no_telp . "@c.us&msg=" . $request->pesan);
+            if ($resWa->successful()) {
                 $data['status'] = 1;
-            } catch (\Throwable $th) {
-                //throw $th;
+            } else {
                 $data['status'] = 2;
             }
             MWhatsapp::create($data);

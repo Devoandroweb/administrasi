@@ -39,9 +39,13 @@
                         if($tanggal != date("d-m-Y",strtotime($val->created_at))){
                             $tanggal = date("d-m-Y",strtotime($val->created_at));
                             if($val->tipe_pemasukan == 1){
-                                $nis = $val->siswa->nis;
-                                $nama = $val->siswa->nama;
-                                $kelas = $val->siswa->kelas->nama." ".$val->siswa->kelas->jurusan->nama;
+                                 if($val->siswa != null){
+                                    $nis = $val->siswa->nis;
+                                    $nama = $val->siswa->nama;
+                                    $kelas = $val->siswa->kelas->nama." ".$val->siswa->kelas->jurusan->nama;
+                                }else{
+                                    $nis = '-';
+                                }
                             }elseif($val->tipe_pemasukan == 2){
                                 $nis = "-";
                                 $nama = "-";
@@ -54,9 +58,13 @@
                             
                         }else{
                             if($val->tipe_pemasukan == 1){
-                                $nis = $val->siswa->nis;
-                                $nama = $val->siswa->nama;
-                                $kelas = $val->siswa->kelas->nama." ".$val->siswa->kelas->jurusan->nama;
+                                if($val->siswa != null){
+                                    $nis = $val->siswa->nis;
+                                    $nama = $val->siswa->nama;
+                                    $kelas = $val->siswa->kelas->nama." ".$val->siswa->kelas->jurusan->nama;
+                                }else{
+                                    $nis = '-';
+                                }
                             }elseif($val->tipe_pemasukan == 2){
                                 $nis = "-";
                                 $nama = "-";

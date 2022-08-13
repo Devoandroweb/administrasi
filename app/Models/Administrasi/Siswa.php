@@ -11,8 +11,10 @@ class Siswa extends Model
 {
     use HasFactory;
     protected $table = 'administrasi';
+    protected $primaryKey = 'id_administrasi';
     public $timestamps = false;
     protected $fillable = ['id_siswa', 'id_jenis_administrasi','nominal'];
+  
     function siswa()
     {
         return $this->belongsTo(MSiswa::class,'id_siswa');

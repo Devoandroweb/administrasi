@@ -7,7 +7,7 @@ use App\Traits\Helper;
 ?>
 <section class="section">
     <div class="section-header">
-    <h1>Kelola Jurusan</h1>
+    <h1>Kelola Administrasi Siswa</h1>
     {{-- breadcrumbs --}}
     {{ Breadcrumbs::render('administrasi_siswa') }}
     </div>

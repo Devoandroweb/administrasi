@@ -63,9 +63,6 @@ use App\Traits\Helper;
             ajax: {
                 url: '{{ url("datatable/siswa") }}',
             },
-            rowReorder: {
-                selector: 'td:nth-child(1)'
-            },
             responsive: true,
             columns: [{
                     "data": 'DT_RowIndex',
@@ -82,21 +79,87 @@ use App\Traits\Helper;
                 },{
                     data: 'jk',
                     name: 'jk',
+                    searchable: false,
                 },{
                     data: 'action',
                     name: 'action',
                     orderable: false,
                     searchable: false
-                },
-            ]
+                }]
         });
     }
     //modal
     // open modal
-        $(document).on("click",".detail", function () {
-            $("#modal-detail").modal('show');
+    $(document).on("click",".detail", function (e) {
+        
+        e.preventDefault();
+        $.ajax({
+            type: "get",
+            url: $(this).attr('href'),
+            dataType: "JSON",
+            success: function (response) {
+                var data = response.data;
+                $(".d-nama").text(data.nama);
+                $(".d-nis").text(data.nis);
+                $(".d-tmp-lhr").text(data.tempat_lahir);
+                $(".d-tgl-lhr").text(data.tgl_lhr);
+                $(".d-jk").text(data.jk_text);
+                $(".d-telp").text(data.no_telp);
+                var kelas = "";
+                if(data.id_kelas != 0){
+                    $(".d-kelas").text(data.kelas.nama+' '+data.kelas.jurusan.nama);
+                }else{
+                    $(".d-kelas").text('Alumni');
+                }
+                $(".d-alamat").text(data.alamat);
+                $("#modal-detail").modal('show');
+            }
         });
+    });
+$(document).on('click','.delete',function(e){
+        e.preventDefault();
+        Swal.fire({
+            title: 'Kamu Yakin?',
+            text: "Menghapus data ini akan menghapus semua data Administrasi yang di miliki oleh data ini",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+            }).then((result) => {
+            if (result.isConfirmed) {
+                deleteData($(this).attr('href'),'post',{_method:'delete'});
+            }
+        })
+    
+});
+function deleteData(url,type = "get",method = null){
+    $.ajax({
+        type: type,
+        url: url,
+        data : method,
+        dataType: "JSON",
+        success: function (response) {
+            if(response.status){
+                iziToast.success({
+                    title: 'Success',
+                    message: response.msg,
+                    position: 'topRight'
+                });
+                $('#data').DataTable().destroy();
+                setDataTable();
+            }
+        }
+    });
+}
+$( document ).ajaxStart(function() {
+    loadingLine(true);
+});
+$( document ).ajaxComplete(function() {
+    loadingLine();
+});
 </script>
-<script type="text/javascript" src="{{asset('assets/js/delete.js')}}"></script>
+
 @endpush
 

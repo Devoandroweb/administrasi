@@ -8,6 +8,8 @@ use App\Models\Administrasi\Siswa;
 use App\Models\MSiswa;
 use App\Models\MTunggakan;
 use App\Models\MWhatsapp;
+use App\Models\TCicilan;
+use App\Models\TSPP;
 use App\Traits\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -51,9 +53,9 @@ class CPembayaran extends Controller
     function save($id,Request $request)
     {
         // dd($request->all());
-        try {
+        // try {
             $id_siswa = decrypt($id);
-            $siswa = MSiswa::find($id_siswa)->first();
+            $siswa = MSiswa::withDeleted()->where('id_siswa',$id_siswa)->first();
             $i = 0;
             $j = 0;
             $detailBiaya = [];
@@ -69,31 +71,68 @@ class CPembayaran extends Controller
             $strukWA_noBefore = 1;
 
             $strukWA = "";
-            $strukWA = "Terima Kasih,\r\n";
-            $strukWA .= "Pembayaran atas nama :\r\n*". $siswa->nama. "* \r\ntelah kami terima.\r\n\r\n";
+            $strukWA = "Terima Kasih,\n";
+            $strukWA .= "Pembayaran atas nama :\n*". $siswa->nama. "* \ntelah kami terima.\n\n";
 
-            $strukWA .= "Dengan detail pembayaran sebagai berikut: \r\n\r\n";
-            $strukWA .= "------------------------------------------------- \r\n\r\n";
+            $strukWA .= "Dengan detail pembayaran sebagai berikut: \n\n";
+            $strukWA .= "------------------------------------------------- \n\n";
             //----------------------------------------------------------------------------
             if(isset($request->id_jenis_administrasi)){
 
                 foreach($request->id_jenis_administrasi as $key){
+                    //uang di bayarkan : $request->nominal
+                    $nominal = (int)str_replace(".", "", $request->biaya[$i]) - (int)str_replace(".", "", $request->nominal[$i]);
                     if($request->nominal[$i] != 0){
+
                         $total = $total + (int)str_replace(".", "", $request->nominal[$i]);
-                        $detailBiaya[] = [
-                            'nama_biaya' => $request->nama_biaya[$i],
-                            'nominal' => (int)str_replace(".", "", $request->nominal[$i]),
-                            'ajaran' => $ajaranNow
-                        ];
+                        //to save t_spp
+                        //exec SPP
+                        if ($key == 1) {
+                            //bulan_spp
+                            $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
+                            $tSpp->{$request->bulan_spp} = $nominal;
+                            $tSpp->update();
+                            $detailBiaya[] = [
+                                'nama_biaya' => $request->nama_biaya[$i],
+                                'nominal' => (int)str_replace(".", "", $request->nominal[$i]),
+                                'ajaran' => $ajaranNow,
+                                'bulan_spp' => $request->bulan_spp
+                            ];
+                        }else{
+                            $detailBiaya[] = [
+                                'nama_biaya' => $request->nama_biaya[$i],
+                                'nominal' => (int)str_replace(".", "", $request->nominal[$i]),
+                                'ajaran' => $ajaranNow
+                            ];
+                        }
+                        
                         if($ajaranNow != $strukWA_ajaranNow){
-                            $strukWA .= "# Tanggungan Pada Tahun Ajaran ". $ajaranNow." # \r\n";
+                            $strukWA .= "*Tanggungan pada TA ". $ajaranNow."* \n";
                             $strukWA_ajaranNow = $ajaranNow;
                         }
-                        $strukWA .= $strukWA_noNow.". ". $request->nama_biaya[$i]." Rp. ". $request->nominal[$i]." \r\n";
+                        $strukWA .= $strukWA_noNow.". ". $request->nama_biaya[$i]." Rp. ". $request->nominal[$i]." ".$this->cekExitsBulanSpp($request->bulan_spp, $request->id_jenis_administrasi)." \n";
                         $strukWA_noNow++;
                     }
-                    $nominal = (int)str_replace(".","",$request->biaya[$i]) - (int)str_replace(".","",$request->nominal[$i]);
-                    Siswa::where('id_jenis_administrasi',$key)->where('id_siswa',$id_siswa)->update(['nominal'=> $nominal]);
+                    
+                    //to save adminitrasi
+                    $administrasi = Siswa::where('id_jenis_administrasi',$key)->where('id_siswa',$id_siswa)->first();
+                    $administrasi->nominal = $nominal;
+                    $administrasi->update();
+                    
+                    //save to cicilan
+                    $tCicilan = TCicilan::where('id_administrasi', $administrasi->id_administrasi)->first();
+                    $cekCicilan = true;
+                    if ($tCicilan != null) {
+                        for($k=1;$k<=10;$k++){
+                            if($tCicilan->{'cicilan_'.$k} == 0){
+                                if($cekCicilan){
+                                    $tCicilan->{'cicilan_'.$k} = $nominal;
+                                    $tCicilan->update();
+                                    $cekCicilan = false;
+                                }
+                            }
+                        }
+                    }
                     $i++;
                 }
             }
@@ -110,62 +149,92 @@ class CPembayaran extends Controller
                             'ajaran' => $ajaranLalu
                         ];
                         if ($ajaranLalu != $strukWA_ajaranBefore) {
-                            $strukWA .= "\r\n";
-                            $strukWA .= "# Tanggungan Pada Tahun Ajaran " . $ajaranLalu . " # \r\n";
+                            $strukWA .= "\n";
+                            $strukWA .= "*Tanggungan pada TA " . $ajaranLalu . "* \n";
                             $strukWA_ajaranBefore = $ajaranLalu;
                         }
                         $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$j] . " Rp. " . $request->nominal_tunggakan[$j] . " \r\n";
                         $strukWA_noBefore++;
                     }
                     $nominal = (int)str_replace(".","",$request->biaya_tunggakan[$j]) - (int)str_replace(".","",$request->nominal_tunggakan[$j]);
-                    MTunggakan::where('nama_tunggakan',$key)->where('id_siswa',$id_siswa)->where('ajaran',$request->tahun_ajaran[$j])->update(['nominal'=> $nominal]);
+                    $mTunggakan = MTunggakan::where('nama_tunggakan',$key)->where('id_siswa',$id_siswa)->where('ajaran',$request->tahun_ajaran[$j])->first();
+                    $mTunggakan->nominal = $nominal;
+                    $mTunggakan->update();
+
+                    $tCicilan = TCicilan::tipeTunggakan()->where('id_administrasi', $mTunggakan->id_tunggakan)->first();
+                    $cekCicilan = true;
+                    if($tCicilan != null){
+                        for ($l = 1; $l <= 10; $l++) {
+                            if ($tCicilan->{'cicilan_' . $l} == 0) {
+                                if ($cekCicilan) {
+                                    $tCicilan->{'cicilan_' . $l} = $nominal;
+                                    $cekCicilan = false;
+                                }
+                            }
+                        }
+                        $tCicilan->update();
+                    }
                     $j++;
                 }
             }
             
-            $strukWA .= "\r\n";
-            $strukWA .= "# Total #\r\n";
-            $strukWA .= "Rp. ".$this->ribuan($total)." \r\n\r\n";
-
-            $strukWA .= "# Uang Diterima #\r\n";
-            $strukWA .= "Rp. ". $request->nominal_pembayaran ." \r\n\r\n";
-
-            $strukWA .= "# Uang Kembalian #\r\n";
-            $strukWA .= "Rp. ". $request->sisa_uang." \r\n\r\n";
+    
+            $strukWA .= "\n*Total* \n";
+            $strukWA .= "Rp ".$this->ribuan($total)." \n\n";
+            $strukWA .= "*Uang Diterima* \n";
+            $strukWA .= "Rp ". $this->nullToNol($request->nominal_pembayaran) ." \n\n";
+            $strukWA .= "*Uang Kembalian* \n";
+            $strukWA .= "Rp ". $this->nullToNol($request->sisa_uang)." ";
 
             // dd($strukWA);
+            
             $masterWa = new MWhatsapp;
-            $masterWa->no_telp = "6285608727991";
+            $masterWa->no_telp = $siswa->no_telp;
             $masterWa->pesan = $strukWA;
             $masterWa->tipe = 1;
             //whatsapp --------------------------------------------------------------------------
+            $msg = $strukWA;
             try {
-                Http::get("http://localhost:8000/send-message", [
-                    'number' => $siswa."@c.us",
-                    'msg' => $strukWA
-                ]);
-                $masterWa->status = 1;
-                // dd($res);
+                //code...
+                $resWa = Http::post(env("HOST_WAGATEWAY")."/send-message?number=". $siswa->no_telp . "@c.us&msg=". $msg);
+                if ($resWa->successful()) {
+                    $masterWa->status = 1;
+                } else {
+                    $masterWa->status = 2;
+                }
             } catch (\Throwable $th) {
-                //throw $th;
                 $masterWa->status = 2;
             }
+            // dd($res);
             $masterWa->save();
             // -----------------------------------------------------------------------------------
-            HTransaksi::create([
+            $hTransaksi = HTransaksi::create([
                 'kode' => 0,
                 'id_siswa' => $id_siswa,
                 'biaya' => json_encode($detailBiaya),
                 'tunggakan' => json_encode($detailTunggakan),
                 'terbayar' => $request->nominal_pembayaran,
             ]);
-            
+            // dd($idTransaksi);
             
         //-------------------------------------------------------------------------------------------
-            return response()->json(['status' => true, 'msg' => "Sukses Membayar"], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
-        }
+            return response()->json(['status' => true, 'msg' => "Sukses Membayar","data" => encrypt($hTransaksi->id_transaksi)], 200);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
+        // }
         // dd("done");
+    }
+    function getSppBulanan($id_siswa,$bulan)
+    {
+        try {
+            //code...
+            $spp = TSPP::where("id_siswa",decrypt($id_siswa))->first();
+            if($spp != null){
+                return response()->json(['status'=>true,'data'=>$spp->{$bulan}]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['status' => true, 'msg'=>$th->getMessage()]);
+        }
     }
 }

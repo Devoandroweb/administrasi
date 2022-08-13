@@ -1,5 +1,6 @@
 <?php use App\Models\MJurusan; ?>
 <form action="" id="form-data">
+    <div class="loader-line form-loader d-none"></div>
     <div class="form-group">
         <label>Nama Kelas</label>
         <input type="text" name="nama" class="form-control" required="" autocomplete="off">
@@ -7,7 +8,7 @@
     <div class="form-group">
         <label for="exampleInputEmail1">Jurusan</label>
         <select id="role" class="form-control "
-            name="role" autocomplete="off">
+            name="id_jurusan" autocomplete="off">
             <option value="" selected disabled> Pilih Jurusan</option>
             @foreach (MJurusan::all() as $item)
             <option value="{{$item->id_jurusan}}">{{$item->nama}}</option>

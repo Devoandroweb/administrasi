@@ -11,6 +11,7 @@ function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
         msg = 'Mengubah';
     }
     if(validate){
+        $("#btn-submit").attr('disabled','disabled');
        
         $.ajax({
             type: method,
@@ -27,6 +28,8 @@ function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
                     position: 'topRight'
                 });
                 result = true;
+                $("#btn-submit").removeAttr('disabled');
+
             }
         });
     }
