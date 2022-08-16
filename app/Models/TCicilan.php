@@ -14,16 +14,7 @@ class TCicilan extends Model
     protected $fillable = [
         "tipe",
         "id_administrasi",
-        "cicilan_1",
-        "cicilan_2",
-        "cicilan_3",
-        "cicilan_4",
-        "cicilan_5",
-        "cicilan_6",
-        "cicilan_7",
-        "cicilan_8",
-        "cicilan_9",
-        "cicilan_10",
+        "deskripsi",
         "updated_at",
     ];
     static function tipeNow()

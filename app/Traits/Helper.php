@@ -2,7 +2,9 @@
 
 namespace App\Traits;
 
-
+use App\Models\MJenisAdministrasi;
+use App\Models\MKelas;
+use App\Models\MRekap;
 use App\Models\MSiswa;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -10,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 trait Helper
 {
+    private static $nama_bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    
     static function convertDate($tgl, $tampil_hari = true, $with_menit = true)
     {
         if ($tgl != null ||  $tgl != "") {
@@ -189,15 +193,7 @@ trait Helper
     {
         return str_replace(".", "", $nominal);
     }
-    static function convertBulan($value)
-    {
-        if ($value != null) {
-            $nama_bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        } else {
-            return "-";
-        }
-        return $nama_bulan[$value - 1];
-    }
+    
     static function getMinutes($value)
     {
         //15 - 23
@@ -263,9 +259,9 @@ trait Helper
     }
     static function chooseGender($kode)
     {
-        if($kode == 1){
+        if(strtoupper($kode) == "L"){
             return 'Laki-laki';
-        }elseif($kode == 2){
+        }elseif(strtoupper($kode) == "P"){
             return 'Perempuan';
         }
         return '-';
@@ -286,11 +282,107 @@ trait Helper
         }
         return $var;
     }
+    static function nullToStrip($var)
+    {
+        if($var == "" || $var == null){
+            return "-";
+        }
+        return $var;
+    }
     static function cekExitsBulanSpp($var,$jenisAdm)
     {
         if($jenisAdm == 1 && $var != null){
             return "(".ucwords($var).")";
         }
         return "";
+    }
+    static function convertDateToSystem($date)
+    {
+        try {
+            $date = explode("-", $date);
+            if (count($date) == 3) {
+                $dateDay = $date[0];
+                $dateMonth = $date[1];
+                $dateYear = $date[2];
+                $nama_bulan = self::$nama_bulan;
+
+                if (in_array(ucwords($dateMonth), $nama_bulan)) {
+                    $dateMonth = self::searchBulan(strtolower($dateMonth));
+                } 
+                return $dateYear . "-" . $dateMonth . "-" . $dateDay;
+            }else{
+                return implode("-", $date);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+            return "Format Tanggal Salah";
+        }
+    }
+    static function convertBulan($value)
+    {
+        if ($value != null) {
+            $nama_bulan = self::$nama_bulan;
+        } else {
+            return "-";
+        }
+        return $nama_bulan[$value - 1];
+    }
+    static function searchBulan($strBulan)
+    {
+        $no = 1;
+        foreach(self::$nama_bulan as $key){
+            if(strtolower($strBulan) == strtolower($key)){
+                return $no;
+            }
+            $no++;
+        }
+        return "-";
+    }
+    static function searchKelas($value)
+    {
+        $mKelas = MKelas::with('jurusan')->get();
+        $value = explode(" ",$value);
+        if(count($value) != 2){
+            return 1;
+        }
+        $nama = $value[0];
+        $jurusan = $value[1];
+        foreach($mKelas as $kelas){
+            if($nama == $kelas->nama && $jurusan == $kelas->jurusan->nama){
+                return 0;
+            }
+        }
+        return 1;
+    }
+    static function searchKelasId($value)
+    {
+        $mKelas = MKelas::with('jurusan')->get();
+        $value = explode(" ",$value);
+        if(count($value) != 2){
+            return 0;
+        }
+        $nama = $value[0];
+        $jurusan = $value[1];
+        foreach($mKelas as $kelas){
+            if($nama == $kelas->nama && $jurusan == $kelas->jurusan->nama){
+                return $kelas->id_kelas;
+            }
+        }
+        return 0;
+    }
+    static function updateRekap()
+    {
+        //ambil jenis adm
+        $mJenisAdm = MJenisAdministrasi::all();
+        $mKelas = MKelas::all();
+        foreach ($mJenisAdm as $jenisAdm) {
+            foreach ($mKelas as $kelas) {
+                MRekap::create([
+                    'id_jenis_administrasi' => $jenisAdm->id,
+                    'id_kelas' => $kelas->id_kelas,
+                    'total' => 0
+                ]);
+            }
+        }
     }
 }

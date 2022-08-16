@@ -19,6 +19,10 @@ use App\Traits\Helper;
             <div class="card-header">
             <h4>Data Siswa untuk mengelola Administrasi</h4>
             <div class="card-header-action">
+                <a href="{{url('siswa-import')}}" class="btn btn-warning mr-2">
+                Import Siswa
+                </a>
+            </div><div class="card-header-action">
                 <a href="{{$url}}" class="btn btn-primary" id="btn-add-data">
                 Tambah Siswa
                 </a>

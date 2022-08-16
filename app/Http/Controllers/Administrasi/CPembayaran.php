@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Administrasi;
 use App\Http\Controllers\Controller;
 use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\Siswa;
+use App\Models\MJenisAdministrasi;
+use App\Models\MKelas;
+use App\Models\MRekap;
 use App\Models\MSiswa;
 use App\Models\MTunggakan;
 use App\Models\MWhatsapp;
@@ -81,58 +84,67 @@ class CPembayaran extends Controller
 
                 foreach($request->id_jenis_administrasi as $key){
                     //uang di bayarkan : $request->nominal
-                    $nominal = (int)str_replace(".", "", $request->biaya[$i]) - (int)str_replace(".", "", $request->nominal[$i]);
-                    if($request->nominal[$i] != 0){
+                    $nominalBayar = (int)str_replace(".", "", $request->nominal[$i]);
+                    $nominal = (int)str_replace(".", "", $request->biaya[$i]) - $nominalBayar;
+                    if($nominalBayar != 0){
 
-                        $total = $total + (int)str_replace(".", "", $request->nominal[$i]);
+                        $total = $total + $nominalBayar;
+
+                        //to save adminitrasi
+                        $administrasi = Siswa::where('id_jenis_administrasi', $key)->where('id_siswa', $id_siswa)->first();
+                        $administrasi->nominal = $nominal;
+                        $administrasi->update();
+
+                        //save to cicilan
+                        $tCicilan = TCicilan::where('id_administrasi', $administrasi->id_administrasi)->first();
+                        $cicilanTahapAdm = 0;
+                        if ($tCicilan != null) {
+                            $jsonDesk = json_decode($tCicilan->deskripsi);
+                            if ($jsonDesk == null) {
+                                $cicilanTahapAdm = 1;
+                                $tCicilan->deskripsi = json_encode([$nominalBayar]);
+                            } else {
+                                $cicilanTahapAdm = count($jsonDesk) + 1;
+                                array_push($jsonDesk, $nominalBayar);
+                                $tCicilan->deskripsi = json_encode($jsonDesk);
+                            }
+                            $tCicilan->update();
+                        }
                         //to save t_spp
                         //exec SPP
                         if ($key == 1) {
                             //bulan_spp
+                            $bulanSpp = $request->bulan_spp;
                             $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
-                            $tSpp->{$request->bulan_spp} = $nominal;
+                            $tSpp->{$bulanSpp} = $nominal;
                             $tSpp->update();
                             $detailBiaya[] = [
-                                'nama_biaya' => $request->nama_biaya[$i],
-                                'nominal' => (int)str_replace(".", "", $request->nominal[$i]),
+                                'nama_biaya' => $request->nama_biaya[$i]." untuk bulan ".ucwords($bulanSpp),
+                                'id_jenis_administrasi' => $key,
+                                'nominal' => $nominalBayar,
                                 'ajaran' => $ajaranNow,
-                                'bulan_spp' => $request->bulan_spp
+                                'bulan_spp' => $bulanSpp
                             ];
                         }else{
                             $detailBiaya[] = [
-                                'nama_biaya' => $request->nama_biaya[$i],
-                                'nominal' => (int)str_replace(".", "", $request->nominal[$i]),
+                                'nama_biaya' => $request->nama_biaya[$i] . " tahap ke " . $cicilanTahapAdm,
+                                'id_jenis_administrasi' => $key,
+                                'nominal' => $nominalBayar,
                                 'ajaran' => $ajaranNow
                             ];
                         }
+                        //update rekap
+                        $this->saveRekap($key,$siswa->id_kelas,$nominalBayar);
                         
                         if($ajaranNow != $strukWA_ajaranNow){
                             $strukWA .= "*Tanggungan pada TA ". $ajaranNow."* \n";
                             $strukWA_ajaranNow = $ajaranNow;
                         }
-                        $strukWA .= $strukWA_noNow.". ". $request->nama_biaya[$i]." Rp. ". $request->nominal[$i]." ".$this->cekExitsBulanSpp($request->bulan_spp, $request->id_jenis_administrasi)." \n";
+                        $strukWA .= $strukWA_noNow.". ". $request->nama_biaya[$i]." Rp. ". $request->nominal[$i]." ".$this->cekExitsBulanSpp($request->bulan_spp, $request->id_jenis_administrasi) ." tahan ke " . $cicilanTahapAdm." \n";
                         $strukWA_noNow++;
                     }
                     
-                    //to save adminitrasi
-                    $administrasi = Siswa::where('id_jenis_administrasi',$key)->where('id_siswa',$id_siswa)->first();
-                    $administrasi->nominal = $nominal;
-                    $administrasi->update();
                     
-                    //save to cicilan
-                    $tCicilan = TCicilan::where('id_administrasi', $administrasi->id_administrasi)->first();
-                    $cekCicilan = true;
-                    if ($tCicilan != null) {
-                        for($k=1;$k<=10;$k++){
-                            if($tCicilan->{'cicilan_'.$k} == 0){
-                                if($cekCicilan){
-                                    $tCicilan->{'cicilan_'.$k} = $nominal;
-                                    $tCicilan->update();
-                                    $cekCicilan = false;
-                                }
-                            }
-                        }
-                    }
                     $i++;
                 }
             }
@@ -140,12 +152,36 @@ class CPembayaran extends Controller
                 
                 foreach($request->nama_biaya_tunggakan as $key){
                     
-                    if ($request->nominal_tunggakan[$j] != 0) {
-                        $total = $total + (int)str_replace(".", "", $request->nominal_tunggakan[$j]);
+                    $nominalTunggakanBayar = (int)str_replace(".","",$request->nominal_tunggakan[$j]);
+                    if ($nominalTunggakanBayar != 0) {
+                        $total = $total + $nominalTunggakanBayar;
                         $ajaranLalu = $request->tahun_ajaran[$j];
+
+                        $nominal = (int)str_replace(".", "", $request->biaya_tunggakan[$j]) - $nominalTunggakanBayar;
+                        $mTunggakan = MTunggakan::where('nama_tunggakan', $key)->where('id_siswa', $id_siswa)->where('ajaran', $request->tahun_ajaran[$j])->first();
+                        $mTunggakan->nominal = $nominal;
+                        $mTunggakan->update();
+
+                        //cicilam
+                        $tCicilan = TCicilan::tipeTunggakan()->where('id_administrasi', $mTunggakan->id_tunggakan)->first();
+                        $cicilanTahapAdmTgg = 0;
+                        if ($tCicilan != null) {
+                            $jsonDesk = json_decode($tCicilan->deskripsi);
+                            if ($jsonDesk == null) {
+                                $cicilanTahapAdmTgg = 1;
+                                $tCicilan->deskripsi = json_encode([$nominalTunggakanBayar]);
+                            } else {
+                                $cicilanTahapAdmTgg = count($jsonDesk) + 1;
+                                $tCicilan->deskripsi = json_encode(array_push($jsonDesk, $nominalTunggakanBayar));
+                            }
+                            $tCicilan->update();
+                        }
+                        
+
                         $detailTunggakan[] = [
-                            'nama_biaya' => $request->nama_biaya_tunggakan[$j],
-                            'nominal' => (int)str_replace(".", "", $request->nominal_tunggakan[$j]),
+                            'nama_biaya' => $request->nama_biaya_tunggakan[$j] . " tahap ke " . $cicilanTahapAdmTgg,
+                            'nominal' => $nominalTunggakanBayar,
+                            'id_jenis_administrasi' => $key,
                             'ajaran' => $ajaranLalu
                         ];
                         if ($ajaranLalu != $strukWA_ajaranBefore) {
@@ -153,27 +189,10 @@ class CPembayaran extends Controller
                             $strukWA .= "*Tanggungan pada TA " . $ajaranLalu . "* \n";
                             $strukWA_ajaranBefore = $ajaranLalu;
                         }
-                        $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$j] . " Rp. " . $request->nominal_tunggakan[$j] . " \r\n";
+                        $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$j] . " Rp. " . $request->nominal_tunggakan[$j] . " tahan ke " . $cicilanTahapAdmTgg . " \n";
                         $strukWA_noBefore++;
                     }
-                    $nominal = (int)str_replace(".","",$request->biaya_tunggakan[$j]) - (int)str_replace(".","",$request->nominal_tunggakan[$j]);
-                    $mTunggakan = MTunggakan::where('nama_tunggakan',$key)->where('id_siswa',$id_siswa)->where('ajaran',$request->tahun_ajaran[$j])->first();
-                    $mTunggakan->nominal = $nominal;
-                    $mTunggakan->update();
-
-                    $tCicilan = TCicilan::tipeTunggakan()->where('id_administrasi', $mTunggakan->id_tunggakan)->first();
-                    $cekCicilan = true;
-                    if($tCicilan != null){
-                        for ($l = 1; $l <= 10; $l++) {
-                            if ($tCicilan->{'cicilan_' . $l} == 0) {
-                                if ($cekCicilan) {
-                                    $tCicilan->{'cicilan_' . $l} = $nominal;
-                                    $cekCicilan = false;
-                                }
-                            }
-                        }
-                        $tCicilan->update();
-                    }
+                    
                     $j++;
                 }
             }
@@ -236,5 +255,11 @@ class CPembayaran extends Controller
             //throw $th;
             return response()->json(['status' => true, 'msg'=>$th->getMessage()]);
         }
+    }
+    public function saveRekap($idJenisAdm,$id_kelas,$bayar)
+    {
+        $mRekap = MRekap::where('id_jenis_administrasi', $idJenisAdm)->where('id_kelas', $id_kelas)->first();
+        $mRekap->total = $mRekap->total + $bayar;
+        $mRekap->update();
     }
 }

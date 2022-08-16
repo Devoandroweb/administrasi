@@ -20,6 +20,10 @@ Breadcrumbs::for('edit_siswa', function (BreadcrumbTrail $trail) {
     $trail->parent('siswa');
     $trail->push('Kelola Siswa', url('siswa'));
 });
+Breadcrumbs::for('import_siswa', function (BreadcrumbTrail $trail) {
+    $trail->parent('siswa');
+    $trail->push('Import Siswa', url('siswa'));
+});
 Breadcrumbs::for('jenis_administrasi', function (BreadcrumbTrail $trail) {
     $trail->push('Jenis Administrasi', url('jenis-adminitrasi'));
 });

@@ -73,12 +73,12 @@ $name[] = 'alamat';
                                    name="{{$name[4]}}" autocomplete="off">
                                    <option value="" selected disabled> Pilih Jenis Kelamin</option>
 
-                                   <option value="1" {{(old($name[4]) == 1) ? 'selected' : ''}}
-                                       {{Helper::showDataSelected2($data,$name[4],1)}}>
+                                   <option value="L" {{(old($name[4]) == "L") ? 'selected' : ''}}
+                                       {{Helper::showDataSelected2($data,$name[4],"L")}}>
                                        Laki - Laki
                                    </option>
-                                   <option value="2" {{(old($name[4]) == 2) ? 'selected' : ''}}
-                                       {{Helper::showDataSelected2($data,$name[4],2)}}>
+                                   <option value="P" {{(old($name[4]) == "P") ? 'selected' : ''}}
+                                       {{Helper::showDataSelected2($data,$name[4],"P")}}>
                                        Perempuan
                                    </option>
                                </select>

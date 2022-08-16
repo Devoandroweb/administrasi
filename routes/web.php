@@ -50,7 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/ajaran', CAjaran::class)->except('actifed_ajaran');
     Route::resource('/whatsapp', CWhatsapp::class);
 
-    
+    //laporan
     Route::get('/laporan', [CLaporan::class, 'index']);
 
     Route::get('/administrasi-siswa', [ASiswa::class, 'index']);
@@ -63,7 +63,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pembayaran', [CPembayaran::class,'index']);
     Route::get('/pembayaran-cost-siswa/{id}', [CPembayaran::class, 'getBiayaSiswa']);
     Route::post('/pembayaran-save/{id}', [CPembayaran::class, 'save']);
+    Route::get('/pembayaran-rekap-save', [CPembayaran::class, 'saveRekap']);
     Route::get('/siswa-show/{id}', [CSiswa::class, 'show']);
+    Route::get('/siswa-import', [CSiswa::class, 'importSiswa']);
+    Route::post('/import-siswa-read', [CSiswa::class, 'importSiswaRead']);
+    Route::post('/import-siswa-save', [CSiswa::class, 'importSiswaSave']);
     Route::get('/biaya-spp-perbulan/{id_siswa}/{bulan}', [CPembayaran::class, 'getSppBulanan']);
     
     //another function
@@ -88,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/siswa-administrasi', [CExport::class, 'exportAdministrasiSiswa']);
         Route::get('/pengeluaran', [CExport::class, 'exportPengeluaran']);
         Route::get('/pemasukan', [CExport::class, 'exportPemasukan']);
+        Route::get('/siswa-template', [CExport::class, 'exportSiswaTemplate']);
     });
 
     //setting

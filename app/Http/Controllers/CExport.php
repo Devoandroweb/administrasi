@@ -6,6 +6,7 @@ use App\Exports\AdministrasiSiswaExport;
 use App\Exports\PemasukanExport;
 use App\Exports\PengeluaranExport;
 use App\Exports\SiswaExport;
+use App\Exports\TemplateSiswa;
 use App\Models\Administrasi\MPendanaan;
 use App\Models\Administrasi\Siswa;
 use App\Models\MAjaran;
@@ -31,5 +32,13 @@ class CExport extends Controller
     {
         return Excel::download(new PemasukanExport, 'pemasukan.xlsx');
 
+    }
+    public function exportSiswaTemplate()
+    {
+        return Excel::download(new TemplateSiswa, 'siswa-template.xlsx');
+    }
+    public function exportRekap()
+    {
+        return view('pages.report.rekap');
     }
 }

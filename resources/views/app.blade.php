@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="csrf-token" content="{{csrf_token()}}">
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=0.5" name="viewport" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>{{$title}} | Administrasi</title>
   <link rel="icon" type="image/x-icon" href="{{asset('assets')}}/img/favicon.ico">
@@ -33,6 +33,7 @@
 </head>
 
 <body style="font-size:12px">
+
   <div class="loader-line app-loader d-none" style="position: fixed;top: 0;  z-index: 999;"></div>
   <div id="app">
     <div class="main-wrapper">

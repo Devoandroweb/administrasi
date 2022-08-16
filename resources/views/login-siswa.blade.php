@@ -1,6 +1,6 @@
 @extends('app',['content'=>'login'])
 @section('content-login')
-<div class="bg-info w-100" style="height: 100vh">
+<div class="w-100" style="height: 100vh">
   <div class="row justify-content-center mx-auto" style="height:100%">
     <div class="col col-md-5 p-5 p-lg-5">
       <div class="px-lg-5">
@@ -49,3 +49,8 @@
   </div>
 </div>
 @endsection
+@push('js')
+<script>
+  $('body').addClass('bg-info');
+</script>
+@endpush

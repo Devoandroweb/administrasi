@@ -238,29 +238,34 @@ function generateRowCostNow(data = []){
     var html = "";
     data.forEach(element => {
         var nominal = 0;
+        var print = true;
         if(element.nominal == 0){
             nominal = bagdeSuccess;
-        }else{
-            nominal = element.nominal;
+            print = false;
         }
+        nominal = element.nominal;
         var classSpp = '';
-        html += "<tr>";
-        html += "<td><input type='hidden' name='nama_biaya[]' value='"+element.nama+"'>"+element.nama+"</td>";
-        html += "<td>"+generateSelectMonth(element.id_jenis_administrasi)+"</td>";
-        if(element.id_jenis_administrasi == 1){
-            classSpp = "td-spp";
+        //pprint -----------------------------------------------------------------------------------
+        if(print){
+            html += "<tr>";
+            html += "<td><input type='hidden' name='nama_biaya[]' value='"+element.nama+"'>"+element.nama+"</td>";
+            html += "<td>"+generateSelectMonth(element.id_jenis_administrasi)+"</td>";
+            if(element.id_jenis_administrasi == 1){
+                classSpp = "td-spp";
+            }
+            html += "<td class='numeric "+classSpp+"'>"+nominal+"</td>";
+            html += "<td>\
+                    <input type='hidden' name='id_jenis_administrasi[]' value='"+element.id_jenis_administrasi+"'/>\
+                    <input type='hidden' name='biaya[]' class='biaya "+classSpp+"' id='"+_NO+"' value='"+element.nominal+"' />";
+            if(element.nominal != 0){
+                html += "<input id='"+classSpp+"' type='text' name='nominal[]' class='form-control text-right nominal-bayar numeric no-"+_NO+"' data-val='"+element.nominal+"' value='0'/></td>";
+            }else{
+                html += "<input id='"+classSpp+"' type='text' name='nominal[]' class='form-control text-right' value='0' readonly/></td>";
+            }
+            html += "<td><a href='#' class='text-danger remove-item'><i class='fas fa-trash'></i></a></td>";
+            html += "</tr>";
         }
-        html += "<td class='numeric "+classSpp+"'>"+nominal+"</td>";
-        html += "<td>\
-                <input type='hidden' name='id_jenis_administrasi[]' value='"+element.id_jenis_administrasi+"'/>\
-                <input type='hidden' name='biaya[]' class='biaya "+classSpp+"' id='"+_NO+"' value='"+element.nominal+"' />";
-        if(element.nominal != 0){
-            html += "<input id='"+classSpp+"' type='text' name='nominal[]' class='form-control text-right nominal-bayar numeric no-"+_NO+"' data-val='"+element.nominal+"' value='0'/></td>";
-        }else{
-            html += "<input id='"+classSpp+"' type='text' name='nominal[]' class='form-control text-right' value='0' readonly/></td>";
-        }
-        html += "<td><a href='#' class='text-danger remove-item'><i class='fas fa-trash'></i></a></td>";
-        html += "</tr>";
+        //---------------------------------------------------------------------------------------
         _NO++;
     });
     $("#data tbody").html(html);
@@ -271,30 +276,34 @@ function generateRowArrears(data = []){
     var html = "";
     var ajaran = "";
     data.forEach(element => {
+        var print = true;
         if(ajaran != element.ajaran){
-            html += "<tr><td colspan='4' class='bg-light text-center'>"+element.ajaran+"</td></tr>";
+            html += "<tr><td colspan='5' class='bg-light text-center'>"+element.ajaran+"</td></tr>";
             ajaran = element.ajaran;
         }
         var nominal = 0;
         if(element.nominal == 0){
-            nominal = bagdeSuccess;
-        }else{
-            nominal = element.nominal;
+            print = false;
         }
-        html += "<tr>";
-        html += "<td><input type='hidden' name='nama_biaya_tunggakan[]' value='"+element.nama_tunggakan+"'>"+element.nama_tunggakan+"</td>";
-        html += "<td>-</td>";
-        html += "<td class='numeric'>"+nominal+"</td>";
-        html += "<td>\
-                <input type='hidden' name='tahun_ajaran[]' value='"+element.ajaran+"'/>\
-                <input type='hidden' name='biaya_tunggakan[]' class='biaya' id='"+_NO+"' value='"+element.nominal+"'/>";
-        if(element.nominal != 0){
-            html += "<input type='text' name='nominal_tunggakan[]' class='form-control nominal-bayar text-right numeric no-"+_NO+"' data-val='"+element.nominal+"' value='0'/></td>";
-        }else{
-            html += "<input type='text' name='nominal_tunggakan[]' class='form-control text-right' value='0' readonly/></td>";
+        nominal = element.nominal;
+        //print ----------------------------------------------------------------------------------------------
+        if(print){
+            html += "<tr>";
+            html += "<td><input type='hidden' name='nama_biaya_tunggakan[]' value='"+element.nama_tunggakan+"'>"+element.nama_tunggakan+"</td>";
+            html += "<td>-</td>";
+            html += "<td class='numeric'>"+nominal+"</td>";
+            html += "<td>\
+                    <input type='hidden' name='tahun_ajaran[]' value='"+element.ajaran+"'/>\
+                    <input type='hidden' name='biaya_tunggakan[]' class='biaya' id='"+_NO+"' value='"+element.nominal+"'/>";
+            if(element.nominal != 0){
+                html += "<input type='text' name='nominal_tunggakan[]' class='form-control nominal-bayar text-right numeric no-"+_NO+"' data-val='"+element.nominal+"' value='0'/></td>";
+            }else{
+                html += "<input type='text' name='nominal_tunggakan[]' class='form-control text-right' value='0' readonly/></td>";
+            }
+            html += "<td><a href='#' class='text-danger remove-item'><i class='fas fa-trash'></i></a></td>";
+            html += "</tr>";
         }
-        html += "<td><a href='#' class='text-danger remove-item'><i class='fas fa-trash'></i></a></td>";
-        html += "</tr>";
+        //---------------------------------------------------------------------------------------------------
         _NO++;
     });
     $("#data tbody").append(html);

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SiswaRequest;
+use App\Imports\ImportSiswaPriview;
+use App\Imports\SiswaImport;
 use App\Models\Administrasi\Siswa;
 use App\Models\MJenisAdministrasi;
 use App\Models\MKelas;
@@ -14,11 +16,13 @@ use App\Traits\Helper;
 use App\Traits\Uploader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Excel;
 
 class CSiswa extends Controller
 {
     use Helper;
     use Uploader;
+    private $jenisAdmistrasi = null;
     public function index()
     {
         $url = url('siswa/create');
@@ -122,7 +126,7 @@ class CSiswa extends Controller
     {
         try {
             $id = decrypt($id_siswa);
-            MSiswa::find($id)->delete();
+            MSiswa::where('id_siswa',$id)->delete();
             $idAdministrasi = Siswa::where('id_siswa',$id)->pluck('id_administrasi');
             TCicilan::where('tipe',1)->whereIn('id_administrasi',$idAdministrasi)->delete();
             
@@ -136,7 +140,7 @@ class CSiswa extends Controller
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         }
     }
-    public function credentials($data,$request)
+    function credentials($data,$request)
     {
         $data['username'] = $request->nis;
         $data['password'] = Hash::make('12345');
@@ -155,19 +159,112 @@ class CSiswa extends Controller
         }
         return $data;
     }
-    public function createAdministrasi($id_siswa)
+    function createAdministrasi($id_siswa)
     {
-        $dataAdm = [];
+
         $jenisAdmistrasi = MJenisAdministrasi::all();
         foreach($jenisAdmistrasi as $key){
-           array_push($dataAdm, ['id_siswa' => $id_siswa,'id_jenis_administrasi'=>$key->id,'nominal'=>$key->biaya]); 
+
+           $siswaAdm = Siswa::create(['id_siswa' => $id_siswa, 'id_jenis_administrasi' => $key->id, 'nominal' => $key->biaya]);
+           
            TCicilan::create([
                 'tipe'=> 1,
-                'id_administrasi'=> $key->id
+                'id_administrasi'=> $siswaAdm->id_administrasi
             ]);
         } 
-        // dd($data);
-        Siswa::insert($dataAdm);
+        // dd($dataAdm);
         TSPP::create(['id_siswa'=> $id_siswa]);
     }
+    function importSiswa()
+    {
+        return view('pages.siswa.import')->with('title','Import Siswa');
+    }
+    function importSiswaRead(Request $request)
+    {
+        // dd($request->all());
+        try {
+            //code...
+            // menangkap file excel
+            $file = $request->file('file-import');
+            $path = public_path('file_import');
+            // membuat nama file unik
+            $nama_file = rand() . "-siswa-".$file->getClientOriginalName();
+    
+            // upload ke folder file_import di dalam folder public
+            $file->move($path, $nama_file);
+    
+            // import data
+            $importPriview = new ImportSiswaPriview();
+            Excel::import($importPriview, public_path('/file_import/' . $nama_file));
+            unlink($path . "\\" . $nama_file);
+            // dd($importPriview->getData());
+            return response()->json(['status'=>true,'data'=> $importPriview->getData(),'msg'=>$importPriview->message()]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['status' => false, 'msg' => $th->getMessage()]);
+        }
+    }
+    function importSiswaSave(Request $request)
+    {
+        
+        // dd($request->all());
+        try {
+            //code...
+            // menangkap file excel
+            $file = $request->file('file-import');
+            $path = public_path('file_import');
+            // membuat nama file unik
+            $nama_file = rand() . "-siswa-" . $file->getClientOriginalName();
+
+            // upload ke folder file_import di dalam folder public
+            $file->move($path, $nama_file);
+            
+            // import data
+            $importSiswa = new SiswaImport();
+            Excel::import($importSiswa, public_path('/file_import/' . $nama_file));
+            unlink($path . "\\" . $nama_file);
+            $this->jenisAdmistrasi = MJenisAdministrasi::all();
+            $this->createSiswa($importSiswa->getData());
+            return response()->json(['status' => true, 'msg'=> 'Sukses Import Siswa','data'=>null]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['status' => false, 'msg' => $th->getMessage()]);
+        }
+    }
+    private function createSiswa($siswas)
+    {
+        foreach($siswas as $siswa){
+            $resultSiswa = MSiswa::create($siswa);
+            $this->saveToAdministrasiAndCicilan($resultSiswa->id_siswa,$siswa['administrasi']);
+            TSPP::create(['id_siswa'=> $resultSiswa->id_siswa]);
+        }
+    }
+    private function saveToAdministrasiAndCicilan($idSiswa,$dataAdm)
+    {
+        foreach($dataAdm as $jenisAdm){
+            $admSiswaAfterCreate = Siswa::create([
+                'id_siswa' => $idSiswa,
+                'id_jenis_administrasi'=>$this->searchIdJenisAdmOrCreate($jenisAdm["nama_biaya"]),
+                'nominal' => $jenisAdm["nominal"]
+            ]);
+            TCicilan::create([
+                'tipe'=>1,
+                'id_administrasi' => $admSiswaAfterCreate->id_administrasi
+            ]);
+        }
+    }
+    private function searchIdJenisAdmOrCreate($jenisAdm)
+    {
+        foreach($this->jenisAdmistrasi as $key){
+            if(ucwords($key->nama) == ucwords($jenisAdm)){
+                return $key->id;
+            }
+        }
+        $resultCreateJAdm = MJenisAdministrasi::create([
+            'nama' => $jenisAdm
+        ]);
+        return $resultCreateJAdm->id;
+    }
+    
+
 }
