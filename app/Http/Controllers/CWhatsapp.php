@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MWhatsapp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 
 class CWhatsapp extends Controller
@@ -17,11 +18,12 @@ class CWhatsapp extends Controller
 
     public function store(Request $request)
     {
+        // dd(env("HOST_WAGATEWAY"));
         try {
             // dd($request->validated());
             $data = $request->except('_method', '_token', 'siswa');
             $data['tipe'] = 1;
-            $resWa = Http::post(env("HOST_WAGATEWAY")."/send-message?number=" . $request->no_telp . "@c.us&msg=" . $request->pesan);
+            $resWa = Http::post(env("HOST_WAGATEWAY")."/send-message?number=" . str_replace(" ","",$request->no_telp) . "@c.us&msg=" . $request->pesan);
             if ($resWa->successful()) {
                 $data['status'] = 1;
             } else {

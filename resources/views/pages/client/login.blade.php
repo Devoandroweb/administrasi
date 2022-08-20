@@ -24,7 +24,7 @@
                   <i class="fas fa-envelope"></i>
                 </div>
               </div>
-              <input type="text" name="nis" class="form-control" required>
+              <input type="text" name="nisn" class="form-control" required>
             </div>
           </div>
           <div class="form-group">

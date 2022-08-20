@@ -1,0 +1,25 @@
+[
+    [
+        'nama_biaya' => 'SPP',
+        'biaya' => [
+            [
+                'kelas' => 'X MIPA',
+                'nominal' => 100000,
+            ],[
+                'kelas' => 'X IPS',
+                'nominal' => 100000,
+            ],
+        ]
+    ],[
+        'nama_biaya' => 'PSB',
+        'biaya' => [
+            [
+                'kelas' => 'X MIPA',
+                'nominal' => 100000,
+            ],[
+                'kelas' => 'X IPS',
+                'nominal' => 100000,
+            ],
+        ]
+    ]
+]

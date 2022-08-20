@@ -31,15 +31,15 @@ use App\Traits\Helper;
                 <tr>
                     <td style="">NISN</td>
                     <td style="width:2%">:</td>
-                    <td style="width:30%">{{auth()->guard('siswa')->user()->nisn}}</td>
+                    <td style="width:30%">{{$siswa->nisn}}</td>
                     <td style="">Kelas</td>
                     <td style="width:2%">:</td>
-                    <td style="">{{auth()->guard('siswa')->user()->kelas->nama." ".auth()->guard('siswa')->user()->kelas->jurusan->nama}}</td>
+                    <td style="">{{$siswa->kelas->nama." ".$siswa->kelas->jurusan->nama}}</td>
                 </tr>
                 <tr>
                     <td style="">Nama</td>
                     <td style="">:</td>
-                    <td style="">{{auth()->guard('siswa')->user()->nama}}</td>
+                    <td style="">{{$siswa->nama}}</td>
                     <td style="">Tanggal Unduh</td>
                     <td style="">:</td>
                     <td style="">{{Helper::convertDate(date("Y-m-d"),true,false)}}</td>

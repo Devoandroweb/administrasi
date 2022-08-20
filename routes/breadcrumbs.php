@@ -44,10 +44,17 @@ Breadcrumbs::for('administrasi_siswa_tunggakan', function (BreadcrumbTrail $trai
     $trail->parent('administrasi_siswa');
     $trail->push('Tunggakan Siswa', url('administrasi-siswa'));
 });
+Breadcrumbs::for('administrasi_siswa_cicilan', function (BreadcrumbTrail $trail) {
+    $trail->parent('administrasi_siswa');
+    $trail->push('Cicilan Pembayaran Siswa', url('administrasi-siswa'));
+});
 Breadcrumbs::for('pendanaan', function (BreadcrumbTrail $trail) {
     $trail->push('Pendanaan', url('pendanaan'));
 });
 Breadcrumbs::for('whatsapp', function (BreadcrumbTrail $trail) {
     $trail->push('Whatsapp Gateway', url('whatsapp'));
+});
+Breadcrumbs::for('htransaksi', function (BreadcrumbTrail $trail) {
+    $trail->push('Riwayat Transaksi', url('htransaksi'));
 });
 

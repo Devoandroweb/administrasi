@@ -22,12 +22,12 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, WithColu
     */
     public function collection()
     {
-        return MSiswa::select('nis','nama','tempat_lahir','tgl_lahir','alamat','jk','no_telp')->get();
+        return MSiswa::select('nisn','nama','tempat_lahir','tgl_lahir','alamat','jk','no_telp')->get();
     }
     public function map($siswa): array
     {
         return [
-            $siswa->nis,
+            $siswa->nisn,
             $siswa->nama,
             $siswa->tempat_lahir,
             $this->convertDate($siswa->tgl_lahir,true,false),
@@ -38,7 +38,7 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, WithColu
     }
     public function headings(): array
     {
-        return ["NIS","Nama", "Tempat Lahir", "Tanggal Lahir","Jenis Kelamin","Alamat","No Telp"];
+        return ["NISN","Nama", "Tempat Lahir", "Tanggal Lahir","Jenis Kelamin","Alamat","No Telp"];
     }
     public function columnFormats(): array
     {

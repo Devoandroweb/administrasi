@@ -24,7 +24,7 @@ class SiswaRequest extends FormRequest
     public function rules()
     {
         return [
-            'nis' => 'required',
+            'nisn' => 'required',
             'nama' => 'required',
             'jk' => 'required',
             'no_telp' => 'required',

@@ -27,9 +27,9 @@
                   <li><a class="nav-link" href="{{url('jurusan')}}">Data Jurusan</a></li>
                   <li><a class="nav-link" href="{{url('kelas')}}">Data Kelas</a></li>
                   <li><a class="nav-link" href="{{url('ajaran')}}">Data Ajaran</a></li>
+                  <li><a class="nav-link" href="{{url('siswa')}}">Data Siswa</a></li>
                 </ul>
               </li>
-              <li><a class="nav-link" href="{{url('siswa')}}"><i class="fas fa-user-graduate"></i> <span>Siswa</span></a></li>
               <li class="nav-item dropdown">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-coins"></i> <span>Administrasi</span></a>
                 <ul class="dropdown-menu">
@@ -38,6 +38,7 @@
                 </ul>
               </li>
               <li><a class="nav-link" href="{{url('whatsapp')}}"><i class="fab fa-whatsapp"></i> <span>WA Gateway</span></a></li>
+              <li><a class="nav-link" href="{{url('htransaksi')}}"><i class="fas fa-clock"></i> <span>Riwayat Transaksi</span></a></li>
               <li><a class="nav-link" href="{{url('laporan')}}"><i class="fas fa-print"></i> <span>Report</span></a></li>
               <li><a class="nav-link" href="{{url('user')}}"><i class="fas fa-user-astronaut"></i> <span>User Management</span></a></li>
               @endif

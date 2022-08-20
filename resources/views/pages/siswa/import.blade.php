@@ -43,7 +43,7 @@ use App\Traits\Helper;
                     <th class="text-center">
                         #
                     </th>
-                    <th>NIS</th>
+                    <th>NISN</th>
                     <th>Nama</th>
                     <th>Tempat Lahir</th>
                     <th>Tanggal Lahir</th>
@@ -107,7 +107,7 @@ use App\Traits\Helper;
                             }
                             html += "<tr class='"+bgWarning+"'>\
                                 <td>"+no+"</td>\
-                                <td>"+element.nis+"</td>\
+                                <td>"+element.nisn+"</td>\
                                 <td>"+element.nama+"</td>\
                                 <td>"+element.tempat_lahir+"</td>\
                                 <td>"+element.tgl_lahir+"</td>\

@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr style="font-weight: bold">
-        <th style="font-weight: bold; background:rosybrown">NIS</th>
+        <th style="font-weight: bold; background:rosybrown">NISN</th>
         <th style="font-weight: bold; background:rosybrown;">Nama</th>
         <th style="font-weight: bold; background:rosybrown;">Kelas</th>
         @foreach($ajarans as $ajaran)
@@ -14,7 +14,7 @@
     @foreach($siswas as $siswa)
         @if(count($siswa->admSiswa) != 0 || count($siswa->tunggakan) != 0)
         <tr >
-            <td style="background:darkkhaki">{{ $siswa->nis }}</td>
+            <td style="background:darkkhaki">{{ $siswa->nisn }}</td>
             <td style="background:darkkhaki">{{ $siswa->nama }}</td>
             <td style="background:darkkhaki">{{ $siswa->kelas->nama." ".$siswa->kelas->jurusan->nama }}</td>
             @foreach($ajarans as $ajaran)

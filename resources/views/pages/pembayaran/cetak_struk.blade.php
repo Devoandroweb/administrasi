@@ -19,7 +19,7 @@ foreach ($_TUNGGAKAN as $key) {
 <html>
 
 <head>
-    <title>Menampilkan List Printer</title>
+    <title>Struk</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 </head>
@@ -111,7 +111,7 @@ foreach ($_TUNGGAKAN as $key) {
     }
 
     .terbilang-bag1 .pattern {
-        background-image: url('{{  asset("public/assets/img/pattern_line.jpg")  }}');
+        background-image: url('{{  asset("assets/img/pattern_line.jpg")  }}');
         background-size: 100px;
         padding: 10px;
     }
@@ -204,7 +204,7 @@ foreach ($_TUNGGAKAN as $key) {
                 <tr>
                     <td>Nama</td>
                     <td>:</td>
-                    <td>{{ $hTransaksi->siswa->nama}}</td>
+                    <td>{{ ucwords(($hTransaksi->siswa != null ) ? $hTransaksi->siswa->nama : '-')}}</td>
                     <td>Tanggal Transaksi</td>
                     <td>:</td>
                     <?php
@@ -217,9 +217,13 @@ foreach ($_TUNGGAKAN as $key) {
                     <td class="numeric" style="text-align: right;">{{ Helper::ribuan(intval($_TOTAL_BIAYA)) }}</td>
                 </tr>
                 <tr>
-                    <td>NIS / Kelas</td>
+                    <td>NISN / Kelas</td>
                     <td>:</td>
-                    <td>{{ $hTransaksi->siswa->nis." / ".$hTransaksi->siswa->namaKelas()}}</td>
+                    @if($hTransaksi->siswa != null)
+                    <td>{{ $hTransaksi->siswa->nisn." / ".$hTransaksi->siswa->namaKelas()}}</td>
+                    @else
+                    <td>-</td>
+                    @endif
                     <td>Tanggal Cetak</td>
                     <td>:</td>
                     <td>{{ $hTransaksi->tanggal }}</td>
@@ -230,14 +234,14 @@ foreach ($_TUNGGAKAN as $key) {
                 <tr>
                     <td>Penerima</td>
                     <td>:</td>
-                    <td>{{$hTransaksi->createdBy->name}}</td>
+                    <td>{{ucwords($hTransaksi->createdBy->name)}}</td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>Kurang</td>
+                    <td>Kembalian</td>
                     <td>:</td>
                     <?php
-                    $total = intval($hTransaksi->total) - intval($hTransaksi->terbayar);
+                    $total = intval($hTransaksi->terbayar) - intval($hTransaksi->total);
                     ?>
                     <td class="" style="text-align: right;">{{ Helper::ribuan(intval($total)) }}</td>
                 </tr>
@@ -250,12 +254,7 @@ foreach ($_TUNGGAKAN as $key) {
                     <td style="text-align: right;">Jumlah (Rp)</td>
                 </tr>
                 <?php
-                function cekBulan($json)
-                {
-                    if(isset($json->bulan_spp)){
-                        return "(".ucwords($json->bulan_spp).")";
-                    }
-                }
+               
                 $no = 1;
 
                 $html = '';
@@ -264,7 +263,7 @@ foreach ($_TUNGGAKAN as $key) {
                 for ($i = 0; $i < count($_BIAYA); $i++) {
                     $html .= '<tr>';
                     $html .= '<td style="width: 5%;">' . $no . '</td>';
-                    $html .= '<td>' . $_BIAYA[$i]->nama_biaya . ' '.cekBulan($_BIAYA[$i]).'</td><td class="" style="text-align: right;">' . Helper::ribuan($_BIAYA[$i]->nominal) . '</td>';
+                    $html .= '<td>' . $_BIAYA[$i]->nama_biaya .'</td><td class="" style="text-align: right;">' . Helper::ribuan($_BIAYA[$i]->nominal) . '</td>';
                     $html .= '</tr>';
                     $no++;
                 }
@@ -346,14 +345,18 @@ foreach ($_TUNGGAKAN as $key) {
                     <br>
                     <br>
                     <br>
-                    <label>[ {{ $hTransaksi->siswa->nama }} ]</label>
+                    @if($hTransaksi->siswa != null)
+                    <label>[ {{ ucwords($hTransaksi->siswa->nama) }} ]</label>
+                    @else
+                    <label>-</label>
+                    @endif
                 </div>
                 <div class="ttd1">
                     <label>Teller/Penerima</label>
                     <br>
                     <br>
                     <br>
-                    <label>[ {{ $hTransaksi->createdBy->name }} ]</label>
+                    <label>[ {{ ucwords($hTransaksi->createdBy->name) }} ]</label>
                 </div>
                 <?php
                 // dd($data['tanggunganprev']);

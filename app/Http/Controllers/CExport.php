@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\AdministrasiSiswaExport;
 use App\Exports\PemasukanExport;
 use App\Exports\PengeluaranExport;
+use App\Exports\RekapExport;
 use App\Exports\SiswaExport;
 use App\Exports\TemplateSiswa;
 use App\Models\Administrasi\MPendanaan;
@@ -39,6 +40,11 @@ class CExport extends Controller
     }
     public function exportRekap()
     {
-        return view('pages.report.rekap');
+        $date = date("dmY-His");
+        return Excel::download(new RekapExport, 'rekap-'.$date.'.xlsx');
+        // return view("pages.report.rekap");
+        // return view("pages.report.rekap-tanggungan-sebelumnya");
     }
+
+
 }

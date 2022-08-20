@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\JabatanRequest;
 use App\Models\MJenisAdministrasi;
+use App\Models\MKelas;
+use App\Models\MRekap;
+use App\Traits\Administrasi;
+use App\Traits\Helper;
 
 class CJenisAdministrasi extends Controller
 {
+    use Helper;
+    use Administrasi;
     public function index()
     {
         return view('pages.jenis-administrasi.index')
@@ -20,7 +26,8 @@ class CJenisAdministrasi extends Controller
             $data = $request->all();
             $data['biaya'] = str_replace('.','',$request->biaya);
             // create to 
-            MJenisAdministrasi::create($data);
+            $mJenisAdm = MJenisAdministrasi::create($data);
+            $this->createRekap($mJenisAdm);
             return response()->json(['status' => true, 'msg' => 'Sukses Menambahkan Data'], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);

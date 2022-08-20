@@ -15,12 +15,12 @@ use App\Traits\Helper;
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Masukkan Kelas sesuai Lembaga anda</h4>
-            <div class="card-header-action">
+            <h4>Data Kelas Lembaga anda</h4>
+            {{-- <div class="card-header-action">
                 <a href="#" class="btn btn-primary" id="btn-add-data">
                 Tambah Kelas
                 </a>
-            </div>
+            </div> --}}
             </div>
             <div class="card-body">
             <div class="loader-line form-loader d-none mb-2"></div>
@@ -33,7 +33,7 @@ use App\Traits\Helper;
                     </th>
                     <th>Nama</th>
                     <th>Jurusan</th>
-                    <th>Siswa</th>
+                    <th>Jumlah Siswa</th>
                     <th>Action</th>
                     </tr>
                 </thead>

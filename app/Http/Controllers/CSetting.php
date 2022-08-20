@@ -8,16 +8,20 @@ use App\Models\MKelas;
 use App\Models\MSiswa;
 use App\Models\MTunggakan;
 use App\Models\TCicilan;
+use App\Models\TSPP;
+use App\Traits\Administrasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class CSetting extends Controller
 {
+    use Administrasi;
     function resetTahunAjaran()
     {
         try {
             //cek tahun ajaran
+            TSPP::truncate();
             $mAjaran = MAjaran::orderBy('tahun_akhir', 'desc')->first();
             $tahunAwalBaru = (int)$mAjaran->tahun_akhir;
             $tahunAkhirBaru = (int)$mAjaran->tahun_akhir + 1;
@@ -45,11 +49,13 @@ class CSetting extends Controller
             $mSiswa = MSiswa::with('kelas')->where('id_kelas', '!=', 0)->get();
             $mKelas = MKelas::all();
             foreach ($mSiswa as $siswa) {
-                if ((int)$siswa->kelas->nama == 12) {
+                if ((int)$siswa->kelas->indikasi == 12) {
                     $siswa->update(['id_kelas' => 0]);
-                } elseif ((int)$siswa->kelas->nama == 11) {
+                } elseif ((int)$siswa->kelas->indikasi == 11) {
+                    $this->createAdministrasi($siswa->id_siswa);
                     $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 12)]);
-                } elseif ((int)$siswa->kelas->nama == 10) {
+                } elseif ((int)$siswa->kelas->indikasi == 10) {
+                    $this->createAdministrasi($siswa->id_siswa);
                     $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 11)]);
                 }
             }
@@ -71,7 +77,8 @@ class CSetting extends Controller
             //truncate
             Siswa::truncate();
             TCicilan::where('tipe', 1)->delete();
-
+            
+            
             return response()->json(['status' => true, 'msg' => 'success tahun ajaran baru ' . $tahunAwalBaru],200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()],500);
@@ -81,7 +88,7 @@ class CSetting extends Controller
     function cariKelas($mKelas,$kelas)
     {
         foreach($mKelas as $key){
-            if((int)$key->nama == (int)$kelas){
+            if((int)$key->indikasi == (int)$kelas){
                 return $key->id_kelas;
             }
         }

@@ -17,7 +17,7 @@ class TemplateSiswa implements WithHeadings, WithStyles
     {
         $mJenisAdministrasi = MJenisAdministrasi::pluck('nama')->toArray();
         // dd($mJenisAdministrasi);
-        $header = ["NIS", "Nama", "Tempat Lahir", "Tanggal Lahir", "Jenis Kelamin","No Telp","Kelas","Alamat"];
+        $header = ["NISN", "Nama", "Tempat Lahir", "Tanggal Lahir", "Jenis Kelamin","No Telp","Kelas","Alamat"];
         foreach($mJenisAdministrasi as $key){
             array_push($header, $key);
         }

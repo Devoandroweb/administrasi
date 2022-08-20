@@ -12,6 +12,7 @@ use App\Models\MSiswa;
 use App\Models\MTunggakan;
 use App\Models\TCicilan;
 use App\Models\TSPP;
+use App\Traits\Administrasi;
 use App\Traits\Helper;
 use App\Traits\Uploader;
 use Illuminate\Http\Request;
@@ -22,9 +23,13 @@ class CSiswa extends Controller
 {
     use Helper;
     use Uploader;
+    use Administrasi;
+    
     private $jenisAdmistrasi = null;
+    private $spp = null;
     public function index()
     {
+        
         $url = url('siswa/create');
         $title = "Siswa";
         $data = MSiswa::all();
@@ -134,6 +139,7 @@ class CSiswa extends Controller
             TCicilan::where('tipe', 2)->whereIn('id_administrasi', $idTunggakan)->delete();
 
             TSPP::where('id_siswa',$id)->delete();
+            Siswa::where('id_siswa',$id)->delete();
 
             return response()->json(['status' => true, 'msg' => 'Sukses Menghapus Data'], 200);
         } catch (\Throwable $th) {
@@ -142,7 +148,7 @@ class CSiswa extends Controller
     }
     function credentials($data,$request)
     {
-        $data['username'] = $request->nis;
+        $data['username'] = $request->nisn;
         $data['password'] = Hash::make('12345');
         $noTelp = str_replace(" ", "", $request->no_telp);
         $noTelpWithNegara = substr($noTelp, 0, 1);
@@ -159,22 +165,7 @@ class CSiswa extends Controller
         }
         return $data;
     }
-    function createAdministrasi($id_siswa)
-    {
-
-        $jenisAdmistrasi = MJenisAdministrasi::all();
-        foreach($jenisAdmistrasi as $key){
-
-           $siswaAdm = Siswa::create(['id_siswa' => $id_siswa, 'id_jenis_administrasi' => $key->id, 'nominal' => $key->biaya]);
-           
-           TCicilan::create([
-                'tipe'=> 1,
-                'id_administrasi'=> $siswaAdm->id_administrasi
-            ]);
-        } 
-        // dd($dataAdm);
-        TSPP::create(['id_siswa'=> $id_siswa]);
-    }
+    
     function importSiswa()
     {
         return view('pages.siswa.import')->with('title','Import Siswa');
@@ -233,28 +224,66 @@ class CSiswa extends Controller
     }
     private function createSiswa($siswas)
     {
+        $this->spp = MJenisAdministrasi::where('id', 1)->first();
+        $this->spp = $this->spp->biaya;
         foreach($siswas as $siswa){
             $resultSiswa = MSiswa::create($siswa);
             $this->saveToAdministrasiAndCicilan($resultSiswa->id_siswa,$siswa['administrasi']);
-            TSPP::create(['id_siswa'=> $resultSiswa->id_siswa]);
+            $spp = $this->spp;
+            TSPP::create([
+                'id_siswa' => $resultSiswa->id_siswa,
+                'januari' => $spp,
+                'februari' => $spp,
+                'maret' => $spp,
+                'april' => $spp,
+                'mei' => $spp,
+                'juni' => $spp,
+                'juli' => $spp,
+                'agustus' => $spp,
+                'september' => $spp,
+                'oktober' => $spp,
+                'november' => $spp,
+                'desember' => $spp
+            ]);
         }
     }
     private function saveToAdministrasiAndCicilan($idSiswa,$dataAdm)
     {
-        foreach($dataAdm as $jenisAdm){
-            $admSiswaAfterCreate = Siswa::create([
-                'id_siswa' => $idSiswa,
-                'id_jenis_administrasi'=>$this->searchIdJenisAdmOrCreate($jenisAdm["nama_biaya"]),
-                'nominal' => $jenisAdm["nominal"]
-            ]);
-            TCicilan::create([
-                'tipe'=>1,
-                'id_administrasi' => $admSiswaAfterCreate->id_administrasi
-            ]);
+        if(count($dataAdm) != 0){
+            foreach($dataAdm as $jenisAdm){
+                $admSiswaAfterCreate = Siswa::create([
+                    'id_siswa' => $idSiswa,
+                    'id_jenis_administrasi'=>$this->searchIdJenisAdmOrCreate($jenisAdm["nama_biaya"]),
+                    'nominal' => $jenisAdm["nominal"]
+                ]);
+                TCicilan::create([
+                    'tipe'=>1,
+                    'id_administrasi' => $admSiswaAfterCreate->id_administrasi
+                ]);
+            }
+        }else{
+            foreach (MJenisAdministrasi::all() as $jenisAdm) {
+                if($jenisAdm->id == 1){
+                    $biaya = $jenisAdm->biaya * 12;
+                }else{
+                    $biaya = $jenisAdm->biaya;
+                }
+                $admSiswaAfterCreate = Siswa::create([
+                    'id_siswa' => $idSiswa,
+                    'id_jenis_administrasi' => $jenisAdm->id,
+                    'nominal' => $biaya
+                ]);
+                TCicilan::create([
+                    'tipe' => 1,
+                    'id_administrasi' => $admSiswaAfterCreate->id_administrasi
+                ]);
+            }
+            
         }
     }
     private function searchIdJenisAdmOrCreate($jenisAdm)
     {
+
         foreach($this->jenisAdmistrasi as $key){
             if(ucwords($key->nama) == ucwords($jenisAdm)){
                 return $key->id;
@@ -263,6 +292,7 @@ class CSiswa extends Controller
         $resultCreateJAdm = MJenisAdministrasi::create([
             'nama' => $jenisAdm
         ]);
+        $this->createRekap($resultCreateJAdm);
         return $resultCreateJAdm->id;
     }
     

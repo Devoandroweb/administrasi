@@ -5,7 +5,7 @@
         <div class="text-center" style="margin-top: -70px">
             <img src="{{asset('assets/img/avatar/avatar-5.png')}}"  style="width: 100px; height:100px" class="rounded-circle shadow mb-4 img-fluid" alt="" srcset=""><br>
             <h5><b>
-              <span class="d-nama"> - </span> (<span class="d-nis">-</span>)</b></h5>
+              <span class="d-nama"> - </span> (<span class="d-nisn">-</span>)</b></h5>
         </div>
         <hr>
         <table class="table w-100">

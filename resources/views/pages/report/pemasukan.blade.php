@@ -6,7 +6,7 @@
         <tr>
             <th>#</th>
             <th style="font-weight: bold">TANGGAL</th>
-            <th style="font-weight: bold">NIS</th>
+            <th style="font-weight: bold">NISN</th>
             <th style="font-weight: bold">NAMA SISWA</th>
             <th style="font-weight: bold">KELAS</th>
             <th style="font-weight: bold">DESKRIPSI</th>
@@ -20,7 +20,7 @@
             $number = 1;
             $i = 0;
             $tanggal = "";
-            $nis = "";
+            $nisn = "";
             $nama = "";
             $kelas = "";
             $tanggalConvert = "";
@@ -40,14 +40,14 @@
                             $tanggal = date("d-m-Y",strtotime($val->created_at));
                             if($val->tipe_pemasukan == 1){
                                  if($val->siswa != null){
-                                    $nis = $val->siswa->nis;
+                                    $nisn = $val->siswa->nisn;
                                     $nama = $val->siswa->nama;
                                     $kelas = $val->siswa->kelas->nama." ".$val->siswa->kelas->jurusan->nama;
                                 }else{
-                                    $nis = '-';
+                                    $nisn = '-';
                                 }
                             }elseif($val->tipe_pemasukan == 2){
-                                $nis = "-";
+                                $nisn = "-";
                                 $nama = "-";
                                 $kelas = "-";
                             }
@@ -59,14 +59,14 @@
                         }else{
                             if($val->tipe_pemasukan == 1){
                                 if($val->siswa != null){
-                                    $nis = $val->siswa->nis;
+                                    $nisn = $val->siswa->nisn;
                                     $nama = $val->siswa->nama;
                                     $kelas = $val->siswa->kelas->nama." ".$val->siswa->kelas->jurusan->nama;
                                 }else{
-                                    $nis = '-';
+                                    $nisn = '-';
                                 }
                             }elseif($val->tipe_pemasukan == 2){
-                                $nis = "-";
+                                $nisn = "-";
                                 $nama = "-";
                                 $kelas = "-";
                             }
@@ -75,13 +75,13 @@
                         
                     }else{
                         $nama = "";
-                        $nis = "";
+                        $nisn = "";
                         $tanggalConvert = "";
                     }
                 @endphp
             </td>
             <td>{{$tanggalConvert}}</td>
-            <td style="text-align: left">{{$nis}}</td>
+            <td style="text-align: left">{{$nisn}}</td>
             <td>{{$nama}}</td>
             <td>{{$kelas}}</td>
             <td>{{$key->nama_biaya}}</td>

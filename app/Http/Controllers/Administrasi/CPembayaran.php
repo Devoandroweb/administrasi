@@ -8,6 +8,7 @@ use App\Models\Administrasi\Siswa;
 use App\Models\MJenisAdministrasi;
 use App\Models\MKelas;
 use App\Models\MRekap;
+use App\Models\MRekapTunggakan;
 use App\Models\MSiswa;
 use App\Models\MTunggakan;
 use App\Models\MWhatsapp;
@@ -32,9 +33,9 @@ class CPembayaran extends Controller
         if ($request->has('q')) {
 
             $search = $request->q;
-            $data = MSiswa::select("nis", "nama")
+            $data = MSiswa::select("nisn", "nama")
             ->where('nama', 'LIKE', "%$search%")
-            ->orWhere('nis', 'LIKE', "%$search%")
+            ->orWhere('nisn', 'LIKE', "%$search%")
             ->get();
             // dd($data);
         }
@@ -92,8 +93,7 @@ class CPembayaran extends Controller
 
                         //to save adminitrasi
                         $administrasi = Siswa::where('id_jenis_administrasi', $key)->where('id_siswa', $id_siswa)->first();
-                        $administrasi->nominal = $nominal;
-                        $administrasi->update();
+                        
 
                         //save to cicilan
                         $tCicilan = TCicilan::where('id_administrasi', $administrasi->id_administrasi)->first();
@@ -114,10 +114,11 @@ class CPembayaran extends Controller
                         //exec SPP
                         if ($key == 1) {
                             //bulan_spp
-                            $bulanSpp = $request->bulan_spp;
                             $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
+                            $bulanSpp = $request->bulan_spp;
                             $tSpp->{$bulanSpp} = $nominal;
                             $tSpp->update();
+                            
                             $detailBiaya[] = [
                                 'nama_biaya' => $request->nama_biaya[$i]." untuk bulan ".ucwords($bulanSpp),
                                 'id_jenis_administrasi' => $key,
@@ -133,6 +134,9 @@ class CPembayaran extends Controller
                                 'ajaran' => $ajaranNow
                             ];
                         }
+                        //update administrasi
+                        $administrasi->nominal = $tSpp->totalSpp();
+                        $administrasi->update();
                         //update rekap
                         $this->saveRekap($key,$siswa->id_kelas,$nominalBayar);
                         
@@ -184,6 +188,10 @@ class CPembayaran extends Controller
                             'id_jenis_administrasi' => $key,
                             'ajaran' => $ajaranLalu
                         ];
+
+                        //update rekap
+                        $this->saveRekapTunggakan($request->nama_biaya_tunggakan[$j],$ajaranLalu, $nominalTunggakanBayar);
+
                         if ($ajaranLalu != $strukWA_ajaranBefore) {
                             $strukWA .= "\n";
                             $strukWA .= "*Tanggungan pada TA " . $ajaranLalu . "* \n";
@@ -226,13 +234,15 @@ class CPembayaran extends Controller
             }
             // dd($res);
             $masterWa->save();
+            // dd($total);
             // -----------------------------------------------------------------------------------
             $hTransaksi = HTransaksi::create([
-                'kode' => 0,
+                'kode' => "SIA-".$this->generateRandomString(15),
                 'id_siswa' => $id_siswa,
                 'biaya' => json_encode($detailBiaya),
                 'tunggakan' => json_encode($detailTunggakan),
-                'terbayar' => $request->nominal_pembayaran,
+                'terbayar' => str_replace(".", "", $request->nominal_pembayaran),
+                'total' => $total
             ]);
             // dd($idTransaksi);
             
@@ -261,5 +271,11 @@ class CPembayaran extends Controller
         $mRekap = MRekap::where('id_jenis_administrasi', $idJenisAdm)->where('id_kelas', $id_kelas)->first();
         $mRekap->total = $mRekap->total + $bayar;
         $mRekap->update();
+    }
+    public function saveRekapTunggakan($namaTunggakan,$ajaran,$bayar)
+    {
+        $mRekapTunggakan = MRekapTunggakan::where('nama_tunggakan', $namaTunggakan)->where('ajaran', $ajaran)->first();
+        $mRekapTunggakan->total = $mRekapTunggakan->total + $bayar;
+        $mRekapTunggakan->update();
     }
 }

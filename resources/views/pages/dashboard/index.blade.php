@@ -66,7 +66,7 @@
                   
                 </div>
                 <div class="card-body">
-                  <canvas id="myChart" height="225"></canvas>
+                  <canvas id="myChart" height="125"></canvas>
             
                 </div>
               </div>
@@ -115,26 +115,22 @@ var myChart = new Chart(ctx, {
     datasets: [{
       label: 'Pemasukan',
       data: <?= json_encode($dataStatistikPemasukan) ?>,
-      borderWidth: 2,
-      backgroundColor: 'rgba(63,82,227,.8)',
-      borderWidth: 0,
-      borderColor: 'transparent',
-      pointBorderWidth: 0,
-      pointRadius: 3.5,
-      pointBackgroundColor: 'transparent',
-      pointHoverBackgroundColor: 'rgba(63,82,227,.8)',
+      borderWidth: 5,
+      borderColor: '#6777ef',
+      backgroundColor: 'transparent',
+      pointBackgroundColor: '#fff',
+      pointBorderColor: '#6777ef',
+      pointRadius: 4
     },
     {
       label: 'Pengeluaran',
       data: <?= json_encode($dataStatistikPengeluaran) ?>,
-      borderWidth: 2,
-      backgroundColor: 'rgba(254,86,83,.7)',
-      borderWidth: 0,
-      borderColor: 'transparent',
-      pointBorderWidth: 0 ,
-      pointRadius: 3.5,
-      pointBackgroundColor: 'transparent',
-      pointHoverBackgroundColor: 'rgba(254,86,83,.8)',
+      borderWidth: 5,
+      borderColor: 'rgba(254,86,83,.7)',
+      backgroundColor: 'transparent',
+      pointBackgroundColor: '#fff',
+      pointBorderColor: 'rgba(254,86,83,.8)',
+      pointRadius: 4
     }]
   },
   options: {
@@ -150,7 +146,7 @@ var myChart = new Chart(ctx, {
         },
         ticks: {
           beginAtZero: true,
-          stepSize: 200000,
+          stepSize: 2000000,
           callback: function(value, index, values) {
             return formatRupiah(value, 'Rp. ');
           }

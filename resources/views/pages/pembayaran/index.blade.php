@@ -18,7 +18,7 @@ use App\Models\MSiswa;
                     <label>Siswa</label>
                     <select id="siswa" class="form-control siswa" placeholer="">
                         @foreach(MSiswa::all() as $key)
-                            <option value="{{encrypt($key->id_siswa)}}">{{$key->nis." - ".$key->nama}}</option>
+                            <option value="{{encrypt($key->id_siswa)}}">{{$key->nisn." - ".$key->nama}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -101,7 +101,7 @@ $("input[name=automatic_hitung]").prop('checked',false);
 $("input[name=automatic_hitung]").attr('disabled',"disabled");
 $('.btn-save').attr('disabled','disabled');
 $('.siswa').select2({
-    placeholder: "Ketikkan NIS atau Nama Siswa",
+    placeholder: "Ketikkan NISN atau Nama Siswa",
 }).val("").trigger("change");
 $(".siswa").select2("val", "");
 $(".automatic_hitung").click(function(){

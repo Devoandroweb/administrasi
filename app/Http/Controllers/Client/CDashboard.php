@@ -44,7 +44,7 @@ class CDashboard extends Controller
         $biayaBefore = MTunggakan::where('id_siswa', $auth->id_siswa)->get();
         Pdf::setOption(['dpi' => 150, 'defaultFont' => 'calibri']);
         $pdf = Pdf::loadView('pages.client.cetak_tanggungan',compact('biayaNow','biayaBefore'));
-        return $pdf->download('administrasi-'. $auth->nis.'-'.$auth->nama.'-'.date('YmdHis').'.pdf');
+        return $pdf->download('administrasi-'. $auth->nisn.'-'.$auth->nama.'-'.date('YmdHis').'.pdf');
         // return view('pages.client.cetak_tanggungan');
     }
 }

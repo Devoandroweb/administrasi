@@ -16,4 +16,8 @@ class MTunggakan extends Model
     {
         return $this->belongsTo(MSiswa::class, 'id_siswa');
     }
+    function cicilan()
+    {
+        return $this->hasOne(TCicilan::class, 'id_administrasi');
+    }
 }

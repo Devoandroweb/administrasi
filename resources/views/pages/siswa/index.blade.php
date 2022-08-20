@@ -39,7 +39,7 @@ use App\Traits\Helper;
                     <th class="text-center">
                         #
                     </th>
-                    <th>NIS</th>
+                    <th>NISN</th>
                     <th>Nama</th>
                     <th>Jenis Kelamin</th>
                     <th>Action</th>
@@ -75,8 +75,8 @@ use App\Traits\Helper;
                     width: '4%',
                     className: 'text-center'
                 },{
-                    data: 'nis',
-                    name: 'nis',
+                    data: 'nisn',
+                    name: 'nisn',
                 },{
                     data: 'nama',
                     name: 'nama',
@@ -104,7 +104,7 @@ use App\Traits\Helper;
             success: function (response) {
                 var data = response.data;
                 $(".d-nama").text(data.nama);
-                $(".d-nis").text(data.nis);
+                $(".d-nisn").text(data.nisn);
                 $(".d-tmp-lhr").text(data.tempat_lahir);
                 $(".d-tgl-lhr").text(data.tgl_lhr);
                 $(".d-jk").text(data.jk_text);

@@ -7,41 +7,32 @@ use App\Traits\Helper;
 ?>
 <section class="section">
     <div class="section-header">
-    <h1>Kelola Administrasi Siswa</h1>
+    <h1>History Transaksi</h1>
     {{-- breadcrumbs --}}
-    {{ Breadcrumbs::render('administrasi_siswa') }}
+    {{ Breadcrumbs::render('htransaksi') }}
     </div>
 
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Data Biaya setiap Siswa</h4>
-            <div class="card-header-action">
-                
-                <div class="dropdown">
-                <a href="#" data-toggle="dropdown" class="btn btn-warning dropdown-toggle" aria-expanded="false">Filter</a>
-                <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
-                    @foreach ($kelas as $item)
-                    <a href="#" class="dropdown-item has-icon">{{$item->nama." ".$item->jurusan->nama}}</a>
-                    @endforeach
-                </div>
-                </div>
-                <a href="#" class="btn btn-primary">View All</a>
-            </div>
+                <p>Data Riwayat Pembayaran siswa</p>   
             </div>
             <div class="card-body">
             <div class="table-responsive">
                 <table id="data" class="table table-striped" width="100%">
                 <thead>
                     <tr>
-                    <th></th>
                     <th class="text-center">
                         #
                     </th>
-                    <th>NISN</th>
-                    <th>Nama</th>
-                    <th>Biaya</th>
-                    <th>Kelas</th>
+                    <th>Kode</th>
+                    <th>Tanggal</th>
+                    <th>Tanggungan Sekarang</th>
+                    <th>Tanggungan Sebelumnya</th>
+                    <th>Terbayar</th>
+                    <th>Total</th>
+                    <th>Penyetor</th>
+                    <th>Penerima</th>
                     <th></th>
                     </tr>
                 </thead>
@@ -58,9 +49,9 @@ use App\Traits\Helper;
 @push('js')
 <script>
 // CUKUP UBAH VARIABLE BERIKUT
-
-var _URL_DATATABLE = '{{ url("datatable/administrasi") }}';
+var _URL_DATATABLE = '{{ url("datatable/htransaksi") }}';
 var _TABLE = null;
+
 // SESUAIKAN COLUMN DATATABLE
 // SESUAIKAN FIELD EDIT MODAL
 setDataTable();
@@ -75,8 +66,7 @@ function setDataTable() {
             selector: 'td:nth-child(1)'
         },
         responsive: true,
-        columns: [
-            {
+        columns: [{
                 className: 'dt-control dtr-control',
                 data:null,
                 width: '4%',
@@ -84,43 +74,53 @@ function setDataTable() {
                 searchable: false,
                 defaultContent: ''},
             {
-                "data": 'DT_RowIndex',
+                data: 'kode',
+                name: 'kode',
+            },{
+                data: 'tanggal',
+                name: 'tanggal',
+            },{
+                data: 'biaya_convert',
+                name: 'biaya_convert',
+                orderable: false,
+                visible: false,
+                searchable: false,
+            },{
+                data: 'tunggakan_convert',
+                name: 'tunggakan_convert',
+                visible: false,
                 orderable: false,
                 searchable: false,
-                width: '4%',
-                className: 'text-center'
             },{
-                data: 'nisn',
-                name: 'nisn',
-                width: '15%',
-
+                data: 'terbayar',
+                name: 'terbayar',
             },{
-                data: 'nama',
-                name: 'nama',
+                data: 'total',
+                name: 'total',
             },{
-                data: 'biaya',
-                name: 'biaya',
-                visible: false,
+                data: 'penyetor',
+                name: 'id_siswa',
             },{
-                data: 'kelas',
-                name: 'kelas',
+                data: 'penerima',
+                name: 'created_by',
             },{
-                data: 'tunggakan',
-                name: null,
-            }
-            // ,{
-            //     data: 'action',
-            //     name: 'action',
-            //     orderable: false,
-            //     searchable: false
-            // }
-        ]
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false
+            }]
         });
     }
-    // Add event listener for opening and closing details
     function format(value) {
-        // console.log();
-            return value.biaya;
+        console.log(value);
+            var html = "<div class='d-flex w-100'>";
+                html += "<div class='w-50'>"
+                html += value.biaya_convert
+                html += "</div>";
+                html += "<div class='w-50'>";
+                html += value.tunggakan_convert;
+                html += "</div>";
+            return html;
         };
     $('#data tbody').on('click', 'td.dt-control', function () {
         var tr = $(this).closest('tr');
@@ -138,9 +138,8 @@ function setDataTable() {
         }
     });
 
-</script>
 
-<script type="text/javascript" src="{{asset('assets/js/delete.js')}}"></script>
+</script>
 
 @endpush
 

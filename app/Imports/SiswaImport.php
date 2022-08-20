@@ -3,15 +3,16 @@
 namespace App\Imports;
 
 use App\Traits\Helper;
+use App\Traits\Kelas;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Illuminate\Support\Facades\Hash;
 
-class SiswaImport implements ToCollection, WithChunkReading, WithStartRow
+class SiswaImport implements ToCollection, WithStartRow
 {
     use Helper;
+    use Kelas;
     protected $data = [];
     protected $jenisAdm = [];
     /**
@@ -40,7 +41,7 @@ class SiswaImport implements ToCollection, WithChunkReading, WithStartRow
                 continue;
             } 
             $this->data[] = [
-                'nis' => $row[0],
+                'nisn' => $row[0],
                 'nama' => $row[1],
                 'tempat_lahir' => $this->nullToStrip($row[2]),
                 'tgl_lahir' => date("Y-m-d", strtotime($this->convertDateToSystem($row[3]))),
@@ -50,15 +51,12 @@ class SiswaImport implements ToCollection, WithChunkReading, WithStartRow
                 'alamat' => $row[7],
                 'username' => $row[0],
                 'password' => Hash::make("12345"),
-                'administrasi' => $this->generateAdministrasi($row)
+                'administrasi' => $this->generateAdministrasi($row),
             ];
 
         }
     }
-    public function chunkSize(): int
-    {
-        return 1000;
-    }
+ 
     public function startRow(): int
     {
         return 1;

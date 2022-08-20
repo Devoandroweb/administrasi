@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\MPendanaan;
 use App\Models\Administrasi\Siswa;
 use App\Models\MAjaran;
@@ -27,9 +28,9 @@ class CDatatable extends Controller
         return DataTables::eloquent(MSiswa::withDeleted())
             ->editColumn('jk', function ($row) {
                 $result = "-";
-                if ($row->jk == 1) {
+                if ($row->jk == "L") {
                     $result = "Laki-laki";
-                } elseif ($row->jk == 2) {
+                } elseif ($row->jk == "P") {
                     $result = "Perempuan";
                 }
                 return $result;
@@ -125,9 +126,9 @@ class CDatatable extends Controller
             ->addColumn('action', function ($row) {
                 $btn = '';
                 $btn .= '<a href="' . route('kelas.edit', encrypt($row->id_kelas)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
-                if ($row->id_kelas != 1) {
-                    $btn .= '<a href="' . route('kelas.destroy', encrypt($row->id_kelas)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
-                }
+                // if ($row->id_kelas != 1) {
+                //     $btn .= '<a href="' . route('kelas.destroy', encrypt($row->id_kelas)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+                // }
                 return $btn;
             })
             ->rawColumns(['action', 'jurusan', 'siswa_count'])
@@ -198,7 +199,9 @@ class CDatatable extends Controller
             })
             ->addColumn('tunggakan', function ($row) {
                 
-                $btn = '<a href="' . url('administrasi-siswa-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-primary edit" tooltip="Klik untuk melihat Detail Tunggakan"><i class="fas fa-eye"></i></a>';
+                $btn = '<a href="' . url('administrasi-siswa-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-primary mr-2" tooltip="Klik untuk melihat Detail Tunggakan"><i class="fas fa-eye"></i></a>';
+                $btn .= '<a href="' . url('administrasi-siswa-cicilan/'. encrypt($row->id_siswa)) . '" class="text-warning mr-2" tooltip="Klik untuk melihat Cicilan Tunggakan"><i class="fas fa-coins"></i></a>';
+                $btn .= '<a href="' . url('administrasi-siswa-cetak-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-info" tooltip="Download Tunggakan"><i class="fas fa-file-download"></i></a>';
                 return $btn;
             })
             ->rawColumns(['biaya','kelas', 'tunggakan'])
@@ -219,7 +222,7 @@ class CDatatable extends Controller
             ->addColumn('nis_convert', function ($row) {
                 if($row->tipe_pemasukan == 1){
                     if($row->siswa != null){
-                        return $row->siswa->nis;
+                        return $row->siswa->nisn;
                     }else{
                         return '<i class="text-danger">Siswa tidak ada atau telah di hapus</i>';
                     }
@@ -315,6 +318,38 @@ class CDatatable extends Controller
                 return $btn;
             })
             ->rawColumns(['action', 'pesan_convert', 'tipe_convert', 'status_convert', 'no_telp_convert'])
+            ->addIndexColumn()
+            ->toJson();
+    }
+    function htransaksi()
+    {
+        $model = HTransaksi::with('createdBy','siswa');
+
+        // dd(Auth::user()->id);
+        return DataTables::eloquent($model)
+            ->addColumn('biaya_convert', function ($row) {
+                return $row->biaya();
+            })
+            ->addColumn('tunggakan_convert', function ($row) {
+                return $row->tunggakan();
+            })
+            ->addColumn('tanggal_convert', function ($row) {
+                return $this->convertDate($row->tanggal,true,false);
+            })
+            ->addColumn('penerima', function ($row) {
+                return $row->createdBy->name;
+            })->addColumn('penyetor', function ($row) {
+                if($row->siswa != null){
+                    return $row->siswa->nama;
+                }
+                return "-";
+            })
+            ->addColumn('action', function ($row) {
+                $btn = '';
+                $btn .= '<a href="' . url('pembayaran-cetak-struk/'. encrypt($row->id_transaksi)) . '" target="_blank" tooltip="Cetak Struk" class="text-info delete mr-2"><i class="fas fa-print"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['action','biaya_convert','tunggakan_convert','tanggal_convert', 'penerima', 'penyetor'])
             ->addIndexColumn()
             ->toJson();
     }

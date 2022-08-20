@@ -4,6 +4,7 @@ namespace App\Models\Administrasi;
 
 use App\Models\MJenisAdministrasi;
 use App\Models\MSiswa;
+use App\Models\TCicilan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,5 +23,9 @@ class Siswa extends Model
     function jenisAdministrasi()
     {
         return $this->belongsTo(MJenisAdministrasi::class,'id_jenis_administrasi');
+    }
+    function cicilan()
+    {
+        return $this->hasOne(TCicilan::class,'id_administrasi');
     }
 }

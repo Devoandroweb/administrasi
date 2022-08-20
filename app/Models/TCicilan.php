@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Administrasi\Siswa;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,5 +25,13 @@ class TCicilan extends Model
     static function tipeTunggakan()
     {
         return self::where('tipe', 2);
+    }
+    function administrasi()
+    {
+        return $this->belongsTo(Siswa::class, 'id_administrasi');
+    }
+    function tunggakan()
+    {
+        return $this->belongsTo(MTunggakan::class, 'id_administrasi');
     }
 }

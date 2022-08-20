@@ -3,7 +3,7 @@
 @section('content')
 <?php 
 use App\Traits\Helper;  
-$name[] = 'nis';
+$name[] = 'nisn';
 $name[] = 'nama';
 $name[] = 'tempat_lahir';
 $name[] = 'tgl_lahir';
@@ -42,7 +42,7 @@ $name[] = 'alamat';
                         </div>
                         <div class="row">
                            <div class="form-group col-md-6">
-                               <label for="exampleInputEmail1">NIS (Nomor Induk Siswa)</label>
+                               <label for="exampleInputEmail1">NISN (Nomor Induk Siswa Nasional)</label>
                                @if(is_null($data))
                                     <input type="text" class="form-control @error($name[0]) is-invalid @enderror"
                                value="{{$newNis}}" name="{{$name[0]}}" autocomplete="off"  />

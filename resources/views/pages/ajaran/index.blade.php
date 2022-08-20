@@ -19,11 +19,6 @@ use App\Traits\Helper;
                     <h4>Tahun Ajaran yang aktif adalah tahun ajaran saat ini</h4>
                     <small><i>Tahun ajaran akan berambah jika Aplikasi di Calculate</i></small>
                 </div>
-            {{-- <div class="card-header-action">
-                <a href="#" class="btn btn-primary" id="btn-add-data">
-                Tambah Tahun Ajaran
-                </a>
-            </div> --}}
             </div>
             <div class="card-body">
             <div class="table-responsive">

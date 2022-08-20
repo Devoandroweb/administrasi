@@ -34,7 +34,7 @@ use App\Traits\Helper;
                     <th class="text-center">
                         #
                     </th>
-                    <th>NIS</th>
+                    <th>NISN</th>
                     <th>Nama</th>
                     <th>Detail</th>
                     <th>Total</th>
@@ -93,7 +93,7 @@ function setDataTable() {
                 className: 'text-center'
             },{
                 data: 'nis_convert',
-                name: 'nis',
+                name: 'nisn',
                 orderable: false,
                 searchable: false,
                 width: '15%',

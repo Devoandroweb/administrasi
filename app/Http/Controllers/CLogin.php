@@ -49,7 +49,7 @@ class CLogin extends Controller
     public function authSiswa(Request $request)
     {
         $credentials = $request->validate([
-            'nis' => ['required'],
+            'nisn' => ['required'],
             'password' => ['required'],
         ]);
         $credentials['deleted'] = 0;
@@ -67,7 +67,7 @@ class CLogin extends Controller
             return redirect(url('/siswa/dashboard'));
         }
 
-        return back()->with('msg','NIS atau Password Salah');
+        return back()->with('msg','NISN atau Password Salah');
     }
     public function logout(Request $request)
     {

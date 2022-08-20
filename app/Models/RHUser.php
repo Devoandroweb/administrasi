@@ -24,6 +24,6 @@ class RHUser extends Model
         if($id_user == Auth::user()->id){
             return 'Now';
         }
-        return $this->dateDifference($this->getAttribute('date_login'),date('Y-m-d H:i:s'));
+        return $this->dateDifference($this->getAttribute('date_login'),date('Y-m-d H:i:s'), '%dh %hj %im');
     }
 }

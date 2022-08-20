@@ -15,11 +15,12 @@ use App\Http\Controllers\CKelas;
 use App\Http\Controllers\CLaporan;
 use App\Http\Controllers\Client\CDashboard as ClientCDashboard;
 use App\Http\Controllers\CLogin;
+use App\Http\Controllers\CRekap;
 use App\Http\Controllers\CSetting;
 use App\Http\Controllers\CSiswa;
 use App\Http\Controllers\CUser;
 use App\Http\Controllers\CWhatsapp;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/administrasi-siswa', [ASiswa::class, 'index']);
     Route::get('/administrasi-siswa-tunggakan/{id}', [ASiswa::class,'tunggakan']);
+    Route::get('/administrasi-siswa-cicilan/{id}', [ASiswa::class,'cicilan']);
+    Route::get('/administrasi-siswa-cetak-tunggakan/{id}', [ASiswa::class, 'printTanggungan']);
     
     //custom funtion
     Route::get('/pendanaan', [CPendanaan::class, 'pendanaan']);
@@ -74,6 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user-checkusername', [CUser::class,'check_username']);
     Route::get('/aktif-ajaran/{id}', [CAjaran::class,'actifed_ajaran']);
     Route::get('/pembayaran-cetak-struk/{id}', [CHTransaksi::class, 'cetak_struk']);
+    Route::get('/htransaksi', [CHTransaksi::class, 'index']);
 
     //datatable
     Route::get('/datatable/pegawai', [CDatatable::class,'pegawai']);
@@ -84,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/datatable/ajaran', [CDatatable::class, 'ajaran']);
     Route::get('/datatable/siswa', [CDatatable::class, 'siswa']);
     Route::get('/datatable/administrasi', [CDatatable::class, 'administrasi']);
+    Route::get('/datatable/htransaksi', [CDatatable::class, 'htransaksi']);
     Route::get('/datatable/pendanaan', [CDatatable::class, 'pendanaan']);
     Route::get('/datatable/whatsapp', [CDatatable::class, 'whatsapp']);
     
@@ -97,14 +102,33 @@ Route::middleware(['auth'])->group(function () {
 
     //setting
     Route:: get('/reset-tahun-ajaran', [CSetting::class, 'resetTahunAjaran']);
-
+    
     //signout
     Route:: get('/logout', [CLogin::class, 'logout'])->name('logout');
     
 });
+Route::get('/reset-sistem', function ()
+{
+    DB::statement("TRUNCATE TABLE t_spp;");
+    DB::statement("TRUNCATE TABLE administrasi;");
+    DB::statement("TRUNCATE TABLE t_cicilan;");
+    DB::statement("TRUNCATE TABLE m_siswa;");
+    DB::statement("TRUNCATE TABLE tunggakan;");
+    DB::statement("TRUNCATE TABLE rekap_tunggakan;");
+    DB::statement("TRUNCATE TABLE m_whatsapp;");
+    DB::statement("TRUNCATE TABLE m_saldo;");
+    DB::statement("TRUNCATE TABLE h_transaksi;");
+    DB::statement("TRUNCATE TABLE whatsapp_send;");
+    DB::statement("TRUNCATE TABLE m_whatsapp;");
+    DB::statement("TRUNCATE TABLE pendanaan;");
+    echo "Success";
+   
+});
 //cronjob
 Route::get('/cronjob-update-spp', [CCronJob::class, 'updateSpp']);
 Route::get('/reset-administrasi', [CSetting::class, 'resetTahunAjaran']);
+Route::get('/rekap', [CExport::class, 'exportRekap']);
+Route::get('/rekap-tanggungan-sebelumnya', [CRekap::class, 'rekapTanggunganSebelumnya']);
 
 //client
 Route::middleware(['auth:siswa'])->group(function () {
