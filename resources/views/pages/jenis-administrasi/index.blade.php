@@ -18,7 +18,7 @@ use App\Traits\Helper;
             <h4>Masukkan Jenis Administrasi sesuai Lembaga anda</h4>
             <div class="card-header-action">
                 <a href="#" class="btn btn-primary" id="btn-add-data">
-                Tambah Jenis Administrasi
+                <i class="fas fa-plus-circle"></i> Tambah Jenis Administrasi
                 </a>
             </div>
             </div>

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AdministrasiSiswaExport;
+use App\Exports\HPembayaranExport;
 use App\Exports\PemasukanExport;
 use App\Exports\PengeluaranExport;
 use App\Exports\RekapExport;
+use App\Exports\RekapPerSiswaExport;
 use App\Exports\SiswaExport;
 use App\Exports\TemplateSiswa;
+use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\MPendanaan;
 use App\Models\Administrasi\Siswa;
 use App\Models\MAjaran;
@@ -40,10 +43,17 @@ class CExport extends Controller
     }
     public function exportRekap()
     {
-        $date = date("dmY-His");
-        return Excel::download(new RekapExport, 'rekap-'.$date.'.xlsx');
+        return Excel::download(new RekapExport, 'rekap-'. date("dmY-His").'.xlsx');
         // return view("pages.report.rekap");
         // return view("pages.report.rekap-tanggungan-sebelumnya");
+    }
+    public function exportHTransaksi()
+    {
+        return Excel::download(new HPembayaranExport, 'riwayat-transaksi-'. date("dmY-His").'.xlsx');
+    }
+    public function exportRekapPerSiswa()
+    {
+        return Excel::download(new RekapPerSiswaExport, 'rekap-per-siswa-' . date("dmY-His") . '.xlsx');
     }
 
 

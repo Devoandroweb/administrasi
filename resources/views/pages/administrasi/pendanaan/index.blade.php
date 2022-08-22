@@ -15,15 +15,27 @@ use App\Traits\Helper;
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Data Pemasukan dan pengeluaran dari Siswa maupuan lainnya</h4>
-            <div class="card-header-action">
+            <h4>Data Pemasukan dan pengeluaran</h4>
+            <div class="card-header-action dropdown ">
+                <a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle mr-2" aria-expanded="false"><i class="fas fa-file-excel"></i> Pilih Export</a>
+                <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-126px, 31px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <li class="dropdown-title">Pilih Export</li>
+                    <li><a href="{{url('export/pemasukan')}}" class="dropdown-item">Pemasukan</a></li>
+                    <li><a href="{{url('export/pengeluaran')}}" class="dropdown-item">Pengeluaran</a></li>
+                </ul>
+            </div>
+            @if(auth()->guard('web')->user()->role != 3)
+            <div class="card-header-action mr-2">
                 <a href="#" class="btn btn-danger " id="btn-add-data-peng">
-                Tambah Pengeluaran
-                </a>
-                <a href="#" class="btn btn-primary " id="btn-add-data-pem">
-                Tambah Pemasukan
+                    <i class="fas fa-plus-circle"></i> Tambah Pengeluaran
                 </a>
             </div>
+            <div class="card-header-action">
+                <a href="#" class="btn btn-primary " id="btn-add-data-pem">
+                <i class="fas fa-plus-circle"></i> Tambah Pemasukan
+                </a>
+            </div>
+            @endif
             </div>
             <div class="card-body">
             <div class="table-responsive">

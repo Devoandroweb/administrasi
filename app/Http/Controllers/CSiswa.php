@@ -226,6 +226,7 @@ class CSiswa extends Controller
     {
         $this->spp = MJenisAdministrasi::where('id', 1)->first();
         $this->spp = $this->spp->biaya;
+        // dd($siswas);
         foreach($siswas as $siswa){
             $resultSiswa = MSiswa::create($siswa);
             $this->saveToAdministrasiAndCicilan($resultSiswa->id_siswa,$siswa['administrasi']);

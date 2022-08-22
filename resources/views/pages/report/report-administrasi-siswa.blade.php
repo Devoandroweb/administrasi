@@ -16,7 +16,7 @@
         <tr >
             <td style="background:darkkhaki">{{ $siswa->nisn }}</td>
             <td style="background:darkkhaki">{{ $siswa->nama }}</td>
-            <td style="background:darkkhaki">{{ $siswa->kelas->nama." ".$siswa->kelas->jurusan->nama }}</td>
+            <td style="background:darkkhaki">{{ $siswa->namaKelas() }}</td>
             @foreach($ajarans as $ajaran)
             <td style="text-align:center;background:salmon;"><i>Biaya</i></td>
             <td style="text-align:center;background:salmon;"><i>Nominal</i></td>

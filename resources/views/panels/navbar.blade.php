@@ -21,10 +21,12 @@
         <ul class="navbar-nav navbar-right">
           
           @if(auth()->guard('web')->check())
+          @if(auth()->guard('web')->user()->role != 3)
           <li class="nav-item active">
             <a href="{{url('pembayaran')}}" class="nav-link nav-link-lg d-flex align-items-center">
-                <span class="btn btn-warning rounded-pill">
-                  Pembayaran Siswa
+              <span class="btn btn-warning rounded-pill">
+                <i class="fas fa-hand-holding-usd" style="font-size: 13px"></i>  
+                   Pembayaran Siswa
                 </span>
             </a>
           </li>
@@ -48,6 +50,7 @@
               <span class="dot {{$activeWa}} mr-2 status-wa"></span> Whatsapp Gateway
             </a>
           </li>
+          @endif
           @endif
           <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
             <img alt="image" src="{{asset('assets')}}/img/avatar/default.png" class="rounded-circle mr-1">

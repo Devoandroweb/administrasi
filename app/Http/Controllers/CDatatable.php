@@ -22,10 +22,39 @@ use Illuminate\Support\Facades\Auth;
 class CDatatable extends Controller
 {
     use Helper;
-    public function siswa()
+    public function siswa_aktif()
     {
         // dd(MPegawai::get());
-        return DataTables::eloquent(MSiswa::withDeleted())
+        return DataTables::eloquent(MSiswa::aktif())
+            ->editColumn('jk', function ($row) {
+                $result = "-";
+                if ($row->jk == "L") {
+                    $result = "Laki-laki";
+                } elseif ($row->jk == "P") {
+                    $result = "Perempuan";
+                }
+                return $result;
+            })
+            ->addColumn('action', function ($row) {
+
+                $btn = '';
+                if(Auth::user()->role == 1){
+                    $btn .= '<a href="' . route('siswa.edit', encrypt($row->id_siswa)) . '" class="text-primary edit mr-2" tooltip="Ubah Biodata Siswa"><i class="fas fa-user-edit"></i></a>';
+                    if ($row->id_siswa != 1) {
+                        $btn .= '<a href="' . route('siswa.destroy', encrypt($row->id_siswa)). '" class="text-danger delete mr-2" tooltip="Hapus Biodata Siswa"><i class="far fa-trash-alt"></i></a>';
+                    }
+                }
+                $btn .= '<a href="'. url('siswa-show/'.encrypt($row->id_siswa)) .'" class="text-info detail" tooltip="Lihat detail Biodata Siswa" ><i class="fas fa-eye"></i></a>';
+                return $btn;
+            })
+            ->rawColumns(['action'])
+            ->addIndexColumn()
+            ->toJson();
+    }
+    public function siswa_nonaktif()
+    {
+        // dd(MPegawai::get());
+        return DataTables::eloquent(MSiswa::nonAktif())
             ->editColumn('jk', function ($row) {
                 $result = "-";
                 if ($row->jk == "L") {
@@ -165,7 +194,15 @@ class CDatatable extends Controller
     }
     public function administrasi()
     {
-        $model = MSiswa::with('admSiswa','kelas');
+        $kelas = (isset($_GET['kelas']) ? $_GET['kelas'] : -1);
+        if($kelas == 0){
+            $model = MSiswa::nonAktif()->with('admSiswa','kelas');
+        }else{
+            $model = MSiswa::aktif()->with('admSiswa','kelas');
+            if($kelas != -1){
+                $model = $model->where('id_kelas', $kelas);
+            }
+        }
         // dd($model[3]->kelas->jurusan);
         
         // dd(Auth::user()->id);
@@ -327,6 +364,15 @@ class CDatatable extends Controller
 
         // dd(Auth::user()->id);
         return DataTables::eloquent($model)
+            ->editColumn('tanggal', function ($row) {
+                return $this->convertDate($row->tanggal,true,false);
+            })
+            ->editColumn('total', function ($row) {
+                return $this->ribuan($row->total);
+            })
+            ->editColumn('terbayar', function ($row) {
+                return $this->ribuan($row->terbayar);
+            })
             ->addColumn('biaya_convert', function ($row) {
                 return $row->biaya();
             })

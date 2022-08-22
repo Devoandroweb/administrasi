@@ -59,7 +59,7 @@
             <td colspan="{{$jenisTgg->count()+3}}" style="border-bottom: 1px solid black"></td>
         </tr>
         <tr>
-            <td colspan="{{$mKelas->count()+3}}" style="font-weight: bold;text-align:center;">Tanggungan Sebelumnya</td>
+            <td colspan="{{$jenisTgg->count()+3}}" style="font-weight: bold;text-align:center;">Tanggungan Sebelumnya</td>
         </tr>
         <tr>
             <td></td>

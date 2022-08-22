@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="row">
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-12">
         <a href="{{url('export/siswa')}}">
         <div class="card card-statistic-1">
           <div class="card-icon bg-primary">
@@ -26,7 +26,7 @@
         </div>
         </a>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-12">
         <a href="{{url('export/siswa-administrasi')}}">
         <div class="card card-statistic-1">
           <div class="card-icon bg-warning">
@@ -43,7 +43,7 @@
         </div>
         </a>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-12">
         <a href="{{url('export/pengeluaran')}}">
         <div class="card card-statistic-1">
           <div class="card-icon bg-danger">
@@ -60,7 +60,7 @@
         </div>
         </a>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-12">
         <a href="{{url('export/pemasukan')}}">
         <div class="card card-statistic-1">
           <div class="card-icon bg-success">
@@ -77,7 +77,8 @@
         </div>
         </a>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+        <a href="{{url('export/htransaksi')}}">
         <div class="card card-statistic-1">
           <div class="card-icon bg-info">
             <i class="fas fa-file-export"></i>
@@ -91,8 +92,10 @@
             </div>
           </div>
         </div>
+        </a>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+        <a href="{{url('export/rekap')}}">
         <div class="card card-statistic-1">
           <div class="card-icon bg-dark">
             <i class="fas fa-file-export"></i>
@@ -106,6 +109,7 @@
             </div>
           </div>
         </div>
+        </a>
       </div>
       
     </div>

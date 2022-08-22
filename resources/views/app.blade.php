@@ -32,7 +32,7 @@
   @stack('style')
 </head>
 
-<body style="font-size:12px">
+<body>
 
   <div class="loader-line app-loader d-none" style="position: fixed;top: 0;  z-index: 999;"></div>
   <div id="app">

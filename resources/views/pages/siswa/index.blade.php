@@ -18,15 +18,37 @@ use App\Traits\Helper;
         <div class="card card-primary">
             <div class="card-header">
             <h4>Data Siswa untuk mengelola Administrasi</h4>
+            @if(auth()->guard('web')->user()->role == 3)
             <div class="card-header-action">
-                <a href="{{url('siswa-import')}}" class="btn btn-warning mr-2">
-                Import Siswa
-                </a>
-            </div><div class="card-header-action">
-                <a href="{{$url}}" class="btn btn-primary" id="btn-add-data">
-                Tambah Siswa
+                <a href="{{url('export/siswa')}}" class="btn btn-success mr-2">
+                <i class="fas fa-file-excel"></i> Export Siswa
                 </a>
             </div>
+            @endif
+            @if(auth()->guard('web')->user()->role != 3)
+            <div class="card-header-action">
+                <a href="{{$url}}" class="btn btn-primary mr-2" id="btn-add-data">
+                <i class="fas fa-plus-circle"></i> Tambah Siswa
+                </a>
+            </div>
+            <div class="card-header-action dropdown mr-2">
+                <a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle" aria-expanded="false"><i class="fas fa-hamburger"></i> Menu Lain</a>
+                <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-126px, 31px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <li class="dropdown-title">Pilih Menu</li>
+                    <li><a href="{{url('export/siswa')}}" class="dropdown-item">Export</a></li>
+                    <li><a href="{{url('siswa-import')}}" class="dropdown-item">Import</a></li>
+                </ul>
+            </div>
+            @endif
+            <div class="card-header-action dropdown  mr-2">
+                <a href="#" data-toggle="dropdown" class="btn btn-danger filter dropdown-toggle" aria-expanded="false"><i class="fas fa-filter"></i> Status : Aktif</a>
+                <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-126px, 31px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <li class="dropdown-title">Pilih Status</li>
+                    <li><a href="{{ url("datatable/siswa-aktif") }}" data-text="aktif" class="dropdown-item sub-filter">Aktif</a></li>
+                    <li><a href="{{ url("datatable/siswa-nonaktif") }}" data-text="non aktif" class="dropdown-item sub-filter">Non Aktif</a></li>
+                </ul>
+            </div>
+            
             </div>
             <div class="card-body">
             @if(session('msg'))
@@ -59,13 +81,15 @@ use App\Traits\Helper;
 
 
 <script>
+    var _URL_DATATABLE = '{{ url("datatable/siswa-aktif") }}';
+    
     setDataTable();
     function setDataTable() {
         $('#data').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{{ url("datatable/siswa") }}',
+                url: _URL_DATATABLE,
             },
             responsive: true,
             columns: [{
@@ -92,6 +116,19 @@ use App\Traits\Helper;
                 }]
         });
     }
+    //DOM
+    $(".sub-filter").click(function (e) { 
+        e.preventDefault();
+        _URL_DATATABLE = $(this).attr('href');
+        $('#data').DataTable().destroy();
+        setDataTable();
+        $(".filter").text("Filter : "+capitalize($(this).data('text')));
+    });
+    function capitalize(word) {
+        const lower = word.toLowerCase();
+        return word.charAt(0).toUpperCase() + lower.slice(1);
+    }
+
     //modal
     // open modal
     $(document).on("click",".detail", function (e) {

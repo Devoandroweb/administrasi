@@ -17,16 +17,23 @@ use App\Traits\Helper;
             <div class="card-header">
             <h4>Data Biaya setiap Siswa</h4>
             <div class="card-header-action">
+                <a href="{{url('export/siswa-administrasi')}}" class="btn btn-success mr-2">
+                <i class="fas fa-file-excel"></i> Export Administrasi Siswa
+                </a>
+            </div>
+            <div class="card-header-action">
                 
                 <div class="dropdown">
-                <a href="#" data-toggle="dropdown" class="btn btn-warning dropdown-toggle" aria-expanded="false">Filter</a>
+                <a href="#" data-toggle="dropdown" class="btn btn-warning filter dropdown-toggle" aria-expanded="false"><i class="fas fa-filter"></i> Filter : Semua</a>
                 <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 26px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <a href="{{ url("datatable/administrasi") }}" data-text="Semua" class="dropdown-item sub-filter has-icon">Semua</a>
                     @foreach ($kelas as $item)
-                    <a href="#" class="dropdown-item has-icon">{{$item->nama." ".$item->jurusan->nama}}</a>
+                    <a href="{{ url("datatable/administrasi?kelas=".$item->id_kelas) }}" data-text="{{$item->nama." ".$item->jurusan->nama}}" class="dropdown-item sub-filter has-icon">{{$item->nama." ".$item->jurusan->nama}}</a>
                     @endforeach
+                    <a href="{{ url("datatable/administrasi?kelas=0") }}" data-text="Alumni" class="dropdown-item sub-filter has-icon">Alumni</a>
+
                 </div>
                 </div>
-                <a href="#" class="btn btn-primary">View All</a>
             </div>
             </div>
             <div class="card-body">
@@ -117,6 +124,15 @@ function setDataTable() {
         ]
         });
     }
+    //DOM
+    $(".sub-filter").click(function (e) { 
+        e.preventDefault();
+        _URL_DATATABLE = $(this).attr('href');
+        $('#data').DataTable().destroy();
+        setDataTable();
+        $(".filter").text("Filter : "+$(this).data('text').toUpperCase());
+    });
+    
     // Add event listener for opening and closing details
     function format(value) {
         // console.log();

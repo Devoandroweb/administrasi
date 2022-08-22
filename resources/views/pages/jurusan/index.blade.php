@@ -18,7 +18,7 @@ use App\Traits\Helper;
             <h4>Masukkan Jurusan sesuai Lembaga anda</h4>
             <div class="card-header-action">
                 <a href="#" class="btn btn-primary" id="btn-add-data">
-                Tambah Jurusan
+                <i class="fas fa-plus-circle"></i> Tambah Jurusan
                 </a>
             </div>
             </div>

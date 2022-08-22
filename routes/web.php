@@ -80,26 +80,35 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/htransaksi', [CHTransaksi::class, 'index']);
 
     //datatable
-    Route::get('/datatable/pegawai', [CDatatable::class,'pegawai']);
-    Route::get('/datatable/user', [CDatatable::class,'user']);
-    Route::get('/datatable/jenis-administrasi', [CDatatable::class, 'jenis_administrasi']);
-    Route::get('/datatable/jurusan', [CDatatable::class, 'jurusan']);
-    Route::get('/datatable/kelas', [CDatatable::class, 'kelas']);
-    Route::get('/datatable/ajaran', [CDatatable::class, 'ajaran']);
-    Route::get('/datatable/siswa', [CDatatable::class, 'siswa']);
-    Route::get('/datatable/administrasi', [CDatatable::class, 'administrasi']);
-    Route::get('/datatable/htransaksi', [CDatatable::class, 'htransaksi']);
-    Route::get('/datatable/pendanaan', [CDatatable::class, 'pendanaan']);
-    Route::get('/datatable/whatsapp', [CDatatable::class, 'whatsapp']);
-    
+    Route::prefix("/datatable")->group(function () {
+        Route::get('/pegawai', [CDatatable::class,'pegawai']);
+        Route::get('/user', [CDatatable::class,'user']);
+        Route::get('/jenis-administrasi', [CDatatable::class, 'jenis_administrasi']);
+        Route::get('/jurusan', [CDatatable::class, 'jurusan']);
+        Route::get('/kelas', [CDatatable::class, 'kelas']);
+        Route::get('/ajaran', [CDatatable::class, 'ajaran']);
+        Route::get('/siswa-aktif', [CDatatable::class, 'siswa_aktif']);
+        Route::get('/siswa-nonaktif', [CDatatable::class, 'siswa_nonaktif']);
+        Route::get('/administrasi', [CDatatable::class, 'administrasi']);
+        Route::get('/htransaksi', [CDatatable::class, 'htransaksi']);
+        Route::get('/pendanaan', [CDatatable::class, 'pendanaan']);
+        Route::get('/whatsapp', [CDatatable::class, 'whatsapp']);
+    });
     Route::prefix("/export")->group(function () {
         Route::get('/siswa', [CExport::class, 'exportSiswa']);
         Route::get('/siswa-administrasi', [CExport::class, 'exportAdministrasiSiswa']);
         Route::get('/pengeluaran', [CExport::class, 'exportPengeluaran']);
         Route::get('/pemasukan', [CExport::class, 'exportPemasukan']);
         Route::get('/siswa-template', [CExport::class, 'exportSiswaTemplate']);
+        Route::get('/rekap', [CExport::class, 'exportRekap']);
+        // Route::get('/rekap-tanggungan-sebelumnya', [CRekap::class, 'rekapTanggunganSebelumnya']);
+        Route::get('/htransaksi', [CExport::class, 'exportHTransaksi']);
+        Route::get('/rekap-per-siswa', [CExport::class, 'exportRekapPerSiswa']);
     });
-
+    Route::prefix("/rekap")->group(function () {
+        Route::get('/per-kelas', [CRekap::class, 'rekapPerKelas']);
+        Route::get('/per-siswa', [CRekap::class, 'rekapPerSiswa']);
+    });
     //setting
     Route:: get('/reset-tahun-ajaran', [CSetting::class, 'resetTahunAjaran']);
     
@@ -121,14 +130,14 @@ Route::get('/reset-sistem', function ()
     DB::statement("TRUNCATE TABLE whatsapp_send;");
     DB::statement("TRUNCATE TABLE m_whatsapp;");
     DB::statement("TRUNCATE TABLE pendanaan;");
+    DB::statement("TRUNCATE TABLE m_rekap;");
     echo "Success";
    
 });
 //cronjob
 Route::get('/cronjob-update-spp', [CCronJob::class, 'updateSpp']);
 Route::get('/reset-administrasi', [CSetting::class, 'resetTahunAjaran']);
-Route::get('/rekap', [CExport::class, 'exportRekap']);
-Route::get('/rekap-tanggungan-sebelumnya', [CRekap::class, 'rekapTanggunganSebelumnya']);
+
 
 //client
 Route::middleware(['auth:siswa'])->group(function () {

@@ -30,4 +30,8 @@ class MKelas extends Model
     {
         return $this->hasMany(MSiswa::class,'id_kelas');
     }
+    public function namaKelas()
+    {
+        return $this->nama . "-" . $this->jurusan->nama;
+    }
 }

@@ -35,24 +35,27 @@ class SiswaImport implements ToCollection, WithStartRow
         }
         //hilangkan index ke 1
         $isFirst = true;
+        // dd($collection);
         foreach ($collection as $row) {
             if ($isFirst) {
                 $isFirst = false;
                 continue;
-            } 
-            $this->data[] = [
-                'nisn' => $row[0],
-                'nama' => $row[1],
-                'tempat_lahir' => $this->nullToStrip($row[2]),
-                'tgl_lahir' => date("Y-m-d", strtotime($this->convertDateToSystem($row[3]))),
-                'jk' => $row[4],
-                'no_telp' => $row[5],
-                'id_kelas' => $this->searchKelasId($row[6]),
-                'alamat' => $row[7],
-                'username' => $row[0],
-                'password' => Hash::make("12345"),
-                'administrasi' => $this->generateAdministrasi($row),
-            ];
+            }
+            if($row[0] != null || $row[1] != null){
+                $this->data[] = [
+                    'nisn' => $row[0],
+                    'nama' => $row[1],
+                    'tempat_lahir' => $this->nullToStrip($row[2]),
+                    'tgl_lahir' => date("Y-m-d", strtotime($this->convertDateToSystem($row[3]))),
+                    'jk' => $row[4],
+                    'no_telp' => $row[5],
+                    'id_kelas' => $this->searchKelasId($row[6]),
+                    'alamat' => $row[7],
+                    'username' => $row[0],
+                    'password' => Hash::make("12345"),
+                    'administrasi' => $this->generateAdministrasi($row),
+                ];
+            }
 
         }
     }

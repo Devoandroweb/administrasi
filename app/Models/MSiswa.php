@@ -26,6 +26,14 @@ class MSiswa extends Authenticatable
     protected $hidden = [
         'created_at', 'updated_at', 'password'
     ];
+    public static function aktif()
+    {
+        return parent::withDeleted()->where('status',1);
+    }
+    public static function nonAktif()
+    {
+        return parent::withDeleted()->where('status',0);
+    }
     function generatePhotos($class)
     {
         $img = '<img class="'.$class.'" src="'.url('img/').$this->foto.'" alt="'.$this->nama.'">';

@@ -8,6 +8,7 @@ use App\Traits\CreatedUpdatedBy;
 use App\Traits\Helper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class HTransaksi extends Model
 {
@@ -16,7 +17,7 @@ class HTransaksi extends Model
     use CreatedUpdatedBy;
     protected $table = 'h_transaksi';
     protected $primaryKey = 'id_transaksi';
-    protected $fillable = ['kode', 'tanggal', 'id_siswa', 'biaya', 'tunggakan', 'total','terbayar'];
+    protected $fillable = ['kode', 'tanggal', 'id_siswa', 'biaya', 'tunggakan', 'total', 'terbayar'];
     function siswa()
     {
         return $this->belongsTo(MSiswa::class, 'id_siswa');
@@ -69,5 +70,9 @@ class HTransaksi extends Model
                     <div class='card-body'>" . $table . "</div></div>";
         return $html;
     }
-
+    public function totalSum($date)
+    {
+        $result = DB::selectOne("SELECT sum(total) as sum_total FROM h_transaksi WHERE Date(tanggal) = '{$date}'");
+        return $result->sum_total;
+    }
 }
