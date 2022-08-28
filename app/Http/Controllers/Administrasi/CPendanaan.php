@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Administrasi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Administrasi\MPendanaan;
+use App\Models\MSaldo;
+use App\Traits\Administrasi;
 use App\Traits\Saldo;
 use Illuminate\Http\Request;
 
@@ -13,7 +15,8 @@ class CPendanaan extends Controller
     function pendanaan()
     {
         $title = "Pendanaan";
-        return view('pages.administrasi.pendanaan.index',compact('title'));
+        $saldo = MSaldo::first()->saldo;
+        return view('pages.administrasi.pendanaan.index',compact('title','saldo'));
     }
     
     function pemasukan_save(Request $request)
@@ -39,6 +42,7 @@ class CPendanaan extends Controller
                 'saldo' => $this->updateSaldo($total),
             );
             MPendanaan::insert($pemasukan);
+            $this->createPemasukan(2, $request->nama, $detail, $total);
             return response()->json(['status' => true, 'msg' => 'Sukses Menambah Data'], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
@@ -58,15 +62,19 @@ class CPendanaan extends Controller
                 $detail[] = ["nama_biaya" => $nama_pengeluaran[$i],"nominal" => $biaya];
                 $total = $total + $biaya;
             }
-            $pengeluaran = array(
-                'tipe' => 2,
-                'nama' => $request->nama,
-                'detail' => json_encode($detail),
-                'total' => $total,
-                'saldo' => $this->updateSaldo($total,false),
-            );
-            MPendanaan::insert($pengeluaran);
-            return response()->json(['status' => true, 'msg' => 'Sukses Menambah Data'], 200);
+            if($this->cekSaldo($total)){
+                $pengeluaran = array(
+                    'tipe' => 2,
+                    'nama' => $request->nama,
+                    'detail' => json_encode($detail),
+                    'total' => $total,
+                    'saldo' => $this->updateSaldo($total,false),
+                );
+                MPendanaan::insert($pengeluaran);
+                return response()->json(['status' => true, 'msg' => 'Sukses Menambah Data'], 200);
+            }else{
+                return response()->json(['status' => false, 'msg' => 'Saldo tida cukup'], 200);
+            }
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         }

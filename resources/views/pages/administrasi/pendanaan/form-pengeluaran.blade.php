@@ -19,7 +19,7 @@
             <td valign="middle" class="text-center"><i class="fas fa-caret-left"></i> <i class="fas fa-caret-right"></i></td>
             <td>
                 <div class="form-group mb-0">
-                    <input type="text" name="nominal[]" class="form-control mb-0 numeric" required="" autocomplete="off">
+                    <input type="text" name="nominal[]" class="form-control mb-0 numeric nominal-peng" required="" autocomplete="off">
                 </div>
             </td>
         </tr>

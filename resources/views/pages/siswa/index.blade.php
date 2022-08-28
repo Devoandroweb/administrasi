@@ -124,10 +124,7 @@ use App\Traits\Helper;
         setDataTable();
         $(".filter").text("Filter : "+capitalize($(this).data('text')));
     });
-    function capitalize(word) {
-        const lower = word.toLowerCase();
-        return word.charAt(0).toUpperCase() + lower.slice(1);
-    }
+    
 
     //modal
     // open modal

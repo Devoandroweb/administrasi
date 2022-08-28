@@ -160,6 +160,8 @@ class CSiswa extends Controller
         $data['no_telp'] = $noTelp;
         $requestFile = $request->file('foto');
         if ($requestFile != null) {
+            $fileOld = $requestFile->getClientOriginalName(); 
+            unlink(public_path() . '/upload/siswa' . $fileOld);
             $nameFile = $this->uploadImage(public_path() . '/upload/siswa', $requestFile);
             $data['foto'] = $nameFile;
         }
@@ -214,6 +216,7 @@ class CSiswa extends Controller
             $importSiswa = new SiswaImport();
             Excel::import($importSiswa, public_path('/file_import/' . $nama_file));
             unlink($path . "\\" . $nama_file);
+            // dd($importSiswa->getData());
             $this->jenisAdmistrasi = MJenisAdministrasi::all();
             $this->createSiswa($importSiswa->getData());
             return response()->json(['status' => true, 'msg'=> 'Sukses Import Siswa','data'=>null]);

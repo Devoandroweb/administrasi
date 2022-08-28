@@ -53,15 +53,21 @@ use App\Traits\Helper;
                     $headerGroup = ""; 
                     $yearAkademicNow = Session::get('tahun_awal')." - ". Session::get('tahun_akhir');
                     $no = 1;
+                    // dd(count($biayaNow));
                 @endphp
                 <tr>
                     <td colspan="3" style="font-weight: bold; padding-top:20px;padding-bottom:10px;">Tahun Ajaran : {{$yearAkademicNow}}</td>
                 </tr>
+                @if(count($biayaNow) == 0)
+                <tr>
+                    <td colspan="3" style="padding-top:20px;padding-bottom:10px;text-align:center;">Tidak ada Tanggungan</td>
+                </tr>
+                @endif
                 @foreach ($biayaNow as $item)
                 <tr>
                     <td>{{$loop->iteration." ".$item->jenisAdministrasi->nama}}</td>
                     @if($item->nominal != 0)
-                    <td style="text-align: right">Rp. </td>
+                    <td style="text-align: right;width:5%;">Rp. </td>
                     <td style="text-align: right">{{number_format($item->nominal,2,".",",")}}</td>
                     @else
                     <td style="text-align: right"></td>
@@ -79,10 +85,10 @@ use App\Traits\Helper;
                 </tr>
                 @endif
                 <tr>
-                    <td>{{$no." ".$item->nama_tunggakan}}</td>
+                    <td style="width:70%;">{{$no." ".$item->nama_tunggakan}}</td>
                     @if($item->nominal != 0)
-                    <td style="text-align: right">Rp. </td>
-                    <td style="text-align: right">{{number_format($item->nominal,2,".",",")}}</td>
+                    <td style="text-align: right;">Rp. </td>
+                    <td style="text-align: right;width:25%;">{{number_format($item->nominal,2,".",",")}}</td>
                     @else
                     <td style="text-align: right"></td>
                     <td style="text-align: right; color:#47c363 ;">Lunas</td>

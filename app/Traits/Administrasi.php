@@ -2,16 +2,19 @@
 
 namespace App\Traits;
 
+use App\Models\Administrasi\MPendanaan;
 use App\Models\Administrasi\Siswa;
 use App\Models\MJenisAdministrasi;
 use App\Models\MKelas;
 use App\Models\MRekap;
+use App\Models\MSaldo;
 use App\Models\TCicilan;
 use App\Models\TSPP;
 
 
 trait Administrasi
 {
+    use Saldo;
     function createAdministrasi($id_siswa)
     {
 
@@ -74,4 +77,17 @@ trait Administrasi
         }
         MRekap::insert($dataRekap);
     }
+    function createPemasukan($tipePemasukan,$nama,$detail,$total)
+    {
+        $pemasukan = array(
+            'tipe' => 1,
+            'tipe_pemasukan' => $tipePemasukan,
+            'nama' => $nama,
+            'detail' => json_encode($detail),
+            'total' => $total,
+            'saldo' => $this->updateSaldo($total),
+        );
+        MPendanaan::insert($pemasukan);
+    }
+    
 }

@@ -1,7 +1,7 @@
 
 $('.image-live img').css('cursor','pointer');
 $('.image-live img').click(() => {
-    $('.image-live input[type=file]').click();
+    $('.image-live .file-live').click();
 });
 $('.file-live').change(function() {
     var file = $(this);

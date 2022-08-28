@@ -20,4 +20,12 @@ trait Saldo
         $saldo->update();
         return $saldo->saldo;
     }
+    function cekSaldo($total)
+    {
+        $saldo = MSaldo::first();
+        if ($saldo >= $total) {
+            return true;
+        }
+        return false;
+    }
 }

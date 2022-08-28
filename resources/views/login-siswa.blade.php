@@ -7,7 +7,7 @@
   <div class="bg"></div>
   <div class="bg bg2"></div>
   <div class="bg bg3"></div>
-  <div class="content w-100">
+  <div class="content pt-0 pt-md-2 w-100">
     <div class="row justify-content-center mx-auto" style="height:80%">
       <div class="col col-md-4">
         <div class="">
@@ -23,7 +23,8 @@
             <div class="alert alert-danger" role="alert">
               {{session('msg')}}
             </div> 
-            @endif <div class="form-group">
+            @endif 
+            <div class="form-group">
               <label class="text-white">Nomor Induk Siswa Nasional (NISN)</label>
               <div class="input-group">
                 <div class="input-group-prepend">
@@ -42,14 +43,14 @@
                     <i class="fas fa-lock"></i>
                   </div>
                 </div>
-                <input type="password" name="password" class="form-control pwstrength" placeholder="Masukkan Password" data-indicator="pwindicator" required>
+                <input type="password" name="password" class="form-control" placeholder="Masukkan Password" required>
               </div>
               <div id="pwindicator" class="pwindicator">
                 <div class="bar"></div>
                 <div class="label"></div>
               </div>
             </div>
-            <button type="submit" class="btn btn-outline-white btn-login btn-block py-2">Masuk</button>
+            <button id="btn-login" type="submit" autocomplete="on" class="btn btn-outline-white  btn-block py-2">Masuk</button>
           </form>
         </div>
       </div>
@@ -60,11 +61,15 @@
 @push('js')
 <script>
   $('body').addClass('bg-info');
-  $('.btn-login').click(function (e) { 
-    // e.preventDefault();
-    $(this).text("Tunggu Sebentar ...");
-    $(this).attr('disabled','disabled');
-    $(".waiting").html('<div class="loader-line app-loader"></div>');
-  });
+    $(document).on('click','#btn-login',function (e) {
+      
+      e.preventDefault();
+      if(validateInput($("form"))){
+        $(this).text("Tunggu Sebentar ...");
+        $(this).attr('disabled','disabled');
+        $(".waiting").html('<div class="loader-line app-loader"></div>');
+        $("form").submit();
+      }
+    });
 </script>
 @endpush

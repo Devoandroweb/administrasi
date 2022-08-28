@@ -10,4 +10,5 @@ class MSaldo extends Model
     use HasFactory;
     protected $table = 'm_saldo';
     public $timestamps = false;
+    protected $fillable = ['saldo'];
 }

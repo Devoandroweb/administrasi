@@ -60,6 +60,7 @@ use App\Traits\Helper;
                     
                 </tbody>
                 </table>
+
             </div>
             </div>
         </div>
@@ -70,6 +71,7 @@ use App\Traits\Helper;
 <script type="text/javascript" src="{{asset('vendor/autonumeric/autoNumeric.js')}}"></script>
 <script>
 // CUKUP UBAH VARIABLE BERIKUT
+var _SALDO = "{{$saldo}}";
 var _URL_INSERT_PEMASUKAN = '{{url("pemasukan/save")}}';
 var _URL_INSERT_PENGELUARAN = '{{url("pengeluaran/save")}}';
 var _URL_DATATABLE = '{{ url("datatable/pendanaan") }}';
@@ -180,7 +182,7 @@ function setDataTable() {
             text: '<i class="fas fa-plus-circle"></i> ',
             class: 'btn btn-success',
             handler: function(current_modal) {
-                var html = '<?= Helper::includeAsJsString("pages.administrasi.pendanaan.input-pemasukan") ?>'
+                var html = '<?= Helper::includeAsJsString("pages.administrasi.pendanaan.input-pengeluaran") ?>'
                 current_modal.find('table').append(html);
                 setNumeric();
             }
@@ -191,7 +193,8 @@ function setDataTable() {
                 id: 'btn-submit',
                 text: 'Simpan',
                 handler: function(current_modal) {
-                    saveForm($('#form-data-peng'),_URL_INSERT_PENGELUARAN,current_modal,1);
+                    // saveForm($('#form-data-peng'),_URL_INSERT_PENGELUARAN,current_modal,1);
+                    cekSaldo();
                 }
         },
         {
@@ -240,7 +243,12 @@ function setDataTable() {
     function removeInput(){
         $(".add-input").remove();
     }
-    
+    function cekSaldo(){
+        var totalInput = 0;
+        $.each($(".nominal-peng"), function (indexInArray, valueOfElement) { 
+             console.log(valueOfElement);
+        });
+    }
 </script>
 
 <script type="text/javascript" src="{{asset('assets/js/save.js')}}"></script>

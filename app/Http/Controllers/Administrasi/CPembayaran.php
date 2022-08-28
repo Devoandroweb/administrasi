@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Administrasi;
 use App\Http\Controllers\Controller;
 use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\Siswa;
-use App\Models\MJenisAdministrasi;
-use App\Models\MKelas;
 use App\Models\MRekap;
 use App\Models\MRekapTunggakan;
 use App\Models\MSiswa;
@@ -14,6 +12,7 @@ use App\Models\MTunggakan;
 use App\Models\MWhatsapp;
 use App\Models\TCicilan;
 use App\Models\TSPP;
+use App\Traits\Administrasi;
 use App\Traits\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -22,6 +21,7 @@ use Illuminate\Support\Facades\Session;
 class CPembayaran extends Controller
 {
     use Helper;
+    use Administrasi;
     function index()
     {
         return view('pages.pembayaran.index')->with('title', 'Pembayaran Siswa');
@@ -49,7 +49,8 @@ class CPembayaran extends Controller
             $tggNow = Siswa::join('m_jenis_administrasi', 'm_jenis_administrasi.id', '=', 'administrasi.id_jenis_administrasi')
                 ->where('id_siswa', $siswaId)->get();
             $tggBefore = MTunggakan::where('id_siswa', $siswaId)->get();
-            return response()->json(['tgg_now' => $tggNow, 'tgg_before' => $tggBefore]);
+            $spp = TSPP::where('id_siswa',$siswaId)->first();
+            return response()->json(['tgg_now' => $tggNow, 'tgg_before' => $tggBefore, 'spp'=>$spp]);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         }
@@ -57,6 +58,7 @@ class CPembayaran extends Controller
     function save($id, Request $request)
     {
         // dd($request->all());
+
         // try {
         $id_siswa = decrypt($id);
         $siswa = MSiswa::withDeleted()->where('id_siswa', $id_siswa)->first();
@@ -115,17 +117,22 @@ class CPembayaran extends Controller
                     if ($key == 1) {
                         //bulan_spp
                         $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
-                        $bulanSpp = $request->bulan_spp;
-                        $tSpp->{$bulanSpp} = $nominal;
+                        $bulanSpp = explode(",", $request->bulan_spp);
+                        $bayarSpp = $request->bayar_spp;
+                        $j = 0;
+                        foreach ($bulanSpp as $spp) {
+                            $tSpp->{$spp} = $tSpp->{$spp} - $nominal;
+                            $detailBiaya[] = [
+                                'nama_biaya' => $request->nama_biaya[$i] . " untuk bulan " . ucwords($spp),
+                                'id_jenis_administrasi' => $key,
+                                'nominal' => str_replace(".","",$bayarSpp[$j]),
+                                'ajaran' => $ajaranNow,
+                                'bulan_spp' => $spp
+                            ];
+                            $j++;
+                        }
                         $tSpp->update();
                         $administrasi->nominal = $tSpp->totalSpp();
-                        $detailBiaya[] = [
-                            'nama_biaya' => $request->nama_biaya[$i] . " untuk bulan " . ucwords($bulanSpp),
-                            'id_jenis_administrasi' => $key,
-                            'nominal' => $nominalBayar,
-                            'ajaran' => $ajaranNow,
-                            'bulan_spp' => $bulanSpp
-                        ];
                     } else {
                         $administrasi->nominal = $nominal;
                         $detailBiaya[] = [
@@ -242,10 +249,17 @@ class CPembayaran extends Controller
             'id_siswa' => $id_siswa,
             'biaya' => json_encode($detailBiaya),
             'tunggakan' => json_encode($detailTunggakan),
-            'terbayar' => str_replace(".", "", $request->nominal_pembayaran),
+            // 'terbayar' => str_replace(".", "", $request->nominal_pembayaran),
             'total' => $total
         ]);
-        // dd($idTransaksi);
+
+        // dd($detail);
+        $this->createPemasukan(2,
+            $siswa->nama,
+            array_merge($detailBiaya, $detailTunggakan),
+            $total
+        );
+
 
         //-------------------------------------------------------------------------------------------
         return response()->json(['status' => true, 'msg' => "Sukses Membayar", "data" => encrypt($hTransaksi->id_transaksi)], 200);
@@ -258,7 +272,12 @@ class CPembayaran extends Controller
     {
         try {
             //code...
+            // dd($bulan);
+            $bulan = explode(",",$bulan);
             $spp = TSPP::where("id_siswa", decrypt($id_siswa))->first();
+            // foreach ($variable as $key => $value) {
+                
+            // }
             if ($spp != null) {
                 return response()->json(['status' => true, 'data' => $spp->{$bulan}]);
             }

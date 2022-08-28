@@ -74,3 +74,52 @@ function readURL(input, status) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+function capitalize(word) {
+    const lower = word.toLowerCase();
+    return word.charAt(0).toUpperCase() + lower.slice(1);
+}
+function inArray(value, array) {
+    for(var i = 0; i < array.length; i++) {
+        if(array[i] == value) return true;
+    }
+    return false;
+}
+function inObject(value, arrayOject, key) {
+    for(var i = 0; i < arrayOject.length; i++) {
+        if(arrayOject[i][key] == value) return true;
+    }
+    return false;
+}
+function updateObject(arrayObject,key,value,key_update,newValue){
+    //Find index of specific object using findIndex method.    
+    var objIndex = arrayObject.findIndex((obj => obj[key] == value));
+
+    //Log object to Console.
+    console.log("Before update: ", arrayObject[objIndex])
+
+    //Update object's name property.
+    arrayObject[objIndex][key_update] = newValue;
+}
+function searchInObject(arrayObject,key,key_value){
+    //Find index of specific object using findIndex method.    
+    var objIndex = arrayObject.findIndex((obj => obj[key] == key_value));
+    return arrayObject[objIndex];
+}
+function removeInObject(arrayObject,key,key_value){
+    //Find index of specific object using findIndex method.    
+    var objIndex = arrayObject.findIndex((obj => obj[key] == key_value));
+    if(objIndex != -1){
+        arrayObject.splice(objIndex,1);
+        return true;
+    }
+    return false;
+}
+function compare(a, b ){
+    if ( a.index < b.index ){
+        return -1;
+    }
+    if ( a.index > b.index ){
+        return 1;
+    }
+    return 0;
+}

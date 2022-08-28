@@ -39,8 +39,9 @@
     <hr>
     <ul class="sidebar-menu">
         {{-- <li class="menu-header">Dashboard</li> --}}
-        @if(auth()->guard('siswa')->check())
+          @if(auth()->guard('siswa')->check())
           <li class="{{menuActive(url('client/dashboard'))}}"><a href="{{url('client/dashboard')}}" class="nav-link"><i class="fas fa-fire"></i><span>Dashboard</span></a></li>
+          <li class="{{menuActive(url('client/profile'))}}"><a href="{{url('client/profile')}}" class="nav-link"><i class="fas fa-user"></i><span>Profile</span></a></li>
           <li class="{{menuActive(url('client/cetak-administrasi'))}}"><a href="{{url('client/cetak-administrasi')}}" class="nav-link"><i class="fas fa-print"></i><span>Cetak Administrasi</span></a></li>
           @endif
 

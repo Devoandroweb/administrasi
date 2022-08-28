@@ -66,7 +66,7 @@ use App\Traits\Helper;
 @push('js')
 <script>
     $(".btn-exec").attr('disabled','disabled');
-    $("#data").DataTable();
+    // $("#data").DataTable();
     $(".custom-file-input").change(function (e) { 
         e.preventDefault();
         var file = $(this)[0].files;
@@ -94,6 +94,7 @@ use App\Traits\Helper;
             contentType: false,
             processData: false,
             success: function (response) {
+                // $("#data").DataTable().destroy();
                 if(response.status){
                     var html = "";
                     var no = 1;
@@ -120,6 +121,7 @@ use App\Traits\Helper;
                             
                         });
                         $("#data tbody").html(html);
+                        // $("#data").DataTable();
                     }else{
                         window.location.href = '{{url("siswa")}}';
                     }

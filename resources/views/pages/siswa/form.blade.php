@@ -11,6 +11,7 @@ $name[] = 'jk';
 $name[] = 'no_telp';
 $name[] = 'id_kelas';
 $name[] = 'alamat';
+$name[] = 'foto';
 ?>
 
 <section class="section">
@@ -35,6 +36,7 @@ $name[] = 'alamat';
                             <div class="col">
                                 <div class="image-live">
                                     <input type="file" class="d-none file-live" name="foto">
+                                    <input type="file" class="d-none" value="{{Helper::showData($data,$name[8])}}" name="foto-old">
                                     <img src="{{asset('assets/img/avatar/avatar-5.png')}}"  style="width: 100px; height:100px" class="rounded-circle shadow mb-4 img-fluid" alt="" srcset="">
                                 </div>
                                 <div class="text-danger"><i>File Tidak Boleh Lebih besar dari 1Mb</i></div>

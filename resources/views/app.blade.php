@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="{{asset('vendor')}}/select2/css/select2.min.css">
   <link rel="stylesheet" href="{{asset('vendor')}}/selectric/selectric.css">
   <link rel="stylesheet" href="{{asset('vendor')}}/bootstrap/timepicker/css/bootstrap-timepicker.min.css">
-  <link rel="stylesheet" href="{{asset('vendor')}}/bootstrap/tagsinput/bootstrap-tagsinput.css">
+  {{-- <link rel="stylesheet" href="{{asset('vendor')}}/bootstrap/tagsinput/bootstrap-tagsinput.css"> --}}
   <!-- CSS Libraries -->
   <link rel="stylesheet" href="{{asset('vendor')}}/izitoast/css/iziToast.min.css">
   @stack('style-library')
@@ -30,11 +30,43 @@
   <link rel="stylesheet" href="{{asset('assets')}}/css/loading.css">
   {{-- custom css --}}
   @stack('style')
+  <style>
+    .reset-adm-loading{
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      z-index: 999;
+      background: #fff;
+      display: none;
+    }
+    .reset-adm-loading.show{
+      display: block;
+      animation-name: fadein;
+      animation-duration: 1s;
+    }
+    @keyframes fadein{
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
-
-  <div class="loader-line app-loader d-none" style="position: fixed;top: 0;  z-index: 999;"></div>
+  <div class="reset-adm-loading">
+    <div class="body text-center">
+      <img src="{{asset('assets/img/reset-system-loading.gif')}}" alt="">
+      <div class="text ml-auto mr-auto"  style="margin-top: -150px">
+        <p>Tunggu Sebentar, sedang memproses data ...</p>
+        <div class="w-25 m-auto">
+          <div class="loader-line app-loader"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="app">
     <div class="main-wrapper">
       
@@ -127,7 +159,7 @@
             cancelButtonText: 'Tidak'
             }).then((result) => {
             if (result.isConfirmed) {
-                $('.app-loader').removeClass('d-none');
+                $('.reset-adm-loading').addClass('show');
                 $.ajax({
                   type: "get",
                   url: $(this).attr('href'),

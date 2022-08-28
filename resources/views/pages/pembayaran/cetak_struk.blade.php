@@ -238,12 +238,12 @@ foreach ($_TUNGGAKAN as $key) {
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>Kembalian</td>
+                    {{-- <td>Kembalian</td>
                     <td>:</td>
                     <?php
                     $total = intval($hTransaksi->terbayar) - intval($hTransaksi->total);
                     ?>
-                    <td class="" style="text-align: right;">{{ Helper::ribuan(intval($total)) }}</td>
+                    <td class="" style="text-align: right;">{{ Helper::ribuan(intval($total)) }}</td> --}}
                 </tr>
             </table>
             <hr>
@@ -303,7 +303,7 @@ foreach ($_TUNGGAKAN as $key) {
                             } else if ($nilai < 200) {
                                 $temp = " Seratus" . penyebut($nilai - 100);
                             } else if ($nilai < 1000) {
-                                $temp = penyebut($nilai / 100) . " ratus" . penyebut($nilai % 100);
+                                $temp = penyebut($nilai / 100) . " Ratus" . penyebut($nilai % 100);
                             } else if ($nilai < 2000) {
                                 $temp = " Seribu" . penyebut($nilai - 1000);
                             } else if ($nilai < 1000000) {
@@ -327,12 +327,12 @@ foreach ($_TUNGGAKAN as $key) {
                             }
                             return $hasil;
                         }
-                        echo terbilang($hTransaksi->terbayar) . " Rupiah";
+                        echo terbilang($hTransaksi->total) . " Rupiah";
                         ?></label>
                 </div>
                 <div class="terbilang-bag2">
                     <label>Total : </label>
-                    <label class="">{{ Helper::ribuan($hTransaksi->terbayar) }}</label>
+                    <label class="">{{ Helper::ribuan($hTransaksi->total) }}</label>
                 </div>
             </div>
             <hr>

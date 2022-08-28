@@ -50,7 +50,7 @@ class CSetting extends Controller
             $mKelas = MKelas::all();
             foreach ($mSiswa as $siswa) {
                 if ((int)$siswa->kelas->indikasi == 12) {
-                    $siswa->update(['id_kelas' => 0]);
+                    $siswa->update(['id_kelas' => 0,'status'=> 0]);
                 } elseif ((int)$siswa->kelas->indikasi == 11) {
                     $this->createAdministrasi($siswa->id_siswa);
                     $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 12)]);
