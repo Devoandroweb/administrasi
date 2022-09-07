@@ -301,8 +301,9 @@ function checkedTggNow(){
 
 
 function buildHtmlBeforeAllCostModal(spp,tgg_now,tgg_before){
-
-    _HTML_COST = buildChecboxSppModal(spp);
+    if(spp != null){
+        _HTML_COST = buildChecboxSppModal(spp);
+    }
     _HTML_COST += buildTggNowModal(tgg_now);
     _HTML_COST += buildTggBeforeModal(tgg_before);
     $('#fire-modal-1').find('.modal-body').html(_HTML_COST);
@@ -339,7 +340,6 @@ function buildChecboxSppModal(spp){
 
 function buildTrDetailSpp(bulan){
     var htmlTr = "";
-    // console.log(bayarSpp);
     _CH_SPP.sort(compare);
     bulan.forEach(e => {
         
@@ -353,6 +353,7 @@ function buildTrDetailSpp(bulan){
             htmlTr += "</tr>";
             
     });
+    // $("table tbody").html(htmlTr);
     $(".td-spp").closest('tr').after(htmlTr);
 }
 
@@ -431,11 +432,13 @@ function buildAllCost(spp = [],tgg_now = [],tgg_before = []){
 }
 //buat row biaya saat ini
 var _NO = 1;
-function generateRowCostNow(data = [],spp = []){
-    console.log(spp);
+function generateRowCostNow(data = []){
+
+    console.log("cek tgg now -> ",data);
+    console.log("cek tgg now ch -> ",_CH_TGG_NOW);
     var html = "";
     data.forEach(element => {
-        if(inArray(element.id_administrasi,_CH_TGG_NOW)){
+        if(inArray(element.id_jenis_administrasi,_CH_TGG_NOW)){
             var nominal = 0;
             var print = true;
             if(element.nominal == 0){
@@ -454,6 +457,7 @@ function generateRowCostNow(data = [],spp = []){
                     classSpp = "td-spp";
                     nominal = 0;
                     readOnly = 'readonly';
+                    console.log('ini spp');
                 }
                 html += "<td class='numeric "+classSpp+"'>"+nominal+"</td>";
                 html += "<td>\

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Administrasi\Siswa;
 use App\Models\MAjaran;
+use App\Models\MJenisAdministrasi;
 use App\Models\MKelas;
 use App\Models\MSiswa;
 use App\Models\MTunggakan;
@@ -20,6 +21,9 @@ class CSetting extends Controller
     function resetTahunAjaran()
     {
         try {
+            // ambil data
+            $mSiswa = MSiswa::with('kelas')->where('id_kelas', '!=', 0)->get();
+            $mKelas = MKelas::all();
             //cek tahun ajaran
             TSPP::truncate();
             $mAjaran = MAjaran::orderBy('tahun_akhir', 'desc')->first();
@@ -46,8 +50,7 @@ class CSetting extends Controller
 
 
             //naikkan siswa ke kelas
-            $mSiswa = MSiswa::with('kelas')->where('id_kelas', '!=', 0)->get();
-            $mKelas = MKelas::all();
+           
             foreach ($mSiswa as $siswa) {
                 if ((int)$siswa->kelas->indikasi == 12) {
                     $siswa->update(['id_kelas' => 0,'status'=> 0]);
@@ -77,8 +80,28 @@ class CSetting extends Controller
             //truncate
             Siswa::truncate();
             TCicilan::where('tipe', 1)->delete();
+
+            // add to administrasi
+            $mJenisAdm = MJenisAdministrasi::all();
+            $mSiswaAfterUp = MSiswa::where('id_kelas','!=',0)->get(); 
             
-            
+            foreach ($mSiswaAfterUp as $siswaAfterUp) {
+                $adm = null;
+                foreach ($mJenisAdm as $jenisAdm) {
+                    if($jenisAdm->id == 1){
+                        $biaya = (int)$jenisAdm->biaya * 12;
+                    }else{
+                        $biaya = (int)$jenisAdm->biaya;
+                    }
+                    $adm[] = [
+                        'id_siswa' => $siswaAfterUp->id_siswa,
+                        'id_jenis_administrasi' => $jenisAdm->id,
+                        'nominal' => $biaya,
+                    ];
+                }
+                Siswa::insert($adm);
+            }
+
             return response()->json(['status' => true, 'msg' => 'success tahun ajaran baru ' . $tahunAwalBaru],200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()],500);

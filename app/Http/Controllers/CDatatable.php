@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Auth;
 class CDatatable extends Controller
 {
     use Helper;
+    protected $bulan = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
+
     public function siswa_aktif()
     {
         // dd(MPegawai::get());
@@ -196,15 +198,16 @@ class CDatatable extends Controller
     {
         $kelas = (isset($_GET['kelas']) ? $_GET['kelas'] : -1);
         if($kelas == 0){
-            $model = MSiswa::nonAktif()->with('admSiswa','kelas');
+            $model = MSiswa::nonAktif();
         }else{
-            $model = MSiswa::aktif()->with('admSiswa','kelas');
+            $model = MSiswa::aktif();
             if($kelas != -1){
                 $model = $model->where('id_kelas', $kelas);
             }
         }
+        $model = $model->with('admSiswa', 'kelas','spp');
         // dd($model[3]->kelas->jurusan);
-        
+        // dd($model->get());
         // dd(Auth::user()->id);
         return DataTables::eloquent($model)
 
@@ -215,8 +218,11 @@ class CDatatable extends Controller
                 return "<i class='text-danger'>Alumni</i>";
             })
             ->addColumn('biaya', function ($row) {
-                $html = '<div class="mb-2 font-weight-bold text-success">Biaya</div>';
-                $html .= "<table class='border'>";
+                $html = '<div class="row">'; //row
+                $html .= '<div class="col">'; // col
+                
+                $html .= '<div class="mb-2 font-weight-bold text-success">Biaya</div>';
+                $html .= "<table class='border w-100'>";
                 foreach($row->admSiswa as $key){
                     $html .= "<tr>"; 
                         $html .= "<td class='font-weight-bold'>".$key->jenisAdministrasi->nama; 
@@ -229,6 +235,27 @@ class CDatatable extends Controller
                     $html .= "</tr>"; 
                 }
                 $html .= "</table>";
+                $html .= '</div>'; //end col
+
+                $html .= '<div class="col">'; // col
+                $html .= '<div class="mb-2 font-weight-bold text-success">Detail SPP</div>';
+                $html .= "<table class='border w-100'>";
+                // dd($this->bulan);
+                
+                for ($i = 0; $i < count($this->bulan); $i++) {
+                    $html .= "<tr>";
+                    $html .= "<td class='font-weight-bold text-capitalize'>" . $this->bulan[$i];
+                    $html .= "<td>:</td>";
+                    if ($row->spp->{$this->bulan[$i]} != 0) {
+                        $html .= "<td class='text-right'>" . $this->ribuan($row->spp->{$this->bulan[$i]});
+                    } else {
+                        $html .= "<td class='text-right text-success'> Lunas";
+                    }
+                    $html .= "</tr>";
+                }
+                $html .= "</table>";
+                $html .= '</div>'; //end col
+                $html .= '</div>'; // end row
                 if(count($row->admSiswa) == 0){
                     $html = "<div class='text-danger'>Biaya tidak ada</div>";
                 }

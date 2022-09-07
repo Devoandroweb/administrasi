@@ -116,7 +116,7 @@ Route::middleware(['auth'])->group(function () {
     
     //signout
     Route:: get('/logout', [CLogin::class, 'logout'])->name('logout');
-    
+    Route::get('/reset-administrasi', [CSetting::class, 'resetTahunAjaran']);
 });
 Route::get('/reset-sistem', function ()
 {
@@ -138,7 +138,7 @@ Route::get('/reset-sistem', function ()
 });
 //cronjob
 Route::get('/cronjob-update-spp', [CCronJob::class, 'updateSpp']);
-Route::get('/reset-administrasi', [CSetting::class, 'resetTahunAjaran']);
+
 
 
 //client

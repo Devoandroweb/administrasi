@@ -29,4 +29,8 @@ class TSPP extends Model
         $total += $this->desember;
         return $total;
     }
+    public function siswa()
+    {
+        return $this->hasOne(MSiswa::class, 'id_siswa');
+    }
 }

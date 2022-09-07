@@ -67,6 +67,10 @@ class MSiswa extends Authenticatable
     {
         return $this->belongsTo(MKelas::class, 'id_kelas');
     }
+    public function spp()
+    {
+        return $this->belongsTo(TSPP::class, 'id_siswa');
+    }
     public function pendanaan()
     {
         return $this->hasOne(Pendanaan::class,'id_siswa');
