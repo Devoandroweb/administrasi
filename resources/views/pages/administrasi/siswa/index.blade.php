@@ -128,8 +128,8 @@ function setDataTable() {
     $(".sub-filter").click(function (e) { 
         e.preventDefault();
         _URL_DATATABLE = $(this).attr('href');
-        $('#data').DataTable().destroy();
-        setDataTable();
+        _TABLE.ajax.url(_URL_DATATABLE).load();
+        // setDataTable();
         $(".filter").text("Filter : "+$(this).data('text').toUpperCase());
     });
     

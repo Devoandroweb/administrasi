@@ -32,7 +32,7 @@ use App\Traits\Helper;
                 </a>
             </div>
             <div class="card-header-action dropdown mr-2">
-                <a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle" aria-expanded="false"><i class="fas fa-hamburger"></i> Menu Lain</a>
+                <a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle" aria-expanded="false"><i class="fas fa-file-excel"></i> Import/Export</a>
                 <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-126px, 31px, 0px); top: 0px; left: 0px; will-change: transform;">
                     <li class="dropdown-title">Pilih Menu</li>
                     <li><a href="{{url('export/siswa')}}" class="dropdown-item">Export</a></li>

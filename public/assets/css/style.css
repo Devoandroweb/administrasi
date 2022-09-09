@@ -62,7 +62,9 @@
   box-shadow: none !important;
   outline: none;
 }
-
+a{
+  outline: none;
+}
 a {
   color: #6777ef;
   font-weight: 500;

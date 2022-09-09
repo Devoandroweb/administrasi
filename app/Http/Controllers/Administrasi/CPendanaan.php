@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class CPendanaan extends Controller
 {
-    use Saldo;
+    use Saldo,Administrasi;
     function pendanaan()
     {
         $title = "Pendanaan";
@@ -33,15 +33,15 @@ class CPendanaan extends Controller
                 $detail[] = ["nama_biaya" => $nama_pemasukan[$i],"nominal" => $biaya];
                 $total = $total + $biaya;
             }
-            $pemasukan = array(
-                'tipe' => 1,
-                'tipe_pemasukan' => 2,
-                'nama' => $request->nama,
-                'detail' => json_encode($detail),
-                'total' => $total,
-                'saldo' => $this->updateSaldo($total),
-            );
-            MPendanaan::insert($pemasukan);
+            // $pemasukan = array(
+            //     'tipe' => 1,
+            //     'tipe_pemasukan' => 2,
+            //     'nama' => $request->nama,
+            //     'detail' => json_encode($detail),
+            //     'total' => $total,
+            //     'saldo' => $this->updateSaldo($total),
+            // );
+            // MPendanaan::insert($pemasukan);
             $this->createPemasukan(2, $request->nama, $detail, $total);
             return response()->json(['status' => true, 'msg' => 'Sukses Menambah Data'], 200);
         } catch (\Throwable $th) {
@@ -78,5 +78,12 @@ class CPendanaan extends Controller
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         }
+    }
+    function cek_saldo($total){
+        $saldo = MSaldo::first()->saldo;
+        if ($saldo >= (int)$total) {
+            return response()->json(['status'=>true,'result' => true]);
+        }
+        return response()->json(['status' => true, 'result' => false]);
     }
 }

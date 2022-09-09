@@ -11,5 +11,5 @@ class MRekapTunggakan extends Model
     protected $table = 'rekap_tunggakan';
     protected $primaryKey = 'id_rekap_tunggakan';
     public $timestamps = false;
-    protected $fillable = ['nama_tunggakan', 'total'];
+    protected $fillable = ['nama_tunggakan', 'ajaran','total'];
 }

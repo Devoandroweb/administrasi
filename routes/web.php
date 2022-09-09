@@ -80,6 +80,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/aktif-ajaran/{id}', [CAjaran::class,'actifed_ajaran']);
     Route::get('/pembayaran-cetak-struk/{id}', [CHTransaksi::class, 'cetak_struk']);
     Route::get('/htransaksi', [CHTransaksi::class, 'index']);
+    Route::get('/ceksaldo/{saldo}', [CPendanaan::class, 'cek_saldo']);
 
     //datatable
     Route::prefix("/datatable")->group(function () {

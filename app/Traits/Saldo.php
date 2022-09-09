@@ -22,8 +22,8 @@ trait Saldo
     }
     function cekSaldo($total)
     {
-        $saldo = MSaldo::first();
-        if ($saldo >= $total) {
+        $saldo = MSaldo::first()->saldo;
+        if ($saldo >= (int)$total) {
             return true;
         }
         return false;

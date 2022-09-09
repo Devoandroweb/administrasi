@@ -197,7 +197,8 @@ class CDatatable extends Controller
     public function administrasi()
     {
         $kelas = (isset($_GET['kelas']) ? $_GET['kelas'] : -1);
-        if($kelas == 0){
+        if((int)$kelas == 0){
+            // dd($kelas);
             $model = MSiswa::nonAktif();
         }else{
             $model = MSiswa::aktif();
@@ -238,22 +239,23 @@ class CDatatable extends Controller
                 $html .= '</div>'; //end col
 
                 $html .= '<div class="col">'; // col
+                if($row->spp != null):
                 $html .= '<div class="mb-2 font-weight-bold text-success">Detail SPP</div>';
                 $html .= "<table class='border w-100'>";
                 // dd($this->bulan);
-                
-                for ($i = 0; $i < count($this->bulan); $i++) {
-                    $html .= "<tr>";
-                    $html .= "<td class='font-weight-bold text-capitalize'>" . $this->bulan[$i];
-                    $html .= "<td>:</td>";
-                    if ($row->spp->{$this->bulan[$i]} != 0) {
-                        $html .= "<td class='text-right'>" . $this->ribuan($row->spp->{$this->bulan[$i]});
-                    } else {
-                        $html .= "<td class='text-right text-success'> Lunas";
+                    for ($i = 0; $i < count($this->bulan); $i++) {
+                        $html .= "<tr>";
+                        $html .= "<td class='font-weight-bold text-capitalize'>" . $this->bulan[$i];
+                        $html .= "<td>:</td>";
+                        if ($row->spp->{$this->bulan[$i]} != 0) {
+                            $html .= "<td class='text-right'>" . $this->ribuan($row->spp->{$this->bulan[$i]});
+                        } else {
+                            $html .= "<td class='text-right text-success'> Lunas";
+                        }
+                        $html .= "</tr>";
                     }
-                    $html .= "</tr>";
-                }
                 $html .= "</table>";
+                endif;
                 $html .= '</div>'; //end col
                 $html .= '</div>'; // end row
                 if(count($row->admSiswa) == 0){

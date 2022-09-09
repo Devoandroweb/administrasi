@@ -17,7 +17,7 @@ use App\Traits\Helper;
             <div class="card-header">
             <h4>Data Pemasukan dan pengeluaran</h4>
             <div class="card-header-action dropdown ">
-                <a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle mr-2" aria-expanded="false"><i class="fas fa-file-excel"></i> Pilih Export</a>
+                <a href="#" data-toggle="dropdown" class="btn btn-success dropdown-toggle mr-2" aria-expanded="false"><i class="fas fa-file-excel"></i> Export Excel</a>
                 <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-126px, 31px, 0px); top: 0px; left: 0px; will-change: transform;">
                     <li class="dropdown-title">Pilih Export</li>
                     <li><a href="{{url('export/pemasukan')}}" class="dropdown-item">Pemasukan</a></li>
@@ -193,8 +193,9 @@ function setDataTable() {
                 id: 'btn-submit',
                 text: 'Simpan',
                 handler: function(current_modal) {
-                    // saveForm($('#form-data-peng'),_URL_INSERT_PENGELUARAN,current_modal,1);
-                    cekSaldo();
+                    // cekSaldo();
+                   cekSaldoAndSave(current_modal);
+                
                 }
         },
         {
@@ -243,11 +244,30 @@ function setDataTable() {
     function removeInput(){
         $(".add-input").remove();
     }
-    function cekSaldo(){
+    function cekSaldoAndSave(current_modal){
         var totalInput = 0;
         $.each($(".nominal-peng"), function (indexInArray, valueOfElement) { 
-             console.log(valueOfElement);
+            totalInput += (valueOfElement.value).split(".").join("");
         });
+        $.ajax({
+            type: "get",
+            url: "{{url('ceksaldo')}}/"+totalInput,
+            dataType: "JSON",
+            success: function (response) {
+                if(response.status){
+                    if(!response.result){
+                        iziToast.error({
+                            title: 'Failed',
+                            message: 'Saldo tidak cukup',
+                            position: 'topRight'
+                        });
+                    }else{
+                        saveForm($('#form-data-peng'),_URL_INSERT_PENGELUARAN,current_modal,1);
+                    }
+                }
+            }
+        });
+       
     }
 </script>
 

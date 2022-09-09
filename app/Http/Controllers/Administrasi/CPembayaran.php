@@ -176,9 +176,11 @@ class CPembayaran extends Controller
 
                     //cicilam
                     $tCicilan = TCicilan::tipeTunggakan()->where('id_administrasi', $mTunggakan->id_tunggakan)->first();
+                    // dd($tCicilan);
                     $cicilanTahapAdmTgg = 0;
                     if ($tCicilan != null) {
                         $jsonDesk = json_decode($tCicilan->deskripsi);
+                        
                         if ($jsonDesk == null) {
                             $cicilanTahapAdmTgg = 1;
                             $tCicilan->deskripsi = json_encode([$nominalTunggakanBayar]);
@@ -303,7 +305,15 @@ class CPembayaran extends Controller
     public function saveRekapTunggakan($namaTunggakan, $ajaran, $bayar)
     {
         $mRekapTunggakan = MRekapTunggakan::where('nama_tunggakan', $namaTunggakan)->where('ajaran', $ajaran)->first();
-        $mRekapTunggakan->total = $mRekapTunggakan->total + $bayar;
-        $mRekapTunggakan->update();
+        if(is_null($mRekapTunggakan)){
+            MRekapTunggakan::create([
+                'nama_tunggakan' => $namaTunggakan,
+                'ajaran' => $ajaran,
+                'total' => $bayar
+            ]);
+        }else{
+            $mRekapTunggakan->total = $mRekapTunggakan->total + $bayar;
+            $mRekapTunggakan->update();
+        }
     }
 }

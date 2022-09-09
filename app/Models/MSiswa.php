@@ -21,7 +21,7 @@ class MSiswa extends Authenticatable
     protected $table = 'm_siswa';
     protected $primaryKey = 'id_siswa';
     protected $fillable = [
-        'username','password','nisn','nama','jk','no_telp','alamat','foto','id_kelas','deleted','tempat_lahir','tgl_lahir'
+        'username','password','nisn','nama','jk','no_telp','alamat','foto','id_kelas','deleted','tempat_lahir','tgl_lahir','status'
     ];
     protected $hidden = [
         'created_at', 'updated_at', 'password'

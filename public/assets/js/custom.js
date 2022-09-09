@@ -114,6 +114,12 @@ function removeInObject(arrayObject,key,key_value){
     }
     return false;
 }
+function removeInArray(array,value){
+    const index = array.indexOf(value);
+    if (index > -1) { // only splice array when item is found
+    array.splice(index, 1); // 2nd parameter means remove one item only
+    }
+}
 function compare(a, b ){
     if ( a.index < b.index ){
         return -1;
