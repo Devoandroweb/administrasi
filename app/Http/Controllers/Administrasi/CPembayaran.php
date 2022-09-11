@@ -84,8 +84,8 @@ class CPembayaran extends Controller
         $strukWA .= "------------------------------------------------- \n\n";
         //----------------------------------------------------------------------------
         if (isset($request->id_jenis_administrasi)) {
-
             foreach ($request->id_jenis_administrasi as $key) {
+                
                 //uang di bayarkan : $request->nominal
                 $nominalBayar = (int)str_replace(".", "", $request->nominal[$i]);
                 $nominal = (int)str_replace(".", "", $request->biaya[$i]) - $nominalBayar;
@@ -114,25 +114,31 @@ class CPembayaran extends Controller
                     }
                     //to save t_spp
                     //exec SPP
-                    if ($key == 1) {
+                    // dd($key);
+
+                    if ((int)$key == 1) {
                         //bulan_spp
-                        $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
-                        $bulanSpp = explode(",", $request->bulan_spp);
-                        $bayarSpp = $request->bayar_spp;
-                        $j = 0;
-                        foreach ($bulanSpp as $spp) {
-                            $tSpp->{$spp} = $tSpp->{$spp} - $nominal;
-                            $detailBiaya[] = [
-                                'nama_biaya' => $request->nama_biaya[$i] . " untuk bulan " . ucwords($spp),
-                                'id_jenis_administrasi' => $key,
-                                'nominal' => str_replace(".","",$bayarSpp[$j]),
-                                'ajaran' => $ajaranNow,
-                                'bulan_spp' => $spp
-                            ];
-                            $j++;
+                        $bulanSpp = (isset($request->bulan_spp)) ?  $request->bulan_spp : null;
+                        
+                        if($bulanSpp != null){
+                            $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
+                            $bayarSpp = $request->bayar_spp;
+                            $j = 0;
+                            foreach ($bulanSpp as $spp) {
+                                $tSpp->{$spp} = $tSpp->{$spp} - (int)str_replace(".", "",$bayarSpp[$j]);
+                                $detailBiaya[] = [
+                                    'nama_biaya' => $request->nama_biaya[$i] . " untuk bulan " . ucwords($spp),
+                                    'id_jenis_administrasi' => $key,
+                                    'nominal' => str_replace(".","",$bayarSpp[$j]),
+                                    'ajaran' => $ajaranNow,
+                                    'bulan_spp' => $spp
+                                ];
+                                $j++;
+                            }
+                            $tSpp->update();
+                            $administrasi->nominal = $tSpp->totalSpp();
                         }
-                        $tSpp->update();
-                        $administrasi->nominal = $tSpp->totalSpp();
+                        
                     } else {
                         $administrasi->nominal = $nominal;
                         $detailBiaya[] = [
@@ -161,16 +167,16 @@ class CPembayaran extends Controller
             }
         }
         if (isset($request->nama_biaya_tunggakan)) {
-
+            $k = 0;
             foreach ($request->nama_biaya_tunggakan as $key) {
 
-                $nominalTunggakanBayar = (int)str_replace(".", "", $request->nominal_tunggakan[$j]);
+                $nominalTunggakanBayar = (int)str_replace(".", "", $request->nominal_tunggakan[$k]);
                 if ($nominalTunggakanBayar != 0) {
                     $total += $nominalTunggakanBayar;
-                    $ajaranLalu = $request->tahun_ajaran[$j];
+                    $ajaranLalu = $request->tahun_ajaran[$k];
 
-                    $nominal = (int)str_replace(".", "", $request->biaya_tunggakan[$j]) - $nominalTunggakanBayar;
-                    $mTunggakan = MTunggakan::where('nama_tunggakan', $key)->where('id_siswa', $id_siswa)->where('ajaran', $request->tahun_ajaran[$j])->first();
+                    $nominal = (int)str_replace(".", "", $request->biaya_tunggakan[$k]) - $nominalTunggakanBayar;
+                    $mTunggakan = MTunggakan::where('nama_tunggakan', $key)->where('id_siswa', $id_siswa)->where('ajaran', $request->tahun_ajaran[$k])->first();
                     $mTunggakan->nominal = $nominal;
                     $mTunggakan->update();
 
@@ -193,25 +199,25 @@ class CPembayaran extends Controller
 
 
                     $detailTunggakan[] = [
-                        'nama_biaya' => $request->nama_biaya_tunggakan[$j] . " tahap ke " . $cicilanTahapAdmTgg,
+                        'nama_biaya' => $request->nama_biaya_tunggakan[$k] . " tahap ke " . $cicilanTahapAdmTgg,
                         'nominal' => $nominalTunggakanBayar,
                         'id_jenis_administrasi' => $key,
                         'ajaran' => $ajaranLalu
                     ];
 
                     //update rekap
-                    $this->saveRekapTunggakan($request->nama_biaya_tunggakan[$j], $ajaranLalu, $nominalTunggakanBayar);
+                    $this->saveRekapTunggakan($request->nama_biaya_tunggakan[$k], $ajaranLalu, $nominalTunggakanBayar);
 
                     if ($ajaranLalu != $strukWA_ajaranBefore) {
                         $strukWA .= "\n";
                         $strukWA .= "*Tanggungan pada TA " . $ajaranLalu . "* \n";
                         $strukWA_ajaranBefore = $ajaranLalu;
                     }
-                    $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$j] . " Rp. " . $request->nominal_tunggakan[$j] . " tahan ke " . $cicilanTahapAdmTgg . " \n";
+                    $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$k] . " Rp. " . $request->nominal_tunggakan[$k] . " tahan ke " . $cicilanTahapAdmTgg . " \n";
                     $strukWA_noBefore++;
                 }
 
-                $j++;
+                $k++;
             }
         }
 
@@ -245,6 +251,7 @@ class CPembayaran extends Controller
         // dd($res);
         $masterWa->save();
         // dd($total);
+        // dd($detailBiaya);
         // -----------------------------------------------------------------------------------
         $hTransaksi = HTransaksi::create([
             'kode' => "SIA-" . $this->generateRandomString(15),
@@ -264,7 +271,10 @@ class CPembayaran extends Controller
 
 
         //-------------------------------------------------------------------------------------------
-        return response()->json(['status' => true, 'msg' => "Sukses Membayar", "data" => encrypt($hTransaksi->id_transaksi)], 200);
+
+        $dataDetail = $hTransaksi->id_transaksi.",".$hTransaksi->id_siswa;
+        
+        return response()->json(['status' => true, 'msg' => "Sukses Membayar", "data" => encrypt($dataDetail)], 200);
         // } catch (\Throwable $th) {
         //     return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         // }

@@ -2,8 +2,12 @@
 
 use App\Traits\Helper;
 use App\Models\Administrasi\HTransaksi;
-$hTransaksi = HTransaksi::with('siswa','createdBy')->where("id_transaksi", $id)->first();
-// dd($id);
+use App\Models\Administrasi\Siswa;
+
+$hTransaksi = HTransaksi::with('siswa','createdBy')->where("id_transaksi", $id_transaksi)->where("id_siswa",$id_siswa)->first();
+// dd($id_siswa);
+
+// dd($kurang);
 $_BIAYA = json_decode($hTransaksi->biaya);
 $_TUNGGAKAN = json_decode($hTransaksi->tunggakan);
 // dd($_TUNGGAKAN);
@@ -15,12 +19,12 @@ foreach ($_BIAYA as $key) {
 foreach ($_TUNGGAKAN as $key) {
     $_TOTAL_TUNGGAKAN = $_TOTAL_TUNGGAKAN + (int)$key->nominal;
 }
+$_TOTAL_BIAYA = $_TOTAL_BIAYA + $_TOTAL_TUNGGAKAN;
 ?>
 <html>
 
 <head>
     <title>Struk</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
 </head>
 <style type="text/css">
@@ -214,7 +218,7 @@ foreach ($_TUNGGAKAN as $key) {
                     <td>{{ $date_indo }}</td>
                     <td>Tanggungan</td>
                     <td>:</td>
-                    <td class="numeric" style="text-align: right;">{{ Helper::ribuan(intval($_TOTAL_BIAYA)) }}</td>
+                    <td class="numeric" style="text-align: right;">{{ Helper::ribuan($tanggungan) }}</td>
                 </tr>
                 <tr>
                     <td>NISN / Kelas</td>
@@ -229,7 +233,7 @@ foreach ($_TUNGGAKAN as $key) {
                     <td>{{ $hTransaksi->tanggal }}</td>
                     <td>Terbayar</td>
                     <td>:</td>
-                    <td class="" style="text-align: right;">{{Helper::ribuan(intval($hTransaksi->terbayar))}}</td>
+                    <td class="" style="text-align: right;">{{Helper::ribuan($totalDibayar)}}</td>
                 </tr>
                 <tr>
                     <td>Penerima</td>
@@ -238,12 +242,12 @@ foreach ($_TUNGGAKAN as $key) {
                     <td></td>
                     <td></td>
                     <td></td>
-                    {{-- <td>Kembalian</td>
+                    <td>Kurang</td>
                     <td>:</td>
                     <?php
                     $total = intval($hTransaksi->terbayar) - intval($hTransaksi->total);
                     ?>
-                    <td class="" style="text-align: right;">{{ Helper::ribuan(intval($total)) }}</td> --}}
+                    <td class="" style="text-align: right;">{{ Helper::ribuan($kurang) }}</td> 
                 </tr>
             </table>
             <hr>
@@ -366,9 +370,6 @@ foreach ($_TUNGGAKAN as $key) {
         </div>
 
     </div>
-    <script src="{{asset('public/assets/js/core/jquery.min.js')}}" type="text/javascript"></script>
-    <script src="{{asset('public/assets/js/core/popper.min.js')}}" type="text/javascript"></script>
-    <script src="{{asset('public/assets/js/plugins/autoNumeric.js')}}"></script>
 </body>
 <script type="text/javascript">
     $('.printing').click(function(event) {

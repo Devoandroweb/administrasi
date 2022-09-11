@@ -265,6 +265,7 @@ class CDatatable extends Controller
             })
             ->addColumn('tunggakan', function ($row) {
                 
+                
                 $btn = '<a href="' . url('administrasi-siswa-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-primary mr-2" tooltip="Klik untuk melihat Detail Tunggakan"><i class="fas fa-eye"></i></a>';
                 $btn .= '<a href="' . url('administrasi-siswa-cicilan/'. encrypt($row->id_siswa)) . '" class="text-warning mr-2" tooltip="Klik untuk melihat Cicilan Tunggakan"><i class="fas fa-coins"></i></a>';
                 $btn .= '<a href="' . url('administrasi-siswa-cetak-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-info" tooltip="Download Tunggakan"><i class="fas fa-file-download"></i></a>';
@@ -420,8 +421,10 @@ class CDatatable extends Controller
                 return "-";
             })
             ->addColumn('action', function ($row) {
+                $dataDetail = $row->id_transaksi . "," . $row->id_siswa;
+                // dd($dataDetail);
                 $btn = '';
-                $btn .= '<a href="' . url('pembayaran-cetak-struk/'. encrypt($row->id_transaksi)) . '" target="_blank" tooltip="Cetak Struk" class="text-info delete mr-2"><i class="fas fa-print"></i></a>';
+                $btn .= '<a href="' . url('pembayaran-cetak-struk/'. encrypt($dataDetail)) . '" target="_blank" tooltip="Cetak Struk" class="text-info delete mr-2"><i class="fas fa-print"></i></a>';
                 return $btn;
             })
             ->rawColumns(['action','biaya_convert','tunggakan_convert','tanggal_convert', 'penerima', 'penyetor'])

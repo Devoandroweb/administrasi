@@ -21,6 +21,7 @@ use App\Http\Controllers\CSetting;
 use App\Http\Controllers\CSiswa;
 use App\Http\Controllers\CUser;
 use App\Http\Controllers\CWhatsapp;
+use App\Models\MAjaran;
 use App\Models\MSaldo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -134,8 +135,10 @@ Route::get('/reset-sistem', function ()
     DB::statement("TRUNCATE TABLE pendanaan;");
     DB::statement("TRUNCATE TABLE m_rekap;");
     MSaldo::first()->update(['saldo'=>0]);
+    MAjaran::where("id","!=",1)->delete();
+    MAjaran::first()->update(['status'=>1]);
     echo "Success";
-   
+    return redirect(url('/logout'));
 });
 //cronjob
 Route::get('/cronjob-update-spp', [CCronJob::class, 'updateSpp']);
