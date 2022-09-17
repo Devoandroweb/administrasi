@@ -88,12 +88,12 @@
   </div>
 
   <!-- General JS Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="{{asset('assets/js')}}/jquery.min.js"></script>
+  <script src="{{asset('assets/js')}}/popper.min.js"></script>
+  <script src="{{asset('assets/js')}}/bootstrap.min.js"></script>
+  <script src="{{asset('assets/js')}}/jquery.nicescroll.min.js"></script>
+  <script src="{{asset('assets/js')}}/moment.min.js"></script>
+  <script src="{{asset('assets/js')}}/sweetalert2.js"></script>
   <script src="{{asset('assets')}}/js/stisla.js"></script>
 
   <!-- JS Libraies -->
@@ -113,10 +113,12 @@
   <!-- Template JS File -->
   <script src="{{asset('assets')}}/js/scripts.js"></script>
   <script src="{{asset('assets')}}/js/custom.js"></script>
-  <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+  <script src="{{asset('assets')}}/js/pusher43.min.js"></script>
   <!-- Page Specific JS File -->
   {{-- <script src="{{asset('assets')}}/js/page/forms-advanced-forms.js"></script> --}}
+  @if($content != 'login')
   <script>
+
    $(document).ready(function () {
        $(".loading").removeClass('loading-show');
    });
@@ -127,20 +129,20 @@
     });
     // Pusher.logToConsole = true;
     //berjalan ketika pusher di akses
-    var pusherClient = new Pusher('58eafcd4dda22b156f9f', {
-        cluster: 'ap1'
-    });
-    var channel = pusherClient.subscribe('my-channel');
-    channel.bind('my-event', function(data) {
-        if(data != null){
-          $(".status-wa").removeClass('bg-danger');
-          $(".status-wa").addClass('bg-success');
-        }else{
-          $(".status-wa").addClass('bg-danger');
-          $(".status-wa").removeClass('bg-success');
+    // var pusherClient = new Pusher('58eafcd4dda22b156f9f', {
+    //     cluster: 'ap1'
+    // });
+    // var channel = pusherClient.subscribe('my-channel');
+    // channel.bind('my-event', function(data) {
+    //     if(data != null){
+    //       $(".status-wa").removeClass('bg-danger');
+    //       $(".status-wa").addClass('bg-success');
+    //     }else{
+    //       $(".status-wa").addClass('bg-danger');
+    //       $(".status-wa").removeClass('bg-success');
 
-        }
-    });
+    //     }
+    // });
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
     });
@@ -184,6 +186,7 @@
     
       document.body.style.zoom = "80%";
   </script>
+  @endif
   {{-- cusom js --}}
   @stack('js')
 

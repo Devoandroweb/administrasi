@@ -13,11 +13,15 @@ class MJenisAdministrasi extends Model
     use CreatedUpdatedBy;
     protected $table = 'm_jenis_administrasi';
     protected $fillable = [
-        'nama', 'biaya'
+        'nama', 'biaya','id_kelas'
     ];
     function siswa()
     {
         return $this->hasOne(Siswa::class);
+    }
+    function kelas()
+    {
+        return $this->belongsTo(MKelas::class,'id_kelas');
     }
 
 }

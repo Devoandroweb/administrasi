@@ -228,9 +228,9 @@ $_TOTAL_BIAYA = $_TOTAL_BIAYA + $_TOTAL_TUNGGAKAN;
                     @else
                     <td>-</td>
                     @endif
-                    <td>Tanggal Cetak</td>
+                    <td>Tanggal/Jam Cetak</td>
                     <td>:</td>
-                    <td>{{ $hTransaksi->tanggal }}</td>
+                    <td>{{ Helper::convertDate(date("Y-m-d H:i:s"),true,true) }}</td>
                     <td>Terbayar</td>
                     <td>:</td>
                     <td class="" style="text-align: right;">{{Helper::ribuan($totalDibayar)}}</td>
@@ -239,9 +239,9 @@ $_TOTAL_BIAYA = $_TOTAL_BIAYA + $_TOTAL_TUNGGAKAN;
                     <td>Penerima</td>
                     <td>:</td>
                     <td>{{ucwords($hTransaksi->createdBy->name)}}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>Tahun Ajaran</td>
+                    <td>:</td>
+                    <td>{{Session::get('tahun_awal')." - ".Session::get('tahun_akhir')}}</td>
                     <td>Kurang</td>
                     <td>:</td>
                     <?php
@@ -275,7 +275,7 @@ $_TOTAL_BIAYA = $_TOTAL_BIAYA + $_TOTAL_TUNGGAKAN;
                 for ($j = 0; $j < count($_TUNGGAKAN); $j++) {
                     $html .= '<tr>';
                     $html .= '<td style="width: 5%;">' . $no . '</td>';
-                    $html .= '<td>' . $_TUNGGAKAN[$j]->nama_biaya . '</td><td class="" style="text-align: right;">' . Helper::ribuan($_TUNGGAKAN[$j]->nominal) . '</td>';
+                    $html .= '<td>' . $_TUNGGAKAN[$j]->nama_biaya . ' TA Sebelumnya '.$_TUNGGAKAN[$j]->ajaran.'</td><td class="" style="text-align: right;">' . Helper::ribuan($_TUNGGAKAN[$j]->nominal) . '</td>';
                     $html .= '</tr>';
                     $no++;
                 }

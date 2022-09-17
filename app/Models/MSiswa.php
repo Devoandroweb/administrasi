@@ -69,7 +69,7 @@ class MSiswa extends Authenticatable
     }
     public function spp()
     {
-        return $this->belongsTo(TSPP::class, 'id_siswa');
+        return $this->hasOne(TSPP::class, 'id_siswa');
     }
     public function pendanaan()
     {

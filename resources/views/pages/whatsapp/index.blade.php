@@ -121,17 +121,14 @@ $('#btn-add-data').fireModal({
             id: 'btn-submit',
             text: 'Simpan',
             handler: function(current_modal) {
-                if(_STATUS_SUBMIT == 1){ // new
-                    
-                    var result = saveForm(
-                        $('#form-data'),
-                        _URL_INSERT,
-                        current_modal,
-                        1,
-                        "POST",
-                        ['siswa']
-                        );
-                }
+                saveForm(
+                    $('#form-data'),
+                    _URL_INSERT,
+                    current_modal,
+                    1,
+                    "POST",
+                    ['siswa']
+                );
             }
     },
     {

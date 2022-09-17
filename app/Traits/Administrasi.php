@@ -15,24 +15,26 @@ use App\Models\TSPP;
 trait Administrasi
 {
     use Saldo;
-    function createAdministrasi($id_siswa)
+    function createAdministrasi($id_siswa,$id_kelas, $idSpp = [])
     {
-
-        $jenisAdmistrasi = MJenisAdministrasi::all();
+        $jenisAdmistrasi = MJenisAdministrasi::where('id_kelas',$id_kelas)->get();
         $spp = 0;
+        $idSpp = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
+        
         foreach ($jenisAdmistrasi as $key) {
-            if ($key->id == 1) {
+            // echo $id_kelas." == ".$key->id_kelas."<br>";
+            if (in_array($key->id, $idSpp)) {
                 $spp = $key->biaya;
                 $siswaAdm = Siswa::create(['id_siswa' => $id_siswa, 'id_jenis_administrasi' => $key->id, 'nominal' => $key->biaya * 12]);
             } else {
                 $siswaAdm = Siswa::create(['id_siswa' => $id_siswa, 'id_jenis_administrasi' => $key->id, 'nominal' => $key->biaya]);
             }
-
             TCicilan::create([
                 'tipe' => 1,
                 'id_administrasi' => $siswaAdm->id_administrasi
             ]);
         }
+        
         // dd($dataAdm);
         TSPP::create([
             'id_siswa' => $id_siswa,

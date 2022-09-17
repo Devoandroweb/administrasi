@@ -31,7 +31,7 @@ use App\Traits\Helper;
                     <th class="text-center">
                         #
                     </th>
-                    <th>Nama</th>
+                    <th>Kelas</th>
                     <th>Jurusan</th>
                     <th>Jumlah Siswa</th>
                     <th>Action</th>
@@ -78,8 +78,8 @@ function setDataTable() {
                 width: '4%',
                 className: 'text-center'
             },{
-                data: 'nama',
-                name: 'nama',   
+                data: 'nama_biaya',
+                name: 'nama_biaya',   
             },{
                 data: 'jurusan',
                 name: 'jurusan',

@@ -22,6 +22,7 @@ class CSetting extends Controller
     {
         try {
             // ambil data
+            $idSpp = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
             $mSiswa = MSiswa::with('kelas')->where('id_kelas', '!=', 0)->get();
             $mKelas = MKelas::all();
             //cek tahun ajaran
@@ -50,18 +51,18 @@ class CSetting extends Controller
 
 
             //naikkan siswa ke kelas
-           
+            
+
             foreach ($mSiswa as $siswa) {
                 if ((int)$siswa->kelas->indikasi == 12) {
                     $siswa->update(['id_kelas' => 0,'status'=> 0]);
                 } elseif ((int)$siswa->kelas->indikasi == 11) {
-                    $this->createAdministrasi($siswa->id_siswa);
-                    $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 12)]);
+                    $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 12, $siswa->kelas->jurusan->id_jurusan)]);
                 } elseif ((int)$siswa->kelas->indikasi == 10) {
-                    $this->createAdministrasi($siswa->id_siswa);
-                    $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 11)]);
+                    $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 11, $siswa->kelas->jurusan->id_jurusan)]);
                 }
             }
+            // die();
             //update ajaran
             $mAjaran->tahun_awal = $tahunAwalBaru;
             $mAjaran->tahun_akhir = $tahunAkhirBaru;
@@ -88,16 +89,34 @@ class CSetting extends Controller
             foreach ($mSiswaAfterUp as $siswaAfterUp) {
                 $adm = null;
                 foreach ($mJenisAdm as $jenisAdm) {
-                    if($jenisAdm->id == 1){
-                        $biaya = (int)$jenisAdm->biaya * 12;
-                    }else{
-                        $biaya = (int)$jenisAdm->biaya;
+                    if($siswaAfterUp->id_kelas == $jenisAdm->id_kelas){
+                        if(in_array($jenisAdm->id,$idSpp)){
+                            $spp = (int)$jenisAdm->biaya;
+                            $biaya = (int)$jenisAdm->biaya * 12;
+                            TSPP::create([
+                                'id_siswa' => $siswaAfterUp->id_siswa,
+                                'januari' => $spp,
+                                'februari' => $spp,
+                                'maret' => $spp,
+                                'april' => $spp,
+                                'mei' => $spp,
+                                'juni' => $spp,
+                                'juli' => $spp,
+                                'agustus' => $spp,
+                                'september' => $spp,
+                                'oktober' => $spp,
+                                'november' => $spp,
+                                'desember' => $spp
+                            ]);
+                        }else{
+                            $biaya = (int)$jenisAdm->biaya;
+                        }
+                        $adm[] = [
+                            'id_siswa' => $siswaAfterUp->id_siswa,
+                            'id_jenis_administrasi' => $jenisAdm->id,
+                            'nominal' => $biaya,
+                        ];
                     }
-                    $adm[] = [
-                        'id_siswa' => $siswaAfterUp->id_siswa,
-                        'id_jenis_administrasi' => $jenisAdm->id,
-                        'nominal' => $biaya,
-                    ];
                 }
                 Siswa::insert($adm);
             }
@@ -108,10 +127,10 @@ class CSetting extends Controller
 
         }
     }
-    function cariKelas($mKelas,$kelas)
+    function cariKelas($mKelas,$kelas,$id_jurusan)
     {
         foreach($mKelas as $key){
-            if((int)$key->indikasi == (int)$kelas){
+            if((int)$key->indikasi == (int)$kelas && (int)$key->id_jurusan == $id_jurusan){
                 return $key->id_kelas;
             }
         }

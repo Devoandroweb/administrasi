@@ -18,6 +18,7 @@ use App\Traits\Helper;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CDatatable extends Controller
 {
@@ -103,13 +104,30 @@ class CDatatable extends Controller
             ->addIndexColumn()
             ->toJson();
     }
-    public function jenis_administrasi()
+    public function jenis_administrasi(Request $request)
     {
-        $model = MJenisAdministrasi::query();
+        // $search ="X";
+        $search = $_GET['search'];
+        $search = $search["value"];
+        // dd($search);
+        $model = DB::table('m_jenis_administrasi')->select("m_jenis_administrasi.*"
+        ,"m_jenis_administrasi.nama as nama_biaya", 
+        "m_kelas.*", "m_jurusan.*",DB::raw("CONCAT(m_kelas.nama,' ',m_jurusan.nama) AS kelas"))
+        ->join('m_kelas','m_kelas.id_kelas','=','m_jenis_administrasi.id_kelas','left')
+        ->join('m_jurusan','m_kelas.id_jurusan','=','m_jurusan.id_jurusan','left');
+        
+        // dd($model->get());
+        
         // dd(Auth::user()->id);
-        return DataTables::eloquent($model)
+        return DataTables::of($model)
             ->editColumn('biaya', function ($row) {
                 return $this->ribuan($row->biaya);
+            })
+            ->addColumn('kelas', function ($row) {
+                if($row->kelas != null){
+                    return $row->kelas;
+                }
+                return "-";
             })
             ->addColumn('action', function ($row) {
                 $btn = '';
@@ -119,7 +137,13 @@ class CDatatable extends Controller
                 }
                 return $btn;
             })
-            ->rawColumns(['action'])
+            ->filterColumn('kelas', function ($query,$keyword) {
+                $query->whereRaw("CONCAT(m_kelas.nama,' ',m_jurusan.nama) like ?", ["%{$keyword}%"]);
+            })
+            ->filterColumn('nama_biaya', function ($query,$keyword) {
+                $query->whereRaw("m_jenis_administrasi.nama like ?", ["%{$keyword}%"]);
+            })
+            ->rawColumns(['action','kelas'])
             ->addIndexColumn()
             ->toJson();
     }
@@ -208,7 +232,9 @@ class CDatatable extends Controller
         }
         $model = $model->with('admSiswa', 'kelas','spp');
         // dd($model[3]->kelas->jurusan);
-        // dd($model->get());
+        // $model->where('id_siswa',5)->get();
+
+        // dd($a[0]->spp);
         // dd(Auth::user()->id);
         return DataTables::eloquent($model)
 

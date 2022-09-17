@@ -48,6 +48,7 @@ function checkInputIgnore(inputName = [], name = ""){
 }
 function clearInput(formId){
     $(formId).find("input[type=text],input[type=password],input[type=email], textarea").val("");
+    $(formId).find("select").prop('selectedIndex', 0);
 }
 function setNumeric(){
     $(".numeric").autoNumeric('init',{aPad:false, aDec: ',', aSep: '.'});
@@ -102,7 +103,11 @@ function updateObject(arrayObject,key,value,key_update,newValue){
 }
 function searchInObject(arrayObject,key,key_value){
     //Find index of specific object using findIndex method.    
+    
     var objIndex = arrayObject.findIndex((obj => obj[key] == key_value));
+    if(objIndex == -1){
+        return false;
+    }
     return arrayObject[objIndex];
 }
 function removeInObject(arrayObject,key,key_value){

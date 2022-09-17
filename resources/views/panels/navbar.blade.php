@@ -52,7 +52,7 @@
           </li>
           @endif
           @endif
-          <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+          <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user d-flex align-items-center">
             <img alt="image" src="{{asset('assets')}}/img/avatar/default.png" class="rounded-circle mr-1">
             @if(Auth::guard('web')->check())
             <div class="d-sm-none d-lg-inline-block">Hi, {{Auth::user()->name}}</div></a>

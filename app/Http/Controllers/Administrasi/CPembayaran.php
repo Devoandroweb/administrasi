@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Administrasi;
 use App\Http\Controllers\Controller;
 use App\Models\Administrasi\HTransaksi;
 use App\Models\Administrasi\Siswa;
+use App\Models\MJenisAdministrasi;
 use App\Models\MRekap;
 use App\Models\MRekapTunggakan;
 use App\Models\MSiswa;
@@ -24,7 +25,9 @@ class CPembayaran extends Controller
     use Administrasi;
     function index()
     {
-        return view('pages.pembayaran.index')->with('title', 'Pembayaran Siswa');
+        $spp = MJenisAdministrasi::where("nama","SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
+        // dd($spp);
+        return view('pages.pembayaran.index',compact('spp'))->with('title', 'Pembayaran Siswa');
     }
     function searchSiswa(Request $request)
     {
@@ -46,8 +49,9 @@ class CPembayaran extends Controller
     {
         try {
             $siswaId = decrypt($id_siswa);
-            $tggNow = Siswa::join('m_jenis_administrasi', 'm_jenis_administrasi.id', '=', 'administrasi.id_jenis_administrasi')
+            $tggNow = Siswa::join('m_jenis_administrasi', 'm_jenis_administrasi.id', '=', 'administrasi.id_jenis_administrasi','left')
                 ->where('id_siswa', $siswaId)->get();
+
             $tggBefore = MTunggakan::where('id_siswa', $siswaId)->get();
             $spp = TSPP::where('id_siswa',$siswaId)->first();
             return response()->json(['tgg_now' => $tggNow, 'tgg_before' => $tggBefore, 'spp'=>$spp]);
@@ -57,13 +61,14 @@ class CPembayaran extends Controller
     }
     function save($id, Request $request)
     {
-        // dd($request->all());
+        //dd($request->all());
 
         // try {
         $id_siswa = decrypt($id);
         $siswa = MSiswa::withDeleted()->where('id_siswa', $id_siswa)->first();
         $i = 0;
         $j = 0;
+        $spp = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
         $detailBiaya = [];
         $detailTunggakan = [];
         $total = 0;
@@ -92,7 +97,7 @@ class CPembayaran extends Controller
                 if ($nominalBayar != 0) {
 
                     $total += $nominalBayar;
-
+                    // dd($key."--".$id_siswa);
                     //to save adminitrasi
                     $administrasi = Siswa::where('id_jenis_administrasi', $key)->where('id_siswa', $id_siswa)->first();
 
@@ -116,10 +121,10 @@ class CPembayaran extends Controller
                     //exec SPP
                     // dd($key);
 
-                    if ((int)$key == 1) {
+                    if (in_array((int)$key,$spp)) {
                         //bulan_spp
                         $bulanSpp = (isset($request->bulan_spp)) ?  $request->bulan_spp : null;
-                        
+                        // dd($bulanSpp);
                         if($bulanSpp != null){
                             $tSpp = TSPP::where('id_siswa', $id_siswa)->first();
                             $bayarSpp = $request->bayar_spp;
@@ -213,7 +218,7 @@ class CPembayaran extends Controller
                         $strukWA .= "*Tanggungan pada TA " . $ajaranLalu . "* \n";
                         $strukWA_ajaranBefore = $ajaranLalu;
                     }
-                    $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$k] . " Rp. " . $request->nominal_tunggakan[$k] . " tahan ke " . $cicilanTahapAdmTgg . " \n";
+                    $strukWA .= $strukWA_noBefore . ". " . $request->nama_biaya_tunggakan[$k] . " Rp. " . $request->nominal_tunggakan[$k] . " tahap ke " . $cicilanTahapAdmTgg . " \n";
                     $strukWA_noBefore++;
                 }
 

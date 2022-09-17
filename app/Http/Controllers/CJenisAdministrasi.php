@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\JabatanRequest;
+use App\Http\Requests\JenisBiayaRequest;
 use App\Models\MJenisAdministrasi;
 use App\Models\MKelas;
 use App\Models\MRekap;
@@ -19,7 +19,7 @@ class CJenisAdministrasi extends Controller
         ->with('title', 'Jenis Administrasi');
     }
 
-    public function store(JabatanRequest $request)
+    public function store(JenisBiayaRequest $request)
     {
         try {
             // dd($request->validated());
@@ -56,7 +56,7 @@ class CJenisAdministrasi extends Controller
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
         }
     }
-    public function update($id, JabatanRequest $request)
+    public function update($id, JenisBiayaRequest $request)
     {
         // dd(decrypt($id));
         try {

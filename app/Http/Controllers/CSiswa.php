@@ -66,7 +66,8 @@ class CSiswa extends Controller
         $data = $this->credentials($data,$request);
         $afterCreate = MSiswa::create($data);
         // dd($afterCreate->id_siswa);
-        $this->createAdministrasi($afterCreate->id_siswa);
+        $idSpp = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
+        $this->createAdministrasi($afterCreate->id_siswa,$afterCreate->id_kelas, $idSpp);
         return redirect(url('siswa'))->with('msg','Sukses Menambah Siswa');
     }
 
@@ -232,7 +233,8 @@ class CSiswa extends Controller
         // dd($siswas);
         foreach($siswas as $siswa){
             $resultSiswa = MSiswa::create($siswa);
-            $this->saveToAdministrasiAndCicilan($resultSiswa->id_siswa,$siswa['administrasi']);
+            
+            $this->saveToAdministrasiAndCicilan($resultSiswa,$siswa['administrasi']);
             $spp = $this->spp;
             TSPP::create([
                 'id_siswa' => $resultSiswa->id_siswa,
@@ -251,36 +253,41 @@ class CSiswa extends Controller
             ]);
         }
     }
-    private function saveToAdministrasiAndCicilan($idSiswa,$dataAdm)
+    private function saveToAdministrasiAndCicilan($siswa,$dataAdm)
     {
         if(count($dataAdm) != 0){
             foreach($dataAdm as $jenisAdm){
-                $admSiswaAfterCreate = Siswa::create([
-                    'id_siswa' => $idSiswa,
-                    'id_jenis_administrasi'=>$this->searchIdJenisAdmOrCreate($jenisAdm["nama_biaya"]),
-                    'nominal' => $jenisAdm["nominal"]
-                ]);
-                TCicilan::create([
-                    'tipe'=>1,
-                    'id_administrasi' => $admSiswaAfterCreate->id_administrasi
-                ]);
+                if ($jenisAdm->id_kelas == $siswa->id_kelas) {
+                    $admSiswaAfterCreate = Siswa::create([
+                        'id_siswa' => $siswa->id_siswa,
+                        'id_jenis_administrasi'=>$this->searchIdJenisAdmOrCreate($jenisAdm["nama_biaya"]),
+                        'nominal' => $jenisAdm["nominal"]
+                    ]);
+                    TCicilan::create([
+                        'tipe'=>1,
+                        'id_administrasi' => $admSiswaAfterCreate->id_administrasi
+                    ]);
+                }
             }
         }else{
+            // $spp = ['SPP','Spp','spp'];
             foreach (MJenisAdministrasi::all() as $jenisAdm) {
-                if($jenisAdm->id == 1){
-                    $biaya = $jenisAdm->biaya * 12;
-                }else{
-                    $biaya = $jenisAdm->biaya;
+                if($jenisAdm->id_kelas == $siswa->id_kelas){
+                    if(strtoupper($jenisAdm->nama) == "SPP" ){
+                        $biaya = $jenisAdm->biaya * 12;
+                    }else{
+                        $biaya = $jenisAdm->biaya;
+                    }
+                    $admSiswaAfterCreate = Siswa::create([
+                        'id_siswa' => $siswa->id_siswa,
+                        'id_jenis_administrasi' => $jenisAdm->id,
+                        'nominal' => $biaya
+                    ]);
+                    TCicilan::create([
+                        'tipe' => 1,
+                        'id_administrasi' => $admSiswaAfterCreate->id_administrasi
+                    ]);
                 }
-                $admSiswaAfterCreate = Siswa::create([
-                    'id_siswa' => $idSiswa,
-                    'id_jenis_administrasi' => $jenisAdm->id,
-                    'nominal' => $biaya
-                ]);
-                TCicilan::create([
-                    'tipe' => 1,
-                    'id_administrasi' => $admSiswaAfterCreate->id_administrasi
-                ]);
             }
             
         }

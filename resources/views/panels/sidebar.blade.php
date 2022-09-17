@@ -54,7 +54,7 @@
           <li class="nav-item dropdown {{menuActiveDropdown(0)}}">
             <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-brain"></i> <span>Master</span></a>
             <ul class="dropdown-menu">
-              <li><a class="nav-link" href="{{url('jenis-administrasi')}}">Jenis Administrasi</a></li>
+              <li><a class="nav-link" href="{{url('jenis-administrasi')}}">Jenis Biaya</a></li>
               <li><a class="nav-link" href="{{url('jurusan')}}">Data Jurusan</a></li>
               <li><a class="nav-link" href="{{url('kelas')}}">Data Kelas</a></li>
               <li><a class="nav-link" href="{{url('ajaran')}}">Data Ajaran</a></li>
@@ -63,7 +63,7 @@
           </li>
           @endif
           <li class="nav-item dropdown {{menuActiveDropdown(1)}}">
-            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-coins"></i> <span>Administrasi</span></a>
+            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-coins"></i> <span>Biaya</span></a>
             <ul class="dropdown-menu">
               <li><a class="nav-link" href="{{url('administrasi-siswa')}}">Siswa</a></li>
               <li><a class="nav-link" href="{{url('pendanaan')}}">Pendanaan</a></li>

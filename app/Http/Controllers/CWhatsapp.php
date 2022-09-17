@@ -23,6 +23,12 @@ class CWhatsapp extends Controller
             // dd($request->validated());
             $data = $request->except('_method', '_token', 'siswa');
             $data['tipe'] = 1;
+            // dd(substr($request->no_telp, 0, 1));
+            if(substr($request->no_telp, 0, 1) == "0"){
+                $noTelp = substr_replace($request->no_telp,"62",0,1);
+            }
+            // dd($request->no_nelp);
+            // dd(env("HOST_WAGATEWAY"));
             $resWa = Http::post(env("HOST_WAGATEWAY")."/send-message?number=" . str_replace(" ","",$request->no_telp) . "@c.us&msg=" . $request->pesan);
             if ($resWa->successful()) {
                 $data['status'] = 1;

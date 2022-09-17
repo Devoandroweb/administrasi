@@ -31,6 +31,6 @@ class TSPP extends Model
     }
     public function siswa()
     {
-        return $this->hasOne(MSiswa::class, 'id_siswa');
+        return $this->belongsTo(MSiswa::class, 'id_siswa');
     }
 }

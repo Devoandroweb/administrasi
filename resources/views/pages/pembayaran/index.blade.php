@@ -119,7 +119,8 @@ var bagdeSuccess = '<span class="badge badge-success">Lunas</span>';
 var _JSON_SPP = [];
 var _SPP_BULAN_CHOUSE = [];
 var _HTML_COST = '';
-
+var _ID_SPP = 0;
+var _ALL_IDSPP = {{ (count($spp) != 0) ? json_encode($spp) : [] }};
 var _CH_SPP = [];
 var _CH_TGG_NOW = [];
 var _CH_JTGG_NOW = [];
@@ -295,7 +296,8 @@ $(".btn-save").click(function (e) {
     }
 });
 $(document).on('click',"#btn-modal-simpan",function (e) { 
-    _ID_SISWA = $(this).data('idsiswa');
+    _ID_SISWA = $(this).attr('data-idsiswa');
+    console.log(_ID_SISWA);
     e.preventDefault();
     getChoouseSpp();
     getChoouseTggNow();
@@ -330,7 +332,7 @@ $(document).on('click','.remove-adm-now', function () {
     $(this).closest('tr').remove();
     removeInArray(_CH_TGG_NOW,$(this).data('keyid'));
     removeInArray(_CH_JTGG_NOW,$(this).data('keyidj'));
-    if($(this).data('keyidj') == 1){
+    if($(this).data('keyidj') == _ID_SPP){
         _CH_SPP = [];
         $(".remove-spp").closest('tr').remove();
     }
@@ -350,9 +352,14 @@ $(document).on('click','.remove-adm-before', function () {
 }); 
 $(document).on('keyup','.bayar_spp', function (e) {
     var total = 0;
-    $.each(".bayar_spp", function (i, ve) { 
-         total += parseInt(ve.split(".").join(""));
-    });
+    var elSpp = $(".bayar_spp");
+    // console.log(elSpp);
+    for (var i = 0; i < elSpp.length; ++i) {
+        total += parseInt(elSpp[i].value.split(".").join(""));
+    }
+    // $.each(".bayar_spp", function (i, ve) { 
+    //      total += parseInt(ve.split(".").join(""));
+    // });
     $("#td-spp").val(total);
 });
 //--------------------------------------- END DOM ---------------
@@ -397,8 +404,8 @@ function getChoouseSpp(){
                 console.log("indexOfBulan ->"+indexOfBulan);
                 _CH_SPP.push({nama_bulan:namaBulan,nominal:$(this).data('nominal'),index:indexOfBulan+1});
             }
-            _CH_TGG_NOW.push(1);
-            _CH_JTGG_NOW.push(1);
+            _CH_TGG_NOW.push({id_adm:_ID_SPP,nominal:0});
+            _CH_JTGG_NOW.push(_ID_SPP);
         }else{
             removeInObject(_CH_SPP,'nama_bulan',namaBulan);
         }
@@ -466,7 +473,7 @@ function buildChecboxSppModal(spp,status){
                             }
                             if(show){
                                 html += '<label class="selectgroup-item">\
-                                <input type="checkbox" name="spp_bulan" value="'+_BULAN[i].toLowerCase()+'" class="selectgroup-input c-spp" data-idja="1" data-nominal="'+nominalSpp+'">\
+                                <input type="checkbox" name="spp_bulan" value="'+_BULAN[i].toLowerCase()+'" class="selectgroup-input c-spp" data-idja="'+_ID_SPP+'" data-nominal="'+nominalSpp+'">\
                                     <span class="selectgroup-button">'+_BULAN[i]+'</span>\
                                 </label>';
                                 zeroCHSpp++;
@@ -487,12 +494,14 @@ function buildTggNowModal(tgg_now = [],status = false){
     var html = "";
     var show = true;
     var zeroCHTggNow = 0;
+    
     html = '<div class="form-group">\
                 <label class="form-label">Tanggungan TA Sekarang</label>\
                 <div class="selectgroup selectgroup-pills">';
                     if(tgg_now.length != 0){
                         tgg_now.forEach(element => {
-                            if(element.id_jenis_administrasi != 1){
+                            if(!inArray(element.id_jenis_administrasi,_ALL_IDSPP)){
+                                
                                 if(element.nominal != 0){
                                     if(status){
                                         if(inObject(element.id_administrasi,_CH_TGG_NOW,"id_adm") && inArray(element.id_jenis_administrasi,_CH_JTGG_NOW)){
@@ -511,6 +520,8 @@ function buildTggNowModal(tgg_now = [],status = false){
                                     }
                                     
                                 }
+                            }else{
+                                _ID_SPP = element.id_jenis_administrasi;
                             }
                         });
                         if(zeroCHTggNow == 0){
@@ -573,22 +584,10 @@ function buildTggBeforeModal(tgg_before = [],status = false){
     return html_checkbox;
 }
 //buat pilihan bayar
-function buildAllCost(spp = [],tgg_now = [],tgg_before = []){
-    generateRowCostNow(tgg_now,spp);
-    generateRowArrears(tgg_before);
 
-    $("select[name=bulan_spp]").prop('selectedIndex', (parseInt(bulan)-1));
-    var html = '<tr><td><td><td>\
-                <b>Total</b>\
-            </td>\
-            <td>\
-                <input type="text" name="total" class="form-control text-right numeric" required="" autocomplete="off" value="0" readonly>\
-            </td></tr>';
-    $("#data tbody").append(html);
-}
 function buildTrDetailSpp(bulan){
     var htmlTr = "";
-    console.log(bulan);
+    console.log("Bulan of TR : "+bulan);
     bulan.sort(compare);
     var totalSpp = 0;
     bulan.forEach(e => {
@@ -615,9 +614,10 @@ function buildTrDetailSpp(bulan){
 var _NO = 1;
 function generateRowCostNow(data = []){
 
-    
+    console.log("TGG NOW :",data)
     var html = "";
     data.forEach(element => {
+        
         if(inArray(element.id_jenis_administrasi,_CH_JTGG_NOW)){
             var nominal = 0;
             var print = true;
@@ -630,10 +630,13 @@ function generateRowCostNow(data = []){
             var readOnly = '';
             //pprint -----------------------------------------------------------------------------------
             if(print){
+                
                 html += "<tr>";
                 html += "<td><input type='hidden' name='nama_biaya[]' value='"+element.nama+"'>"+element.nama+"</td>";
                 html += "<td></td>";
-                if(element.id_jenis_administrasi == 1){
+                console.log("cek jenis spp "+_ALL_IDSPP)
+                console.log("cek jenis spp "+inArray(element.id_jenis_administrasi,_ALL_IDSPP))
+                if(inArray(element.id_jenis_administrasi,_ALL_IDSPP)){
                     classSpp = "td-spp";
                     nominal = "";
                     readOnly = 'readonly';
@@ -644,12 +647,14 @@ function generateRowCostNow(data = []){
                         <input type='hidden' name='id_jenis_administrasi[]' value='"+element.id_jenis_administrasi+"'/>\
                         <input type='hidden' name='biaya[]' class='biaya "+classSpp+"' id='"+_NO+"' value='"+element.nominal+"' />";
                 if(element.nominal != 0){
-                    if(element.id_jenis_administrasi != 1){
-                        html += "<input id='"+classSpp+"' data-key='"+element.id_administrasi+"' type='text' name='nominal[]' class='form-control text-right numeric nominal-bayar nominal-tgg-now no-"+_NO+"' data-val='"+element.nominal+"' value='"+searchInObject(_CH_TGG_NOW,"id_adm",element.id_administrasi).nominal+"' "+readOnly+"/></td>";
-                    }else{
-                        html += "<input id='"+classSpp+"' type='hidden' name='nominal[]' class='form-control text-right numeric no-"+_NO+"' value='0'/></td>";
-
-                    }
+                    
+                        if(!inArray(element.id_jenis_administrasi,_ALL_IDSPP)){
+                            html += "<input id='"+classSpp+"' data-key='"+element.id_administrasi+"' type='text' name='nominal[]' class='form-control text-right numeric nominal-bayar nominal-tgg-now no-"+_NO+"' data-val='"+element.nominal+"' value='"+searchInObject(_CH_TGG_NOW,"id_adm",element.id_administrasi).nominal+"' "+readOnly+"/></td>";
+                        }else{
+                            html += "<input id='"+classSpp+"' type='hidden' name='nominal[]' class='form-control text-right numeric no-"+_NO+"' value='0'/></td>";
+    
+                        }
+                    
                 }else{
                     html += "<input id='"+classSpp+"' type='text' name='nominal[]' class='form-control text-right nominal-bayar' value='0' readonly/></td>";
                 }

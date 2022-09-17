@@ -7,7 +7,7 @@ use App\Traits\Helper;
 ?>
 <section class="section">
     <div class="section-header">
-    <h1>Kelola Jenis Administrasi</h1>
+    <h1>Kelola Jenis Biaya</h1>
     {{-- breadcrumbs --}}
     {{ Breadcrumbs::render('jenis_administrasi') }}
     </div>
@@ -15,10 +15,10 @@ use App\Traits\Helper;
     <div class="section-body">
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Masukkan Jenis Administrasi sesuai Lembaga anda</h4>
+            <h4>Masukkan Jenis Biaya sesuai Lembaga anda</h4>
             <div class="card-header-action">
                 <a href="#" class="btn btn-primary" id="btn-add-data">
-                <i class="fas fa-plus-circle"></i> Tambah Jenis Administrasi
+                <i class="fas fa-plus-circle"></i> Tambah Jenis Biaya
                 </a>
             </div>
             </div>
@@ -30,7 +30,8 @@ use App\Traits\Helper;
                     <th class="text-center">
                         #
                     </th>
-                    <th>Nama Administrasi</th>
+                    <th>Nama Biaya</th>
+                    <th>Kelas</th>
                     <th>Biaya</th>
                     <th>Action</th>
                     </tr>
@@ -50,8 +51,8 @@ use App\Traits\Helper;
 <script>
 // CUKUP UBAH VARIABLE BERIKUT
 var _STATUS_SUBMIT = 0;
-var _TITLE_MODAL_ADD = "Tambah Jenis Administrasi";
-var _TITLE_MODAL_UPDATE = "Ubah Jenis Administrasi";
+var _TITLE_MODAL_ADD = "Tambah Jenis Biaya";
+var _TITLE_MODAL_UPDATE = "Ubah Jenis Biaya";
 var _ID_UPDATE = "";
 var _URL_INSERT = '{{route("jenis-administrasi.store")}}';
 var _URL_UPDATE = '{{url("jenis-administrasi")}}/';
@@ -77,8 +78,13 @@ function setDataTable() {
                 width: '4%',
                 className: 'text-center'
             },{
-                data: 'nama',
-                name: 'nama',
+                data: 'nama_biaya',
+                name: 'nama_biaya',
+                // searchable: false,
+            },{
+                data: 'kelas',
+                name: 'kelas',
+                // searchable: false,
             },{
                 data: 'biaya',
                 name: 'biaya',
@@ -109,6 +115,7 @@ $(document).on('click','.edit',function(e){
                 modal.find(".modal-title").text(_TITLE_MODAL_UPDATE);
                 _ID_UPDATE = response.data.key;
                 modal.find("input[name=nama]").val(response.data.nama);
+                modal.find("select[name=id_kelas]").val(response.data.id_kelas);
                 toRupiah(modal.find("input[name=biaya]"),response.data.biaya);
                 modal.modal("show");
             }

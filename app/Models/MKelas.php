@@ -34,4 +34,9 @@ class MKelas extends Model
     {
         return $this->nama . "-" . $this->jurusan->nama;
     }
+    function jenisBiaya()
+    {
+        return $this->hasOne(MJenisAdministrasi::class,'id_kelas');
+    
+    }
 }
