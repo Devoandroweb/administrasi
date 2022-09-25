@@ -135,6 +135,7 @@ class CDatatable extends Controller
                 if ($row->id != 1) {
                     $btn .= '<a href="' . route('jenis-administrasi.destroy', encrypt($row->id)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
                 }
+                $btn .= "<input type='hidden' name='delete' value='". encrypt($row->id)."'/>";
                 return $btn;
             })
             ->filterColumn('kelas', function ($query,$keyword) {
@@ -180,10 +181,10 @@ class CDatatable extends Controller
             })
             ->addColumn('action', function ($row) {
                 $btn = '';
-                $btn .= '<a href="' . route('kelas.edit', encrypt($row->id_kelas)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
-                // if ($row->id_kelas != 1) {
-                //     $btn .= '<a href="' . route('kelas.destroy', encrypt($row->id_kelas)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
-                // }
+                if ($row->no_urut != 0) {
+                    $btn .= '<a href="' . route('kelas.edit', encrypt($row->id_kelas)) . '" class="text-primary edit"><i class="fas fa-user-edit"></i></a>';
+                    // $btn .= '<a href="' . route('kelas.destroy', encrypt($row->id_kelas)) . '" class="text-danger delete mr-2"><i class="far fa-trash-alt"></i></a>';
+                }
                 return $btn;
             })
             ->rawColumns(['action', 'jurusan', 'siswa_count'])

@@ -133,14 +133,14 @@ class CSiswa extends Controller
         try {
             $id = decrypt($id_siswa);
             MSiswa::where('id_siswa',$id)->delete();
-            $idAdministrasi = Siswa::where('id_siswa',$id)->pluck('id_administrasi');
-            TCicilan::where('tipe',1)->whereIn('id_administrasi',$idAdministrasi)->delete();
+            // $idAdministrasi = Siswa::where('id_siswa',$id)->pluck('id_administrasi');
+            // TCicilan::where('tipe',1)->whereIn('id_administrasi',$idAdministrasi)->delete();
             
-            $idTunggakan = MTunggakan::where('id_siswa',$id)->pluck('id_tunggakan');
-            TCicilan::where('tipe', 2)->whereIn('id_administrasi', $idTunggakan)->delete();
+            // $idTunggakan = MTunggakan::where('id_siswa',$id)->pluck('id_tunggakan');
+            // TCicilan::where('tipe', 2)->whereIn('id_administrasi', $idTunggakan)->delete();
 
-            TSPP::where('id_siswa',$id)->delete();
-            Siswa::where('id_siswa',$id)->delete();
+            // TSPP::where('id_siswa',$id)->delete();
+            // Siswa::where('id_siswa',$id)->delete();
 
             return response()->json(['status' => true, 'msg' => 'Sukses Menghapus Data'], 200);
         } catch (\Throwable $th) {
@@ -202,7 +202,7 @@ class CSiswa extends Controller
     {
         
         // dd($request->all());
-        try {
+        // try {
             //code...
             // menangkap file excel
             $file = $request->file('file-import');
@@ -221,19 +221,20 @@ class CSiswa extends Controller
             $this->jenisAdmistrasi = MJenisAdministrasi::all();
             $this->createSiswa($importSiswa->getData());
             return response()->json(['status' => true, 'msg'=> 'Sukses Import Siswa','data'=>null]);
-        } catch (\Throwable $th) {
-            //throw $th;
-            return response()->json(['status' => false, 'msg' => $th->getMessage()]);
-        }
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        //     return response()->json(['status' => false, 'msg' => $th->getMessage()]);
+        // }
     }
     private function createSiswa($siswas)
     {
-        $this->spp = MJenisAdministrasi::where('id', 1)->first();
-        $this->spp = $this->spp->biaya;
+        
         // dd($siswas);
         foreach($siswas as $siswa){
             $resultSiswa = MSiswa::create($siswa);
-            
+            $this->spp = MJenisAdministrasi::where('nama', strtoupper('SPP'))->where('id_kelas', $resultSiswa->id_kelas)->first();
+            $this->spp = $this->spp->biaya;
+
             $this->saveToAdministrasiAndCicilan($resultSiswa,$siswa['administrasi']);
             $spp = $this->spp;
             TSPP::create([

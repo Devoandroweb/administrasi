@@ -27,6 +27,7 @@ use App\Traits\Helper;
                 <table id="data" class="table table-striped" width="100%">
                 <thead>
                     <tr>
+                    
                     <th class="text-center">
                         #
                     </th>
@@ -44,7 +45,25 @@ use App\Traits\Helper;
             </div>
         </div>
 </section>
-
+<style>
+.floating-button{
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 99;
+    display: none;
+}
+.floating-button .btn-delete{
+    width: 60px;
+    height: 60px;
+}
+.floating-button .fas{
+    font-size: 1.5em
+}
+</style>
+<div class="floating-button" id="btn-float">
+    <button type="button" class="btn btn-danger rounded-circle btn-delete" tooltip="Hapus yang di pilih"><i class="fas fa-trash fa-lg"></i></button>
+</div>
 @endsection
 @push('js')
 <script type="text/javascript" src="{{asset('vendor/autonumeric/autoNumeric.js')}}"></script>
@@ -62,6 +81,7 @@ var _URL_DATATABLE = '{{ url("datatable/jenis-administrasi") }}';
 setDataTable();
 function setDataTable() {
     $('#data').DataTable({
+        "stateSave": true,
         processing: true,
         serverSide: true,
         ajax: {
@@ -93,16 +113,64 @@ function setDataTable() {
                 name: 'action',
                 orderable: false,
                 searchable: false
-            }]
+            }],
         });
     }
+$('#data tbody').on('click', 'tr', function () {
+    $(this).toggleClass('selected');
+    showMultiDelete();
+});
+$(document).on("click",".btn-delete",function(){
+    var tr = $('#data tbody').find(".selected");
+    var data = [];
+    $.each(tr, function (indexInArray, valueOfElement) { 
+        data.push($(this).find('input[name=delete]').val());
+    });
+    Swal.fire({
+        title: 'Kamu Yakin?',
+        text: "Menghapus data ini",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Tidak'
+        }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "post",
+                url: "{{url('jenis-administrasi-multidelete')}}",
+                data: {delete:data},
+                dataType: "json",
+                success: function (response) {
+                    if(response.status){
+                        iziToast.success({
+                            title: 'Success',
+                            message: response.msg,
+                            position: 'topRight'
+                        });
+                        $('#data').DataTable().destroy();
+                        setDataTable();
+                        $("#btn-float").hide();
+                    }
+                }
+            });
+        }
+    })
+    
+})
 $(document).on('click','#btn-add-data',function(e){
     _STATUS_SUBMIT = 1;
     clearInput("#form-data");
     $("#fire-modal-1").find(".modal-title").text(_TITLE_MODAL_ADD);
+    $('#jb-kelas').selectric('destroy');
+    $("#fire-modal-1").find(".selectric").attr("multiple","multiple");
+    initSelectic()
 });
 $(document).on('click','.edit',function(e){
     var modal = $("#fire-modal-1");
+    $(this).closest('tr').removeClass("selected")
+    showMultiDelete()
     clearInput("#form-data");
     e.preventDefault();
     $.ajax({
@@ -111,6 +179,8 @@ $(document).on('click','.edit',function(e){
         dataType: "JSON",
         success: function (response) {
             if(response.status){
+                $('#jb-kelas').selectric('destroy');
+                $("#fire-modal-1").find(".selectric").removeAttr("multiple");
                 _STATUS_SUBMIT = 2;
                 modal.find(".modal-title").text(_TITLE_MODAL_UPDATE);
                 _ID_UPDATE = response.data.key;
@@ -118,6 +188,7 @@ $(document).on('click','.edit',function(e){
                 modal.find("select[name=id_kelas]").val(response.data.id_kelas);
                 toRupiah(modal.find("input[name=biaya]"),response.data.biaya);
                 modal.modal("show");
+                initSelectic()
             }
         }
     });
@@ -164,10 +235,33 @@ $('#btn-add-data').fireModal({
             $.destroyModal(current_modal);
             
         }
+    }],
+    appended : function(current_modal){
+        initSelectic()
     }
-    ]
 });
-
+function initSelectic(){
+    $('#jb-kelas').selectric({
+        responsive: true,
+        maxHeight:200,
+        onBeforeInit: function() {
+            console.log("after selectric")
+            $(".selectric-input").attr("name","selectric")
+        },
+        onClose: function() {
+        
+            var value = $(this).val();
+            if(typeof value == 'object'){
+                $("input[name=kelas]").val(value.join(','));
+            }else{
+                $("input[name=kelas]").val(value);
+            }
+        },
+        onChange: function(element) {
+            $(element).change();
+        }
+    });
+}
 // submit data
 function saveForm(form,url,modal,statusSubmit,method = "post"){
     var result = false;
@@ -175,10 +269,10 @@ function saveForm(form,url,modal,statusSubmit,method = "post"){
     var msg = null;
     if(statusSubmit == 1){//new
         msg = 'Menambahkan';
-        validate = validateInput(form);
+        validate = validateInput(form,['id_kelas','kelas','']);
     }else if(statusSubmit == 2){//update
         msg = 'Mengubah';
-        validate = validateInput(form,['password']);
+        validate = validateInput(form,['id_kelas','kelas','']);
     }
     if(validate){
         $.ajax({
@@ -198,10 +292,13 @@ function saveForm(form,url,modal,statusSubmit,method = "post"){
                 result = true;
             }
         });
+    }else{
+        console.log("Not Complete Input")
     }
     return result;
 }
 setNumeric();
+
 </script>
 <script type="text/javascript" src="{{asset('assets/js/delete.js')}}"></script>
 

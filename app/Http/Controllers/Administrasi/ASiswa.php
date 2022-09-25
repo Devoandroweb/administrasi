@@ -11,6 +11,7 @@ use App\Models\MTunggakan;
 use App\Models\TCicilan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class ASiswa extends Controller
 {
@@ -31,11 +32,13 @@ class ASiswa extends Controller
     {
         $id_siswa = decrypt($id);
         $siswa = MSiswa::where('id_siswa', $id_siswa)->with('kelas')->first();
-        $adminsitrasi = Siswa::where('id_siswa', $id_siswa)->with('cicilan', 'jenisAdministrasi')->get();
-        $tunggakan = MTunggakan::where('id_siswa', $id_siswa)->with('cicilan')->get();
+        $administrasi = DB::select("SELECT * FROM `administrasi` INNER JOIN t_cicilan ON administrasi.id_administrasi = t_cicilan.id_administrasi INNER JOIN m_jenis_administrasi ON m_jenis_administrasi.id = administrasi.id_jenis_administrasi WHERE tipe = 1 AND administrasi.id_siswa = {$id_siswa} ;");
+        $tunggakan = DB::select("SELECT * FROM `administrasi` INNER JOIN t_cicilan ON administrasi.id_administrasi = t_cicilan.id_administrasi INNER JOIN m_jenis_administrasi ON m_jenis_administrasi.id = administrasi.id_jenis_administrasi WHERE tipe = 2 AND administrasi.id_siswa = {$id_siswa} ;");
+        // $tunggakan = DB::statement('SELECT * FROM `administrasi` INNER JOIN t_cicilan ON administrasi.id_administrasi = t_cicilan.id_administrasi WHERE tipe = 2;');
+        // $tunggakan = MTunggakan::where('id_siswa', $id_siswa)->with('cicilan')->get();
         $ajaran = MAjaran::whereNot('status', 1)->get();
-        // dd($data);
-        return view('pages.administrasi.siswa.cicilan', compact('siswa', 'adminsitrasi', 'tunggakan','ajaran'))->with('title', 'Cicilan Siswa ' . $siswa->nama);
+        // dd($administrasi);
+        return view('pages.administrasi.siswa.cicilan', compact('siswa', 'administrasi', 'tunggakan','ajaran'))->with('title', 'Cicilan Siswa ' . $siswa->nama);
     }
     function printTanggungan($id_siswa)
     {

@@ -32,6 +32,7 @@ class CLogin extends Controller
                 $_SESI_AJARAN['tahun_akhir'] = $ajaran->tahun_akhir;
             }
             //insert update to RHUser
+            
             $idUser = Auth::user()->id;
             RHUser::where('id_user',$idUser)->delete();
             RHUser::updateOrCreate(['id_user'=> $idUser,'date_login'=>date('Y-m-d H:i:s')]);

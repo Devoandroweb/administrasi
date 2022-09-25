@@ -12,6 +12,7 @@ function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
     }
     if(validate){
         $("#btn-submit").attr('disabled','disabled');
+        $("#btn-submit").addClass('disabled');
        
         $.ajax({
             type: method,
@@ -29,6 +30,8 @@ function saveForm(form,url,modal,statusSubmit,method = "post",igoneinput = []){
                 });
                 result = true;
                 $("#btn-submit").removeAttr('disabled');
+                $("#btn-submit").removeClass('disabled');
+
 
             }
         });

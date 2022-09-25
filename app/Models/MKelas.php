@@ -39,4 +39,8 @@ class MKelas extends Model
         return $this->hasOne(MJenisAdministrasi::class,'id_kelas');
     
     }
+    public static function withNoUrut()
+    {
+        return self::orderBy('no_urut','asc');
+    }
 }

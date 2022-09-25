@@ -23,7 +23,7 @@ class CRekap extends Controller
         $administrasi = Siswa::all();
         $terbayar = HTransaksi::all();
         $tunggakan = MTunggakan::all();
-        $kelas = MKelas::all();
+        $kelas = MKelas::withNoUrut()->get();
         $siswa = MSiswa::where(function($query) use ($q) {
                 $query->where('nisn', 'LIKE', '%'.$q.'%')
                     ->orWhere('nama', 'LIKE', '%'.$q.'%');

@@ -22,6 +22,8 @@ use App\Http\Controllers\CSiswa;
 use App\Http\Controllers\CUser;
 use App\Http\Controllers\CWhatsapp;
 use App\Models\MAjaran;
+use App\Models\MJenisAdministrasi;
+use App\Models\MRekap;
 use App\Models\MSaldo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -48,12 +50,12 @@ Route::middleware(['auth'])->group(function () {
     //resource
     Route::resource('/user', CUser::class)->except('credentials', 'check_username');
     Route::resource('/siswa', CSiswa::class);
-    Route::resource('/jenis-administrasi', CJenisAdministrasi::class);
+    Route::resource('/jenis-administrasi', CJenisAdministrasi::class)->except('delete_multi');
     Route::resource('/jurusan', CJurusan::class);
     Route::resource('/kelas', CKelas::class);
     Route::resource('/ajaran', CAjaran::class)->except('actifed_ajaran');
     Route::resource('/whatsapp', CWhatsapp::class);
-
+    
     //laporan
     Route::get('/laporan', [CLaporan::class, 'index']);
 
@@ -75,6 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/import-siswa-read', [CSiswa::class, 'importSiswaRead']);
     Route::post('/import-siswa-save', [CSiswa::class, 'importSiswaSave']);
     Route::get('/biaya-spp-perbulan/{id_siswa}/{bulan}', [CPembayaran::class, 'getSppBulanan']);
+    Route::post('/jenis-administrasi-multidelete', [CJenisAdministrasi::class,'delete_multi']);
     
     //another function
     Route::get('/user-checkusername', [CUser::class,'check_username']);
@@ -122,10 +125,20 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/reset-sistem', function ()
 {
+    // $mJenisAdms = MJenisAdministrasi::all();
+    // foreach ($mJenisAdms as $key) {
+        
+    //     $dataRekap[] = [
+    //         'id_jenis_administrasi' => $key->id,
+    //         'id_kelas' => $key->id_kelas,
+    //     ];
+    //     MRekap::insert($dataRekap);
+    // }
+    DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+    DB::statement("TRUNCATE TABLE m_siswa;");
     DB::statement("TRUNCATE TABLE t_spp;");
     DB::statement("TRUNCATE TABLE administrasi;");
     DB::statement("TRUNCATE TABLE t_cicilan;");
-    DB::statement("TRUNCATE TABLE m_siswa;");
     DB::statement("TRUNCATE TABLE tunggakan;");
     DB::statement("TRUNCATE TABLE rekap_tunggakan;");
     DB::statement("TRUNCATE TABLE m_whatsapp;");
@@ -133,10 +146,11 @@ Route::get('/reset-sistem', function ()
     DB::statement("TRUNCATE TABLE whatsapp_send;");
     DB::statement("TRUNCATE TABLE m_whatsapp;");
     DB::statement("TRUNCATE TABLE pendanaan;");
-    DB::statement("TRUNCATE TABLE m_rekap;");
+    DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     MSaldo::first()->update(['saldo'=>0]);
     MAjaran::where("id","!=",1)->delete();
     MAjaran::first()->update(['status'=>1]);
+    DB::table('m_rekap')->update(['total'=>0]);
     echo "Success";
     return redirect(url('/logout'));
 });

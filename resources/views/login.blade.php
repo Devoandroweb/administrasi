@@ -83,6 +83,7 @@
     $(this).text("Tunggu Sebentar ...");
     $(this).attr('disabled','disabled');
     $(".waiting").html('<div class="loader-line app-loader"></div>');
+    $("form").submit();
   });
 </script>
 @endpush

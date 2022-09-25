@@ -64,9 +64,14 @@
     {
         if($id == 0){
             return 'ALUMNI';
+        }elseif($id == -1){
+            return 'SEMUA';
         }else{
             foreach ($kelas as $key) {
                 if($key->id_kelas == $id){
+                    if($key->no_urut == 0){
+                        return $key->nama;
+                    }
                     return $key->namaKelas();
                 }
             }
@@ -98,11 +103,15 @@
                 @endif
                 <ul class="dropdown-menu dropdown-menu-sm dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(-126px, 31px, 0px); top: 0px; left: 0px; will-change: transform;">
                     <li class="dropdown-title">Pilih Kelas</li>
+                    <li><a href="#" data-text="semua" data-id="-1" class="dropdown-item kelas-item" >Semua</a></li>
                     @foreach ($kelas as $kel)
+                        @if($kel->no_urut == 0)
+                        <li><a href="#" class="dropdown-item kelas-item" data-text="{{$kel->nama}}" data-id="{{$kel->id_kelas}}">{{$kel->nama}}</a></li>
+                        @else
                         <li><a href="#" class="dropdown-item kelas-item" data-text="{{$kel->namaKelas()}}" data-id="{{$kel->id_kelas}}">{{$kel->namaKelas()}}</a></li>
-                    @endforeach
-                    <li><a href="#" class="dropdown-item kelas-item" data-text="Alumni" data-id="0">Alumni</a></li>
-                </ul>
+                        @endif
+                        @endforeach
+                    </ul>
             </div>
             <form class="card-header-form" method="GET" action="{{url('rekap/per-siswa')}}">
                 <div class="input-group">

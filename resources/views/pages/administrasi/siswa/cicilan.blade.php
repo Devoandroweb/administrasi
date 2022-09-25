@@ -32,23 +32,24 @@ use App\Traits\Helper;
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="tab-ta-now" role="tabpanel" aria-labelledby="tab-ta-now">
                 <div class="row">
-                    @foreach ($adminsitrasi as $item)
-                    @if($item->cicilan->tipe == 1)
+                    @foreach ($administrasi as $item)
+                    
+                    @if($item->tipe === 1)
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="text-dark">{{$item->jenisAdministrasi->nama}}</h4>
+                                <h4 class="text-dark">{{$item->nama}}</h4>
                                 <div class="card-header-action">
                                     <a data-collapse="#adm-tab-{{$loop->iteration}}" class="btn btn-icon btn-danger" href="#"><i class="fas fa-plus"></i></a>
                                 </div>
                             </div>
                             <div class="collapse" id="adm-tab-{{$loop->iteration}}">
                                 <div class="card-body">
-                                    @if($item->cicilan->deskripsi != null)
+                                    @if($item->deskripsi != null)
                                     <table class="w-100">
-                                        {{-- <td>{{$item->cicilan->deskripsi}}</td> --}}
+                                        {{-- <td>{{$item->deskripsi}}</td> --}}
                                         @php
-                                            $desc = json_decode($item->cicilan->deskripsi); 
+                                            $desc = json_decode($item->deskripsi); 
                                         @endphp
                                         @foreach ($desc as $des)    
                                         <tr>

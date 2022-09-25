@@ -13,9 +13,9 @@ function validateInput(form,ingoneInputName = []){
     var textarea = form.find('textarea');
     var select = form.find('select');
     var allInput = [{el:input,text:'input'},{el:select,text:'select'},{el:textarea,text:'textarea'}];
-    console.log(allInput);
     allInput.forEach(function(v,i){
         $.each(v.el, function (indexInArray,element) { 
+            console.log(element);
             var name = element.name;
             //cek input ignore
             //jika input ada maka true, jika true maka skip in-valid

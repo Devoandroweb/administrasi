@@ -20,8 +20,9 @@ class CSetting extends Controller
     use Administrasi;
     function resetTahunAjaran()
     {
-        try {
+        // try {
             // ambil data
+            $alumni = MKelas::where("no_urut",0)->first();
             $idSpp = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
             $mSiswa = MSiswa::with('kelas')->where('id_kelas', '!=', 0)->get();
             $mKelas = MKelas::all();
@@ -55,7 +56,7 @@ class CSetting extends Controller
 
             foreach ($mSiswa as $siswa) {
                 if ((int)$siswa->kelas->indikasi == 12) {
-                    $siswa->update(['id_kelas' => 0,'status'=> 0]);
+                    $siswa->update(['id_kelas' => $alumni->id_kelas,'status'=> 0]);
                 } elseif ((int)$siswa->kelas->indikasi == 11) {
                     $siswa->update(['id_kelas' => $this->cariKelas($mKelas, 12, $siswa->kelas->jurusan->id_jurusan)]);
                 } elseif ((int)$siswa->kelas->indikasi == 10) {
@@ -84,48 +85,51 @@ class CSetting extends Controller
 
             // add to administrasi
             $mJenisAdm = MJenisAdministrasi::all();
-            $mSiswaAfterUp = MSiswa::where('id_kelas','!=',0)->get(); 
+            $mSiswaAfterUp = MSiswa::where('id_kelas','!=', $alumni->id_kelas)->get();
             
             foreach ($mSiswaAfterUp as $siswaAfterUp) {
-                $adm = null;
-                foreach ($mJenisAdm as $jenisAdm) {
-                    if($siswaAfterUp->id_kelas == $jenisAdm->id_kelas){
-                        if(in_array($jenisAdm->id,$idSpp)){
-                            $spp = (int)$jenisAdm->biaya;
-                            $biaya = (int)$jenisAdm->biaya * 12;
-                            TSPP::create([
-                                'id_siswa' => $siswaAfterUp->id_siswa,
-                                'januari' => $spp,
-                                'februari' => $spp,
-                                'maret' => $spp,
-                                'april' => $spp,
-                                'mei' => $spp,
-                                'juni' => $spp,
-                                'juli' => $spp,
-                                'agustus' => $spp,
-                                'september' => $spp,
-                                'oktober' => $spp,
-                                'november' => $spp,
-                                'desember' => $spp
-                            ]);
-                        }else{
-                            $biaya = (int)$jenisAdm->biaya;
-                        }
-                        $adm[] = [
-                            'id_siswa' => $siswaAfterUp->id_siswa,
-                            'id_jenis_administrasi' => $jenisAdm->id,
-                            'nominal' => $biaya,
-                        ];
-                    }
-                }
-                Siswa::insert($adm);
+                $this->createAdministrasi($siswaAfterUp->id_siswa, $siswaAfterUp->id_kelas, $idSpp);
             }
+            //foreach ($mSiswaAfterUp as $siswaAfterUp) {
+            //     $adm = null;
+            //     foreach ($mJenisAdm as $jenisAdm) {
+            //         if($siswaAfterUp->id_kelas == $jenisAdm->id_kelas){
+            //             if(in_array($jenisAdm->id,$idSpp)){
+            //                 $spp = (int)$jenisAdm->biaya;
+            //                 $biaya = (int)$jenisAdm->biaya * 12;
+            //                 TSPP::create([
+            //                     'id_siswa' => $siswaAfterUp->id_siswa,
+            //                     'januari' => $spp,
+            //                     'februari' => $spp,
+            //                     'maret' => $spp,
+            //                     'april' => $spp,
+            //                     'mei' => $spp,
+            //                     'juni' => $spp,
+            //                     'juli' => $spp,
+            //                     'agustus' => $spp,
+            //                     'september' => $spp,
+            //                     'oktober' => $spp,
+            //                     'november' => $spp,
+            //                     'desember' => $spp
+            //                 ]);
+            //             }else{
+            //                 $biaya = (int)$jenisAdm->biaya;
+            //             }
+            //             $adm[] = [
+            //                 'id_siswa' => $siswaAfterUp->id_siswa,
+            //                 'id_jenis_administrasi' => $jenisAdm->id,
+            //                 'nominal' => $biaya,
+            //             ];
+            //             Siswa::insert($adm);
+            //         }
+            //     }
+            // }
 
             return response()->json(['status' => true, 'msg' => 'success tahun ajaran baru ' . $tahunAwalBaru],200);
-        } catch (\Throwable $th) {
-            return response()->json(['status' => false, 'msg' => $th->getMessage()],500);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['status' => false, 'msg' => $th->getMessage()],500);
 
-        }
+        // }
     }
     function cariKelas($mKelas,$kelas,$id_jurusan)
     {

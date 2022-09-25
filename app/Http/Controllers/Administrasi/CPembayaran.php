@@ -68,7 +68,7 @@ class CPembayaran extends Controller
         $siswa = MSiswa::withDeleted()->where('id_siswa', $id_siswa)->first();
         $i = 0;
         $j = 0;
-        $spp = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
+        $sppId = MJenisAdministrasi::where("nama", "SPP")->orWhere("nama", "spp")->pluck('id')->toArray();
         $detailBiaya = [];
         $detailTunggakan = [];
         $total = 0;
@@ -103,7 +103,7 @@ class CPembayaran extends Controller
 
 
                     //save to cicilan
-                    $tCicilan = TCicilan::where('id_administrasi', $administrasi->id_administrasi)->first();
+                    $tCicilan = TCicilan::tipeNow()->where('id_administrasi', $administrasi->id_administrasi)->first();
                     $cicilanTahapAdm = 0;
                     if ($tCicilan != null) {
                         $jsonDesk = json_decode($tCicilan->deskripsi);
@@ -119,9 +119,9 @@ class CPembayaran extends Controller
                     }
                     //to save t_spp
                     //exec SPP
-                    // dd($key);
 
-                    if (in_array((int)$key,$spp)) {
+
+                    if (in_array((int)$key, $sppId)) {
                         //bulan_spp
                         $bulanSpp = (isset($request->bulan_spp)) ?  $request->bulan_spp : null;
                         // dd($bulanSpp);

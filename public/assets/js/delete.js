@@ -1,5 +1,7 @@
 $(document).on('click','.delete',function(e){
         e.preventDefault();
+        $(this).closest('tr').removeClass("selected")
+        showMultiDelete()
         Swal.fire({
             title: 'Kamu Yakin?',
             text: "Menghapus data ini",
@@ -34,4 +36,11 @@ function deleteData(url,type = "get",method = null){
             }
         }
     });
+}function showMultiDelete(){
+    var tr = $('#data tbody').find(".selected");
+    if(tr.length != 0){
+        $("#btn-float").show();
+    }else{
+        $("#btn-float").hide();
+    }
 }

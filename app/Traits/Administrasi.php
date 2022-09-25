@@ -69,14 +69,11 @@ trait Administrasi
     }
     static function createRekap($mJenisAdm)
     {
-        $mKelas = MKelas::all();
-        $dataRekap = [];
-        foreach ($mKelas as $kelas) {
-            $dataRekap[] = [
-                'id_jenis_administrasi' => $mJenisAdm->id,
-                'id_kelas' => $kelas->id_kelas,
-            ];
-        }
+       
+        $dataRekap[] = [
+            'id_jenis_administrasi' => $mJenisAdm->id,
+            'id_kelas' => $mJenisAdm->id_kelas,
+        ];
         MRekap::insert($dataRekap);
     }
     function createPemasukan($tipePemasukan,$nama,$detail,$total)

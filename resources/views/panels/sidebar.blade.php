@@ -70,13 +70,8 @@
             </ul>
           </li>
           <li class="menu-header">Laporan</li>
-          <li class="nav-item dropdown {{menuActiveDropdown(2)}}">
-            <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-book"></i> <span>Rekap</span></a>
-            <ul class="dropdown-menu">
-              <li><a class="nav-link" href="{{url('rekap/per-kelas')}}">Per-Kelas</a></li>
-              <li><a class="nav-link" href="{{url('rekap/per-siswa')}}">Per-Siswa</a></li>
-            </ul>
-          </li>
+          
+          <li class="{{menuActive(url('rekap/per-siswa'))}}"><a class="nav-link" href="{{url('rekap/per-siswa')}}"><i class="fas fa-book"></i> <span>Rekap</span></a></li>
           <li class="{{menuActive(url('htransaksi'))}}"><a class="nav-link" href="{{url('htransaksi')}}"><i class="fas fa-clock"></i> <span>Riwayat Transaksi</span></a></li>
           <li class="{{menuActive(url('laporan'))}}"><a class="nav-link" href="{{url('laporan')}}"><i class="fas fa-print"></i> <span>Report</span></a></li>
 

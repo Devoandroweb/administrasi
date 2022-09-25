@@ -565,7 +565,7 @@ function buildTggBeforeModal(tgg_before = [],status = false){
                     }
                 }
                 if(show){
-                    html_checkbox += '<label class="selectgroup-item" style="margin-bottom: 33px;">\
+                    html_checkbox += '<label class="selectgroup-item">\
                         <input type="checkbox" name="tgg_before" value="'+element.nama_tunggakan+'" data-id="'+element.id_tunggakan+'" data-nominal="'+element.nominal+'" class="selectgroup-input c-tgg-before">\
                         <span class="selectgroup-button rounded-pill mr-2">'+element.nama_tunggakan+'</span>\
                         </label>';

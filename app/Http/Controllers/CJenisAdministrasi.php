@@ -8,6 +8,7 @@ use App\Models\MKelas;
 use App\Models\MRekap;
 use App\Traits\Administrasi;
 use App\Traits\Helper;
+use Illuminate\Http\Request;
 
 class CJenisAdministrasi extends Controller
 {
@@ -23,11 +24,16 @@ class CJenisAdministrasi extends Controller
     {
         try {
             // dd($request->validated());
-            $data = $request->all();
-            $data['biaya'] = str_replace('.','',$request->biaya);
-            // create to 
-            $mJenisAdm = MJenisAdministrasi::create($data);
-            $this->createRekap($mJenisAdm);
+            $data = $request->except('_token');
+            // dd($request->all());
+            foreach(explode(",",$request->kelas) as $key){
+                $data['nama'] = strtoupper($request->nama);
+                $data['biaya'] = str_replace('.', '', $request->biaya);
+                $data['id_kelas'] = $key;
+                // create to 
+                $mJenisAdm = MJenisAdministrasi::create($data);
+                $this->createRekap($mJenisAdm);
+            }
             return response()->json(['status' => true, 'msg' => 'Sukses Menambahkan Data'], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
@@ -61,6 +67,7 @@ class CJenisAdministrasi extends Controller
         // dd(decrypt($id));
         try {
             $data = $request->safe()->except('_method', '_token');
+            $data['nama'] = strtoupper($request->nama);
             $data['biaya'] = str_replace('.', '', $request->biaya);
             MJenisAdministrasi::find(decrypt($id))->update($data);
             return response()->json(['status' => true, 'msg' => 'Sukses Mengubah Data'], 200);
@@ -72,6 +79,21 @@ class CJenisAdministrasi extends Controller
     {
         try {
             MJenisAdministrasi::find(decrypt($id))->delete();
+            return response()->json(['status' => true, 'msg' => 'Sukses Menghapus Data'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);
+        }
+    }
+    public function delete_multi(Request $request)
+    {
+        
+        try {
+            // dd($request->delete);
+            $idDelete = [];
+            foreach ($request->delete as $key) {
+                array_push($idDelete, decrypt($key));
+            }
+            MJenisAdministrasi::destroy($idDelete);
             return response()->json(['status' => true, 'msg' => 'Sukses Menghapus Data'], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => false, 'msg' => $th->getMessage()], 500);

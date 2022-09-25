@@ -25,7 +25,7 @@ class JenisBiayaRequest extends FormRequest
     {
         return [
             'nama' => 'required',
-            'id_kelas' => 'required',
+            // 'id_kelas' => 'required',
             'biaya' => 'required'
         ];
     }

@@ -43,9 +43,11 @@
                     use App\Models\MJenisAdministrasi;
                     use App\Models\MKelas;
                     use App\Models\MRekap;
+                    use App\Models\Administrasi\Siswa;
                     use App\Traits\Helper;
                     $mJenisAdm = MJenisAdministrasi::paginate(10);
-                    $mKelas = MKelas::with('jurusan')->orderBy('no_urut','asc')->get();
+                    // dd($mJenisAdm);
+                    $mKelas = MKelas::with('jurusan')->whereNot('no_urut',0)->orderBy('no_urut','asc')->get();
                     function cariRekap($_idJenisAdm,$_idKelas)
                     {
                         $mRekap = MRekap::all();
@@ -58,14 +60,17 @@
                     }
                     function cariAdmTotal($id_jenis_adm,$id_kelas)
                     {
-                        $data = DB::selectOne("SELECT m_siswa.id_kelas, SUM(administrasi.nominal) as nominal_adm FROM administrasi 
-                                    INNER JOIN m_siswa ON m_siswa.id_siswa = administrasi.id_siswa 
-                                    INNER JOIN m_kelas ON m_siswa.id_kelas = m_kelas.id_kelas 
-                                    WHERE id_jenis_administrasi = {$id_jenis_adm} AND m_siswa.id_kelas = {$id_kelas} GROUP BY m_siswa.id_kelas");
+                        $data = Siswa::whereHas('jenisAdministrasi', function($q) use($id_jenis_adm,$id_kelas) {
+                                // Query the name field in status table
+                                $q->where('id_kelas', '=', $id_kelas); // '=' is optional
+                                })->where('id_jenis_administrasi', $id_jenis_adm)->sum('nominal');
+                        // $data = null;
+                        // dd($id_jenis_adm);
                         if($data == null){
                             return 0;
                         }
-                        return $data->nominal_adm;
+                        
+                        return (int)$data;
                     }
                 ?>
                 <table id="data" class="table" style="color:black;" width="100%">
@@ -94,64 +99,67 @@
                             }
                             
                         @endphp
-                        @foreach ($mJenisAdm as $jenisAdm)
-                            {{-- Tanggungan --}}
-                            <tr>
-                                <td rowspan="3" style="vertical-align: center;border: 1px solid black;">{{$jenisAdm->nama}}</td>
-                                <td style="border: 1px solid black;">Tanggungan</td>
-                                @php
-                                    $totalTanggungan = 0;
-                                @endphp 
-                                @foreach ($mKelas as $item)
-                                    @php
-                                        $nominalTanggungan = cariAdmTotal($jenisAdm->id,$item->id_kelas) + cariRekap($jenisAdm->id,$item->id_kelas);
-                                        $totalTanggungan = $totalTanggungan + $nominalTanggungan;
-                                        $totalInKelasTanggungan[strtolower($item->nama."_".$item->jurusan->nama)] = $totalInKelasTanggungan[strtolower($item->nama."_".$item->jurusan->nama)] + $nominalTanggungan;
-                                        
-                                    @endphp
-                                    <td style="text-align: right;border: 1px solid black;">{{Helper::ribuan($nominalTanggungan)}}</td>
-                                @endforeach
-                                <td style="text-align: right;border: 1px solid black;">{{Helper::ribuan($totalTanggungan)}}</td>
-                            </tr>
-                            {{-- yg sudah di bayar --}}
-                            <tr>
-                                @php
-                                    $totalTerbayar = 0;
-                                @endphp
-                                <td style="border: 1px solid black;">Terbayar</td>
-                                @foreach ($mKelas as $item)
-                                    @php
+                        @php
+                        $allTable = "";
+                        $table = "";
+                        $namaBiaya = "";
+                        $idjAdmArray = [];
+                        $namajAdm = "";
+                        foreach ($mJenisAdm as $i => $jenisAdm) :
+                            // {{-- Tanggungan --}}
+                            
+                            $idjAdmArray[] = $jenisAdm->id;
+                            $table .= '<tr>
+                                <td rowspan="3" style="vertical-align: center;border: 1px solid black;">'.$jenisAdm->nama.'</td>
+                                <td style="border: 1px solid black;">Tanggungan</td>';
+                                $totalTanggungan = 0;
+                                foreach ($mKelas as $item):
+                                    
+                                    $nominalTanggungan = cariAdmTotal($jenisAdm->id,$item->id_kelas) + cariRekap($jenisAdm->id,$item->id_kelas);
+                                    $totalTanggungan = $totalTanggungan + $nominalTanggungan;
+                                    $totalInKelasTanggungan[strtolower($item->nama."_".$item->jurusan->nama)] = $totalInKelasTanggungan[strtolower($item->nama."_".$item->jurusan->nama)] + $nominalTanggungan;
+
+                                    $table .= '<td style="text-align: right;border: 1px solid black;">'.Helper::ribuan($nominalTanggungan).'</td>';
+                                endforeach;
+                                $table .= '<td style="text-align: right;border: 1px solid black;">'.Helper::ribuan($totalTanggungan).'</td>
+                            </tr>';
+                            // {{-- yg sudah di bayar --}}
+                            $table .= '<tr>';
+                                $totalTerbayar = 0;
+                                $table .= '<td style="border: 1px solid black;">Terbayar</td>';
+                                foreach ($mKelas as $item):
+                                    
                                         $nominalTerbayar = cariRekap($jenisAdm->id,$item->id_kelas);
                                         $totalTerbayar = $totalTerbayar + $nominalTerbayar;
                                         $totalInKelasTerbayar[strtolower($item->nama."_".$item->jurusan->nama)] = $totalInKelasTerbayar[strtolower($item->nama."_".$item->jurusan->nama)] + $nominalTerbayar;
-                                    @endphp
-                                    <td style="text-align: right;border: 1px solid black;">{{
-                                        Helper::ribuan($nominalTerbayar);
-                                    }}</td>
-                                @endforeach
-                                <td style="text-align: right;border: 1px solid black;">{{Helper::ribuan($totalTerbayar)}}</td>
-                            </tr>
-                            {{-- Kurang --}}
-                            <tr>
-                                @php
-                                    $totalKurang = 0;
-                                @endphp
-                                <td style="border: 1px solid black;">Kurang</td>
-                                @foreach ($mKelas as $item)
-                                    @php
-                                        $nominalKurang = cariAdmTotal($jenisAdm->id,$item->id_kelas);
-                                        $totalKurang = $totalKurang + $nominalKurang;
-                                        $totalInKelasKurang[strtolower($item->nama."_".$item->jurusan->nama)] = $totalInKelasKurang[strtolower($item->nama."_".$item->jurusan->nama)] + $nominalKurang;
-                                    @endphp
-                                    <td style="text-align: right;border: 1px solid black;">{{
-                                            Helper::ribuan($nominalKurang)
-                                        }}</td>
-                                @endforeach
-                                <td style="text-align: right;border: 1px solid black;">{{Helper::ribuan($totalKurang)}}</td>
-                            </tr>
-                            
-                        @endforeach
+                                    
+                                $table .= '<td style="text-align: right;border: 1px solid black;">'.Helper::ribuan($nominalTerbayar).'</td>';
+                                endforeach;
+                                $table .= '<td style="text-align: right;border: 1px solid black;">'.Helper::ribuan($totalTerbayar).'</td>
+                            </tr>';
+                            // {{-- Kurang --}}
+                            $table .= '<tr>';
+                                $totalKurang = 0;
+                                $table .= '<td style="border: 1px solid black;">Kurang</td>';
+                                foreach ($mKelas as $item):
+                                    
+                                    $nominalKurang = cariAdmTotal($jenisAdm->id,$item->id_kelas);
+                                    $totalKurang = $totalKurang + $nominalKurang;
+                                    $totalInKelasKurang[strtolower($item->nama."_".$item->jurusan->nama)] = $totalInKelasKurang[strtolower($item->nama."_".$item->jurusan->nama)] + $nominalKurang;
+                                    
+                                    $table .= '<td style="text-align: right;border: 1px solid black;">'.Helper::ribuan($nominalKurang).'</td>';
+                                endforeach;
+                                $table .= '<td style="text-align: right;border: 1px solid black;">'.Helper::ribuan($totalKurang).'</td>
+                            </tr>';
+                            if($namaBiaya != $jenisAdm->nama){
+                                $namaBiaya = $jenisAdm->nama;
+                                $allTable .= $table;
+                                $table = "";
+                            }
+                        endforeach;
+                        @endphp
                         @php
+                            echo $allTable;
                             $jumlahInKelasTanggungan = 0;
                             $jumlahInKelasKurang = 0;
                             $jumlahInKelasTerbayar = 0;
