@@ -293,9 +293,9 @@ class CDatatable extends Controller
             ->addColumn('tunggakan', function ($row) {
                 
                 
-                $btn = '<a href="' . url('administrasi-siswa-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-primary mr-2" tooltip="Klik untuk melihat Detail Tunggakan"><i class="fas fa-eye"></i></a>';
-                $btn .= '<a href="' . url('administrasi-siswa-cicilan/'. encrypt($row->id_siswa)) . '" class="text-warning mr-2" tooltip="Klik untuk melihat Cicilan Tunggakan"><i class="fas fa-coins"></i></a>';
-                $btn .= '<a href="' . url('administrasi-siswa-cetak-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-info" tooltip="Download Tunggakan"><i class="fas fa-file-download"></i></a>';
+                $btn = '<a href="' . url('administrasi-siswa-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-primary mr-2" tooltip="Klik untuk melihat Detail Tanggungan Sebelumnya"><i class="fas fa-eye"></i></a>';
+                $btn .= '<a href="' . url('administrasi-siswa-cicilan/'. encrypt($row->id_siswa)) . '" class="text-warning mr-2" tooltip="Klik untuk melihat Cicilan Tanggungan"><i class="fas fa-coins"></i></a>';
+                $btn .= '<a href="' . url('administrasi-siswa-cetak-tunggakan/'. encrypt($row->id_siswa)) . '" class="text-info" tooltip="Download Tanggungan"><i class="fas fa-file-download"></i></a>';
                 return $btn;
             })
             ->rawColumns(['biaya','kelas', 'tunggakan'])
